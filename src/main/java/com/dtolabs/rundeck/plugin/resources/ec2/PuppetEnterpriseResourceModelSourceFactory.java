@@ -35,39 +35,27 @@ import java.io.File;
 import java.util.*;
 
 /**
- * EC2ResourceModelSourceFactory is the factory that can create a {@link ResourceModelSource} based on a configuration.
+ * PuppetEnterpriseResourceModelSourceFactory is the factory that can create a {@link ResourceModelSource} based on a configuration.
  * <p/>
- * The configuration properties are: <ul> <li>endpoint: the AWS endpoint to use, or blank for the default</li>
- * <li>filter: A set of ";" separated query filters ("filter=value") for the AWS EC2 API, see <a
- * href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeInstances.html">DescribeInstances</a></li>
- * <li>mappingParams: A set of ";" separated mapping entries</li> <li>runningOnly: if "true", automatically filter the
- * instances by "instance-state-name=running"</li> <li>accessKey: API AccessKey value</li> <li>secretKey: API SecretKey
- * value</li> <li>mappingFile: Path to a java properties-formatted mapping definition file.</li> <li>refreshInterval:
- * Time in seconds used as minimum interval between calls to the AWS API.</li> <li>useDefaultMapping: if "true", base
- * all mapping definitions off the default mapping provided. </li> </ul>
- *
- * @author Greg Schueler <a href="mailto:greg@dtosolutions.com">greg@dtosolutions.com</a>
  */
 @Plugin(name = "aws-ec2", service = "ResourceModelSource")
-public class EC2ResourceModelSourceFactory implements ResourceModelSourceFactory, Describable {
-    public static final String PROVIDER_NAME = "aws-ec2";
+public class PuppetEnterpriseResourceModelSourceFactory implements ResourceModelSourceFactory, Describable {
+    public static final String PROVIDER_NAME = "puppet-enterprise";
     private Framework framework;
 
-    public static final String ENDPOINT = "endpoint";
-    public static final String FILTER_PARAMS = "filter";
-    public static final String MAPPING_PARAMS = "mappingParams";
-    public static final String RUNNING_ONLY = "runningOnly";
-    public static final String ACCESS_KEY = "accessKey";
-    public static final String SECRET_KEY = "secretKey";
-    public static final String MAPPING_FILE = "mappingFile";
-    public static final String REFRESH_INTERVAL = "refreshInterval";
-    public static final String USE_DEFAULT_MAPPING = "useDefaultMapping";
-    public static final String HTTP_PROXY_HOST = "httpProxyHost";
-    public static final String HTTP_PROXY_PORT = "httpProxyPort";
-    public static final String HTTP_PROXY_USER = "httpProxyUser";
-    public static final String HTTP_PROXY_PASS = "httpProxyPass";
+    public static final String SSL_FOLDER = "sslFolder";
+    public static final String HTTPS_HOST = "httpsHost";
+    public static final String HTTPS_PORT = "httpsPort";
+    //public static final String FILTER_PARAMS = "filter";
+    //public static final String MAPPING_PARAMS = "mappingParams";
+    //public static final String RUNNING_ONLY = "runningOnly";
+    //public static final String MAPPING_FILE = "mappingFile";
+    //public static final String REFRESH_INTERVAL = "refreshInterval";
+    //public static final String USE_DEFAULT_MAPPING = "useDefaultMapping";
+    //public static final String HTTP_PROXY_HOST = "httpProxyHost";
+    //public static final String HTTP_PROXY_PORT = "httpProxyPort";
 
-    public EC2ResourceModelSourceFactory(final Framework framework) {
+    public PuppetEnterpriseResourceModelSourceFactory(final Framework framework) {
         this.framework = framework;
     }
 
@@ -79,23 +67,13 @@ public class EC2ResourceModelSourceFactory implements ResourceModelSourceFactory
 
     static Description DESC = DescriptionBuilder.builder()
             .name(PROVIDER_NAME)
-            .title("AWS EC2 Resources")
-            .description("Produces nodes from AWS EC2")
+            .title("Puppet Enterprise Resources")
+            .description("Produces nodes from Puppet Enterprise")
 
-            .property(PropertyUtil.string(ACCESS_KEY, "Access Key", "AWS Access Key", false, null))
-            .property(
-                    PropertyUtil.string(
-                            SECRET_KEY,
-                            "Secret Key",
-                            "AWS Secret Key, required if Access Key is used. If not used, then the IAM profile will be used",
-                            false,
-                            null,
-                            null,
-                            null,
-                            Collections.singletonMap("displayType", (Object) StringRenderingConstants.DisplayType.PASSWORD)
-                    )
-            )
-            .property(PropertyUtil.integer(REFRESH_INTERVAL, "Refresh Interval",
+            .property(PropertyUtil.string(SSL_FOLDER, "SSL Folder", "AWS EC2 filters", false, null))
+            .property(PropertyUtil.string(HTTPS_HOST, "Puppet Enterprise HTTPS Host", "API hostname", false, null))
+            .property(PropertyUtil.integer(HTTPS_PORT, "Puppet Enterprise HTTPS Port", "API port or blank for 8081", false, "8081"))
+            /*.property(PropertyUtil.integer(REFRESH_INTERVAL, "Refresh Interval",
                     "Minimum time in seconds between API requests to AWS (default is 30)", false, "30"))
             .property(PropertyUtil.string(FILTER_PARAMS, "Filter Params", "AWS EC2 filters", false, null))
             .property(PropertyUtil.string(ENDPOINT, "Endpoint", "AWS EC2 Endpoint, or blank for default", false, null))
@@ -136,7 +114,7 @@ public class EC2ResourceModelSourceFactory implements ResourceModelSourceFactory
                     "Include Running state instances only. If false, all instances will be returned that match your " +
                             "filters.",
                     false, "true"))
-
+*/
             .build();
 
     public Description getDescription() {

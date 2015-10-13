@@ -125,47 +125,47 @@ public class EC2ResourceModelSource implements ResourceModelSource {
     }
 
     public EC2ResourceModelSource(final Properties configuration) {
-        this.accessKey = configuration.getProperty(EC2ResourceModelSourceFactory.ACCESS_KEY);
-        this.secretKey = configuration.getProperty(EC2ResourceModelSourceFactory.SECRET_KEY);
-        this.endpoint = configuration.getProperty(EC2ResourceModelSourceFactory.ENDPOINT);
-        this.httpProxyHost = configuration.getProperty(EC2ResourceModelSourceFactory.HTTP_PROXY_HOST);
+        this.accessKey = configuration.getProperty(PuppetEnterpriseResourceModelSourceFactory.ACCESS_KEY);
+        this.secretKey = configuration.getProperty(PuppetEnterpriseResourceModelSourceFactory.SECRET_KEY);
+        this.endpoint = configuration.getProperty(PuppetEnterpriseResourceModelSourceFactory.ENDPOINT);
+        this.httpProxyHost = configuration.getProperty(PuppetEnterpriseResourceModelSourceFactory.HTTP_PROXY_HOST);
         int proxyPort = 80;
         
-        final String proxyPortStr = configuration.getProperty(EC2ResourceModelSourceFactory.HTTP_PROXY_PORT);
+        final String proxyPortStr = configuration.getProperty(PuppetEnterpriseResourceModelSourceFactory.HTTP_PROXY_PORT);
         if (null != proxyPortStr && !"".equals(proxyPortStr)) {
             try {
                 proxyPort = Integer.parseInt(proxyPortStr);
             } catch (NumberFormatException e) {
-                logger.warn(EC2ResourceModelSourceFactory.HTTP_PROXY_PORT + " value is not valid: " + proxyPortStr);
+                logger.warn(PuppetEnterpriseResourceModelSourceFactory.HTTP_PROXY_PORT + " value is not valid: " + proxyPortStr);
             }
         }
         this.httpProxyPort = proxyPort;
-        this.httpProxyUser = configuration.getProperty(EC2ResourceModelSourceFactory.HTTP_PROXY_USER);
-        this.httpProxyPass = configuration.getProperty(EC2ResourceModelSourceFactory.HTTP_PROXY_PASS);
+        this.httpProxyUser = configuration.getProperty(PuppetEnterpriseResourceModelSourceFactory.HTTP_PROXY_USER);
+        this.httpProxyPass = configuration.getProperty(PuppetEnterpriseResourceModelSourceFactory.HTTP_PROXY_PASS);
 
-        this.filterParams = configuration.getProperty(EC2ResourceModelSourceFactory.FILTER_PARAMS);
-        this.mappingParams = configuration.getProperty(EC2ResourceModelSourceFactory.MAPPING_PARAMS);
-        final String mappingFilePath = configuration.getProperty(EC2ResourceModelSourceFactory.MAPPING_FILE);
+        this.filterParams = configuration.getProperty(PuppetEnterpriseResourceModelSourceFactory.FILTER_PARAMS);
+        this.mappingParams = configuration.getProperty(PuppetEnterpriseResourceModelSourceFactory.MAPPING_PARAMS);
+        final String mappingFilePath = configuration.getProperty(PuppetEnterpriseResourceModelSourceFactory.MAPPING_FILE);
         if (null != mappingFilePath) {
             mappingFile = new File(mappingFilePath);
         }
         int refreshSecs = 30;
-        final String refreshStr = configuration.getProperty(EC2ResourceModelSourceFactory.REFRESH_INTERVAL);
+        final String refreshStr = configuration.getProperty(PuppetEnterpriseResourceModelSourceFactory.REFRESH_INTERVAL);
         if (null != refreshStr && !"".equals(refreshStr)) {
             try {
                 refreshSecs = Integer.parseInt(refreshStr);
             } catch (NumberFormatException e) {
-                logger.warn(EC2ResourceModelSourceFactory.REFRESH_INTERVAL + " value is not valid: " + refreshStr);
+                logger.warn(PuppetEnterpriseResourceModelSourceFactory.REFRESH_INTERVAL + " value is not valid: " + refreshStr);
             }
         }
         refreshInterval = refreshSecs * 1000;
-        if (configuration.containsKey(EC2ResourceModelSourceFactory.USE_DEFAULT_MAPPING)) {
+        if (configuration.containsKey(PuppetEnterpriseResourceModelSourceFactory.USE_DEFAULT_MAPPING)) {
             useDefaultMapping = Boolean.parseBoolean(configuration.getProperty(
-                EC2ResourceModelSourceFactory.USE_DEFAULT_MAPPING));
+                PuppetEnterpriseResourceModelSourceFactory.USE_DEFAULT_MAPPING));
         }
-        if (configuration.containsKey(EC2ResourceModelSourceFactory.RUNNING_ONLY)) {
+        if (configuration.containsKey(PuppetEnterpriseResourceModelSourceFactory.RUNNING_ONLY)) {
             runningOnly = Boolean.parseBoolean(configuration.getProperty(
-                EC2ResourceModelSourceFactory.RUNNING_ONLY));
+                PuppetEnterpriseResourceModelSourceFactory.RUNNING_ONLY));
         }
         if (null != accessKey && null != secretKey) {
             credentials = new BasicAWSCredentials(accessKey.trim(), secretKey.trim());
