@@ -1,71 +1,37 @@
 buildscript {
    repositories {
       mavenCentral()
-      maven { url "https://oss.sonatype.org/content/groups/public"}
-   }
-   dependencies {
-      classpath 'com.github.townsfolk:gradle-release:1.2'
    }
 }
-apply plugin: 'release'
+
 apply plugin: 'java'
 apply plugin: 'idea'
-sourceCompatibility = 1.6
+
+sourceCompatibility = targetCompatibility = 1.8
 defaultTasks 'clean', 'build'
 ext.rundeckPluginVersion = '1.1'
 
-configurations{
-    //declare custom pluginLibs configuration to include only libs for this plugin
-    pluginLibs
-
-    //declare compile to extend from pluginLibs so it inherits the dependencies
-    compile{
-        extendsFrom pluginLibs
-    }
-}
 repositories {
     mavenCentral()
-
-    ivy {
-        url = "file:$projectDir/third-party"
-        name = 'thirdparty'
-        layout  'pattern', {
-            artifact "[module]-[revision]/[module]-[revision](-[classifier]).[ext]"
-        }
-    }
 }
 dependencies {
-    compile group: 'org.rundeck', name: 'rundeck-core', version: '2.2.2'
+    compile group: 'org.rundeck', name: 'rundeck-core', version: '2.6.0'
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.4'
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.12'
 
-    pluginLibs group: 'commons-beanutils', name: 'commons-beanutils', version: '1.7.0'
-    pluginLibs group: 'dom4j', name: 'dom4j', version: '1.6.1'
-    pluginLibs group: 'apache-log4j', name: 'apache-log4j', version: '1.2.15'
-    pluginLibs group: 'stax', name: 'stax', version: '1.2.0'
-    pluginLibs group: 'stax-api', name: 'stax-api', version: '1.0.1'
-
-    pluginLibs group: 'com.amazonaws', name: 'aws-java-sdk-ec2', version: '1.9.0'
+    testCompile group: 'junit', name:'junit', version: '4.12'
 }
-
-// task to copy plugin libs to output/lib dir
-task copyToLib(type: Copy) {
-    into "$buildDir/output/lib"
-    from configurations.pluginLibs
-}
-
 
 jar {
-    //include contents of output dir
-    from "$buildDir/output"
     manifest {
-        attributes 'Rundeck-Plugin-Version': rundeckPluginVersion, 'Rundeck-Plugin-Archive': 'true', 'Rundeck-Plugin-Libs-Load-First':'false'
-        //create space-separated list of pluginLibs
-        def libList = configurations.pluginLibs.collect{'lib/'+it.name}.join(' ')
-        attributes 'Rundeck-Plugin-Classnames': 'PuppetEnterpriseResourceModelSourceFactory', 'Rundeck-Plugin-Libs': "${libList}"
+        attributes(
+                "Rundeck-Plugin-Version": rundeckPluginVersion,
+                "Rundeck-Plugin-File-Version": version,
+                "Rundeck-Plugin-Archive": "true",
+                "Rundeck-Plugin-Classnames": "com.rundeck.plugin.resources.puppetdb.ResourceModelFactory"
+        )
     }
 }
-
-//set jar task to depend on copyToLib
-jar.dependsOn(copyToLib)
 
 task wrapper(type: Wrapper) {
     gradleVersion = '1.10'
