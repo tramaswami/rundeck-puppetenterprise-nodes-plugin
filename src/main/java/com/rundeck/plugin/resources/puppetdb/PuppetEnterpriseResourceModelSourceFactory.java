@@ -21,7 +21,7 @@
 * Created: 9/1/11 4:27 PM
 * 
 */
-package com.dtolabs.rundeck.plugin.resources.ec2;
+package com.rundeck.plugin.resources.puppetdb;
 
 import com.dtolabs.rundeck.core.common.Framework;
 import com.dtolabs.rundeck.core.plugins.Plugin;

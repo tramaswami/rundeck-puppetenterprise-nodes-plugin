@@ -21,7 +21,7 @@
 * Created: 9/1/11 4:34 PM
 * 
 */
-package com.dtolabs.rundeck.plugin.resources.ec2;
+package com.rundeck.plugin.resources.puppetdb;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.ClientConfiguration;
