@@ -15,7 +15,7 @@
  */
 
 /*
-* EC2ResourceModelSource.java
+* PuppetEnterpriseResourceModelSource.java
 * 
 * User: Greg Schueler <a href="mailto:greg@dtosolutions.com">greg@dtosolutions.com</a>
 * Created: 9/1/11 4:27 PM
@@ -29,9 +29,7 @@ import com.dtolabs.rundeck.core.plugins.configuration.*;
 import com.dtolabs.rundeck.core.resources.ResourceModelSource;
 import com.dtolabs.rundeck.core.resources.ResourceModelSourceFactory;
 import com.dtolabs.rundeck.plugins.util.DescriptionBuilder;
-import com.dtolabs.rundeck.plugins.util.PropertyBuilder;
 
-import java.io.File;
 import java.util.*;
 
 /**
@@ -60,9 +58,9 @@ public class PuppetEnterpriseResourceModelSourceFactory implements ResourceModel
     }
 
     public ResourceModelSource createResourceModelSource(final Properties properties) throws ConfigurationException {
-        final EC2ResourceModelSource ec2ResourceModelSource = new EC2ResourceModelSource(properties);
-        ec2ResourceModelSource.validate();
-        return ec2ResourceModelSource;
+        final PuppetEnterpriseResourceModelSource puppetEnterpriseResourceModelSource = new PuppetEnterpriseResourceModelSource(properties);
+        puppetEnterpriseResourceModelSource.validate();
+        return puppetEnterpriseResourceModelSource;
     }
 
     static Description DESC = DescriptionBuilder.builder()

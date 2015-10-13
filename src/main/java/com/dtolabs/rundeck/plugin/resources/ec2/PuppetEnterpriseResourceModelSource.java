@@ -15,7 +15,7 @@
  */
 
 /*
-* EC2ResourceModelSource.java
+* PuppetEnterpriseResourceModelSource.java
 * 
 * User: Greg Schueler <a href="mailto:greg@dtosolutions.com">greg@dtosolutions.com</a>
 * Created: 9/1/11 4:34 PM
@@ -38,7 +38,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 /**
- * EC2ResourceModelSource produces nodes by querying the AWS EC2 API to list instances.
+ * PuppetEnterpriseResourceModelSource produces nodes by querying the AWS EC2 API to list instances.
  * <p/>
  * The RunDeck node definitions are created from the instances on a mapping system to convert properties of the amazon
  * instances to attributes defined on the nodes.
@@ -48,8 +48,8 @@ import java.util.concurrent.Future;
  *
  * @author Greg Schueler <a href="mailto:greg@dtosolutions.com">greg@dtosolutions.com</a>
  */
-public class EC2ResourceModelSource implements ResourceModelSource {
-    static Logger logger = Logger.getLogger(EC2ResourceModelSource.class);
+public class PuppetEnterpriseResourceModelSource implements ResourceModelSource {
+    static Logger logger = Logger.getLogger(PuppetEnterpriseResourceModelSource.class);
     private String accessKey;
     private String secretKey;
     long refreshInterval = 30000;
@@ -101,7 +101,7 @@ public class EC2ResourceModelSource implements ResourceModelSource {
                                + "tags.default=ec2\n";
         try {
 
-            final InputStream resourceAsStream = EC2ResourceModelSource.class.getClassLoader().getResourceAsStream(
+            final InputStream resourceAsStream = PuppetEnterpriseResourceModelSource.class.getClassLoader().getResourceAsStream(
                 "defaultMapping.properties");
             if (null != resourceAsStream) {
                 try {
@@ -124,7 +124,7 @@ public class EC2ResourceModelSource implements ResourceModelSource {
         }
     }
 
-    public EC2ResourceModelSource(final Properties configuration) {
+    public PuppetEnterpriseResourceModelSource(final Properties configuration) {
         this.accessKey = configuration.getProperty(PuppetEnterpriseResourceModelSourceFactory.ACCESS_KEY);
         this.secretKey = configuration.getProperty(PuppetEnterpriseResourceModelSourceFactory.SECRET_KEY);
         this.endpoint = configuration.getProperty(PuppetEnterpriseResourceModelSourceFactory.ENDPOINT);
