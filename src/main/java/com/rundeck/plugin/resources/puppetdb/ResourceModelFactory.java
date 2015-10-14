@@ -41,6 +41,7 @@ import com.dtolabs.rundeck.core.plugins.configuration.Description;
 import com.dtolabs.rundeck.core.plugins.configuration.Property;
 import com.dtolabs.rundeck.core.resources.ResourceModelSource;
 import com.dtolabs.rundeck.core.resources.ResourceModelSourceFactory;
+import com.rundeck.plugin.resources.puppetdb.client.DefaultPuppetAPI;
 import org.apache.log4j.Logger;
 
 @Plugin(name = "puppet-enterprise", service = "ResourceModelSource")
@@ -69,9 +70,10 @@ public class ResourceModelFactory implements ResourceModelSourceFactory, Describ
             throw new ConfigurationException(message);
         }
 
-        // aqui necesitas el cliente web
-        final String puppetHost = properties.getProperty(PROPERTY_PUPPETDB_HOST);
-        final String puppetPort = properties.getProperty(PROPERTY_PUPPETDB_PORT);
+        // web api
+        final DefaultPuppetAPI defaultPuppetAPI = new DefaultPuppetAPI(properties);
+
+        // TODO: mapping
 
         return () -> new NodeSetImpl();
     }
