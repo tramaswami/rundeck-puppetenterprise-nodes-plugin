@@ -1,37 +1,34 @@
 package com.rundeck.plugin.resources.puppetdb;
 
-import static java.util.stream.Collectors.toList;
-
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 import java.util.Properties;
 
-import com.rundeck.plugin.resources.puppetdb.client.DefaultPuppetAPI;
-import com.rundeck.plugin.resources.puppetdb.client.model.Node;
-import com.rundeck.plugin.resources.puppetdb.client.model.NodeWithFacts;
+import com.dtolabs.rundeck.core.plugins.configuration.ConfigurationException;
 import org.junit.Test;
 
-public class ResourceModelFactoryUnit implements Constants {
+public class ResourceModelFactory_UT implements Constants {
 
     @Test
-    public void test() {
+    public void test_required_properties() throws ConfigurationException {
         final Properties properties = new Properties();
         properties.put(PROPERTY_PUPPETDB_HOST, "localhost");
         properties.put(PROPERTY_PUPPETDB_PORT, "8081");
 
         // web api
-        final DefaultPuppetAPI defaultPuppetAPI = new DefaultPuppetAPI(properties);
-
-        final List<Node> nodes = defaultPuppetAPI.getNodes();
-
-        final List<NodeWithFacts> collect = nodes.stream().map(node -> defaultPuppetAPI.getFacts(node))
-                .collect(toList());
-
-        System.out.println(collect);
+        final ResourceModelFactory resourceModelFactory = new ResourceModelFactory(null);
+        resourceModelFactory.getPuppetAPI(properties);
     }
 
-    @Test
+    @Test(expected = ConfigurationException.class)
+    public void test_missing_properties() throws ConfigurationException {
+        final Properties properties = new Properties();
+        properties.put(PROPERTY_PUPPETDB_HOST, "localhost");
+
+        final ResourceModelFactory resourceModelFactory = new ResourceModelFactory(null);
+        resourceModelFactory.getPuppetAPI(properties);
+    }
+
     public void test2() throws IOException{
         final InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream("defaultMapping.properties");
         final Properties defaultMapping = new Properties();

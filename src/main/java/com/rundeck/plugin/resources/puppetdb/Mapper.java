@@ -23,39 +23,166 @@
 */
 package com.rundeck.plugin.resources.puppetdb;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Properties;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import static java.lang.String.format;
+import static java.util.Arrays.asList;
+import static java.util.Objects.isNull;
+import static java.util.Optional.empty;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
-import com.amazonaws.services.ec2.model.*;
+import java.lang.reflect.InvocationTargetException;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.BiFunction;
+
 import com.dtolabs.rundeck.core.common.INodeEntry;
 import com.dtolabs.rundeck.core.common.NodeEntryImpl;
-import org.apache.commons.beanutils.BeanUtils;
+import com.rundeck.plugin.resources.puppetdb.client.model.NodeWithFacts;
+import org.apache.commons.beanutils.PropertyUtilsBean;
+import org.apache.log4j.Logger;
 
 /**
  * InstanceToNodeMapper produces Rundeck node definitions from EC2 Instances
  *
  * @author Greg Schueler <a href="mailto:greg@dtosolutions.com">greg@dtosolutions.com</a>
  */
-class InstanceToNodeMapper {
+public class Mapper implements BiFunction<NodeWithFacts, Map<String, Map<String, Object>>, Optional<INodeEntry>> {
 
+    private static final List<String> REQUIRED_PROPERTIES = asList("hostname", "username", "nodename", "tags");
+    private static Logger log = Logger.getLogger(ResourceModelFactory.class);
+
+    private final PropertyUtilsBean propertyUtilsBean;
+
+    public Mapper() {
+        this.propertyUtilsBean = new PropertyUtilsBean();
+    }
+
+
+    @Override
+    public Optional<INodeEntry> apply(final NodeWithFacts node,
+                                      final Map<String, Map<String, Object>> mappings) {
+        // 1.- create a new instance
+        final NodeEntryImpl result = newNodeTreeImpl();
+
+        // 2.- using configuration map everything
+        mappings.forEach((propertyName, mapping) -> {
+            final boolean isCollection = "tags".equals(propertyName) ||
+                    "attributes".equals(propertyName);
+
+            if (isCollection) {
+                return;
+            }
+
+            final boolean isDefault = mapping.containsKey("default");
+            final boolean isPath = mapping.containsKey("path");
+
+            if (isDefault && isPath) {
+                // TODO: flag problem
+                final String template = "property: '%s' is misconfigured, " +
+                        "can't have default and path properties at the same time";
+                log.warn(template);
+                return;
+            }
+
+            if (isDefault) {
+                final String value = mapping.getOrDefault("default", "").toString();
+                if (isNotBlank(value)) {
+                    setNodeProperty(result, propertyName, value);
+                }
+            }
+
+            if (isPath) {
+                final String path = mapping.getOrDefault("path", "").toString();
+                if (isNotBlank(path)) {
+                    final String value = getNodeWithFactsProperty(node, path);
+                    if (isNotBlank(value)) {
+                        setNodeProperty(result, propertyName, value);
+                    }
+                }
+            }
+        });
+
+        // 3.- check if valid
+        return validState(result) ? Optional.of(result) : empty();
+    }
+
+    private String getNodeWithFactsProperty(final NodeWithFacts nodeWithFacts,
+                                            final String propertyPath) {
+        if (isBlank(propertyPath)) {
+            return "";
+        }
+
+        try {
+            final Object value = propertyUtilsBean.getProperty(nodeWithFacts, propertyPath);
+
+            return isNull(value) ? "" : value.toString();
+        } catch (IllegalAccessException|InvocationTargetException|NoSuchMethodException e) {
+            final String template = "can't parse propertyPath: '%s'";
+            final String message = format(template, propertyPath);
+            log.warn(message, e);
+        }
+
+        return "";
+    }
+
+    private void setNodeProperty(final NodeEntryImpl nodeEntry,
+                                 final String propertyName,
+                                 final String value) {
+        if (isBlank(propertyName) || isBlank(value)) {
+            return;
+        }
+
+        try {
+            propertyUtilsBean.setProperty(nodeEntry, propertyName, value);
+        } catch (IllegalAccessException|InvocationTargetException|NoSuchMethodException e) {
+            e.printStackTrace();
+            final String template = "can't set NodeEntry property '%s', value: '%s'";
+            final String message = format(template, propertyName, value);
+            log.warn(message, e);
+        }
+    }
+
+    private NodeEntryImpl newNodeTreeImpl() {
+        final NodeEntryImpl result = new NodeEntryImpl();
+
+        if (isNull(result.getTags())) {
+            result.setTags(new LinkedHashSet<>());
+        }
+
+        if (isNull(result.getAttributes())) {
+            result.setAttributes(new LinkedHashMap<>());
+        }
+
+        return result;
+    }
+
+    private boolean validState(final INodeEntry nodeEntry) {
+        if (isNull(nodeEntry)) {
+            return false;
+        }
+
+        return true;
+    }
+
+
+    /*
     private final Properties mapping;
 
     /**
      * Create with the credentials and mapping definition
-     */
     InstanceToNodeMapper(final Properties mapping) {
         this.mapping = mapping;
     }
 
     /**
      * Convert an AWS EC2 Instance to a RunDeck INodeEntry based on the mapping input
-     */
     static INodeEntry instanceToNode(final Properties mapping) throws GeneratorException {
         final NodeEntryImpl node = new NodeEntryImpl();
+
+
 
         //evaluate single settings.selector=tags/* mapping
         if ("tags/*".equals(mapping.getProperty("attributes.selector"))) {
@@ -173,7 +300,6 @@ class InstanceToNodeMapper {
     /**
      * Return the result of the selector applied to the instance, otherwise return the defaultValue. The selector can be
      * a comma-separated list of selectors
-     */
     public static String applySelector(final Instance inst, final String selector, final String defaultValue) throws
         GeneratorException {
         return applySelector(inst, selector, defaultValue, false);
@@ -186,7 +312,6 @@ class InstanceToNodeMapper {
      * @param selector the selector string
      * @param defaultValue a default value to return if there is no result from the selector
      * @param tagMerge if true, allow | separator to merge multiple values
-     */
     public static String applySelector(final Instance inst, final String selector, final String defaultValue,
                                        final boolean tagMerge) throws
         GeneratorException {
@@ -241,6 +366,6 @@ class InstanceToNodeMapper {
 
         return null;
     }
-
+    */
 
 }

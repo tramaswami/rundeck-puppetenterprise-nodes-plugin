@@ -11,7 +11,6 @@ import com.google.gson.Gson;
 import com.rundeck.plugin.resources.puppetdb.Constants;
 import com.rundeck.plugin.resources.puppetdb.client.model.Fact;
 import com.rundeck.plugin.resources.puppetdb.client.model.Node;
-import com.rundeck.plugin.resources.puppetdb.client.model.NodeWithFacts;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -68,7 +67,7 @@ public class DefaultPuppetAPI implements PuppetAPI, Constants {
     }
 
     @Override
-    public NodeWithFacts getFacts(final Node node) {
+    public List<Fact> getFactsForNode(final Node node) {
         final CloseableHttpClient httpclient = new DefaultHttpClient();
         final String url = format(getBaseUrl("pdb/query/v4/nodes/%s/facts"), node.getCertname());
         final HttpGet httpGet = new HttpGet(url);
@@ -81,19 +80,19 @@ public class DefaultPuppetAPI implements PuppetAPI, Constants {
                 LOG.warn(format("getFacts(%s) ended with status code: %d",
                         node.getCertname(),
                         statusCode));
-                return new NodeWithFacts(node, emptyList());
+                return emptyList();
             }
 
             final HttpEntity entity = response.getEntity();
             final String responseBody = EntityUtils.toString(entity);
 
-            final List<Fact> facts = GSON.fromJson(responseBody, Fact.LIST);
-            return new NodeWithFacts(node, facts);
+            return GSON.fromJson(responseBody, Fact.LIST);
         } catch (IOException e) {
             LOG.warn("while getFacts()", e);
         }
 
-        return new NodeWithFacts(node, emptyList());
+        return emptyList();
     }
+
 
 }

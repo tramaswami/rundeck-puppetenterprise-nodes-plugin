@@ -1,0 +1,48 @@
+{
+  "osFamily": {
+    "path": "facts.os.family"
+  },
+  "osArch": {
+    "path": "facts.architecture"
+  },
+  "osVersion": {
+    "path": "facts.kernelversion"
+  },
+  "osName": {
+    "path": "facts.os.name"
+  },
+  "nodename": {
+    "path": "certname"
+  },
+  "username": {
+    "default": "username"
+  },
+  "hostname": {
+    "path": "facts.ipaddress"
+  },
+  "description": {
+    "default": "this is a cool an amazing description"
+  },
+  "attributes": [
+    {
+      "path": "facts.hardwareisa"
+    },
+    {
+      "default": "value2"
+    },
+    {
+      "path": "facts.os.distro.codename"
+    }
+  ],
+  "tags": [
+    {
+      "path": "facts.hardwareisa"
+    },
+    {
+      "default": "value2"
+    },
+    {
+      "path": "facts.os.distro.codename"
+    }
+  ]
+}

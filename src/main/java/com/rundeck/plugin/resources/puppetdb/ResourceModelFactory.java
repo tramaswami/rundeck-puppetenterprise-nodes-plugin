@@ -42,6 +42,7 @@ import com.dtolabs.rundeck.core.plugins.configuration.Property;
 import com.dtolabs.rundeck.core.resources.ResourceModelSource;
 import com.dtolabs.rundeck.core.resources.ResourceModelSourceFactory;
 import com.rundeck.plugin.resources.puppetdb.client.DefaultPuppetAPI;
+import com.rundeck.plugin.resources.puppetdb.client.PuppetAPI;
 import org.apache.log4j.Logger;
 
 @Plugin(name = "puppet-enterprise", service = "ResourceModelSource")
@@ -57,6 +58,18 @@ public class ResourceModelFactory implements ResourceModelSourceFactory, Describ
 
     @Override
     public ResourceModelSource createResourceModelSource(final Properties properties) throws ConfigurationException {
+
+        // TODO: mapping
+
+        return () -> new NodeSetImpl();
+    }
+
+    @Override
+    public Description getDescription() {
+        return PLUGIN_DESCRIPTION;
+    }
+
+    public PuppetAPI getPuppetAPI(final Properties properties) throws ConfigurationException {
         final List<Property> missingProperties = getMissingProperties(properties);
         if (isNotEmpty(missingProperties)) {
             final String missingPropertiesNames = missingProperties
@@ -70,17 +83,8 @@ public class ResourceModelFactory implements ResourceModelSourceFactory, Describ
             throw new ConfigurationException(message);
         }
 
-        // web api
-        final DefaultPuppetAPI defaultPuppetAPI = new DefaultPuppetAPI(properties);
 
-        // TODO: mapping
-
-        return () -> new NodeSetImpl();
-    }
-
-    @Override
-    public Description getDescription() {
-        return PLUGIN_DESCRIPTION;
+        return new DefaultPuppetAPI(properties);
     }
 
     private List<Property> getMissingProperties(final Properties properties) {
