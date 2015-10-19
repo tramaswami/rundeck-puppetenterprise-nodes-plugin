@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Properties;
 
 import com.google.gson.Gson;
+import com.google.inject.Provider;
+import com.puppetlabs.puppetdb.javaclient.impl.PEM_SSLSocketFactoryProvider;
 import com.rundeck.plugin.resources.puppetdb.Constants;
 import com.rundeck.plugin.resources.puppetdb.client.model.Fact;
 import com.rundeck.plugin.resources.puppetdb.client.model.Node;
@@ -15,22 +17,31 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 
 public class DefaultPuppetAPI implements PuppetAPI, Constants {
 
-    private static Logger LOG = Logger.getLogger(DefaultPuppetAPI.class);
+    private static final String HTTPS = "https";
+
+    private static final Logger LOG = Logger.getLogger(DefaultPuppetAPI.class);
     private static final Gson GSON = new Gson();
 
     private final String puppetProtocol;
     private final String puppetHost;
     private final String puppetPort;
+    private final String puppetSslDir;
 
     public DefaultPuppetAPI(Properties properties) {
-        puppetProtocol = "http"; // TODO puppetProtocol as parameter too?
+        puppetSslDir = properties.getProperty(PROPERTY_PUPPETDB_SSL_DIR);
+        puppetProtocol = puppetSslDir == null ? "http" : HTTPS;
         puppetHost = properties.getProperty(PROPERTY_PUPPETDB_HOST);
         puppetPort = properties.getProperty(PROPERTY_PUPPETDB_PORT);
     }
@@ -43,7 +54,7 @@ public class DefaultPuppetAPI implements PuppetAPI, Constants {
 
     @Override
     public List<Node> getNodes() {
-        final CloseableHttpClient httpclient = new DefaultHttpClient();
+        final CloseableHttpClient httpclient = puppetProtocol.equals(HTTPS) ? getHttpsClient() : new DefaultHttpClient();
         final HttpGet httpGet = new HttpGet(getBaseUrl("pdb/query/v4/nodes"));
 
         try (final CloseableHttpResponse response = httpclient.execute(httpGet)) {
@@ -68,7 +79,7 @@ public class DefaultPuppetAPI implements PuppetAPI, Constants {
 
     @Override
     public List<Fact> getFactsForNode(final Node node) {
-        final CloseableHttpClient httpclient = new DefaultHttpClient();
+        final CloseableHttpClient httpclient = puppetProtocol.equals(HTTPS) ? getHttpsClient() : new DefaultHttpClient();
         final String url = format(getBaseUrl("pdb/query/v4/nodes/%s/facts"), node.getCertname());
         final HttpGet httpGet = new HttpGet(url);
 
@@ -94,5 +105,16 @@ public class DefaultPuppetAPI implements PuppetAPI, Constants {
         return emptyList();
     }
 
+    private DefaultHttpClient getHttpsClient() {
+        Provider<SSLSocketFactory> provider = new PEM_SSLSocketFactoryProvider(puppetHost, Integer.parseInt(puppetPort), puppetSslDir);
+        SSLSocketFactory sf = provider.get();
+
+        SchemeRegistry registry = new SchemeRegistry();
+        registry.register(new Scheme(HTTPS, 443, sf));
+
+        ClientConnectionManager ccm = new PoolingClientConnectionManager(registry);
+
+        return new DefaultHttpClient(ccm);
+    }
 
 }

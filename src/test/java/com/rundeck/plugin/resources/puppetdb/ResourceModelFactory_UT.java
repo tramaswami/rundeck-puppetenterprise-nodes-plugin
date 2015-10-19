@@ -12,6 +12,7 @@ public class ResourceModelFactory_UT implements Constants {
     @Test
     public void test_required_properties() throws ConfigurationException {
         final Properties properties = new Properties();
+        properties.put(PROPERTY_PUPPETDB_SSL_DIR, "ssl");
         properties.put(PROPERTY_PUPPETDB_HOST, "localhost");
         properties.put(PROPERTY_PUPPETDB_PORT, "8081");
 
