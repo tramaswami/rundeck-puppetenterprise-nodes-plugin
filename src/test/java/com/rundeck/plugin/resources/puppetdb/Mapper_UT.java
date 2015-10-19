@@ -1,6 +1,7 @@
 package com.rundeck.plugin.resources.puppetdb;
 
 import static java.util.stream.Collectors.toList;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
@@ -28,7 +29,7 @@ public class Mapper_UT {
     // support
     Gson gson;
     PuppetAPI testApi;
-    Map<String, Map<String, Object>> mapping;
+    Map<String, Object> mapping;
 
     @Before
     public void before() {
@@ -39,7 +40,7 @@ public class Mapper_UT {
     }
 
     @Test
-    public void first_test() {
+    public void test_known_mapping() {
         final List<NodeWithFacts> nodesWithFacts = testApi.getNodes()
                 .stream()
                 .map(testApi::getNodeWithFacts)
@@ -48,13 +49,16 @@ public class Mapper_UT {
         final NodeWithFacts nodeWithFacts = nodesWithFacts.get(0);
 
         final Optional<INodeEntry> maybeNode = mapper.apply(nodeWithFacts, mapping);
+        final INodeEntry nodeEntry = maybeNode.orElse(null);
 
         assertTrue("maybeNode should be present", maybeNode.isPresent());
+        assertEquals("nodeEntry.hostname should be 100.112.162.79", "100.112.162.79", nodeEntry.getHostname());
+        assertEquals("nodeEntry.username should be username", "username", nodeEntry.getUsername());
     }
 
-    public Map<String, Map<String, Object>> getMapping() {
+    public Map<String, Object> getMapping() {
         final Type mappingType = new TypeToken<Map<String, Object>>() {}.getType();
-        return gson.fromJson(readFile("defaultMapping.json"), mappingType);
+        return gson.fromJson(readFile("knownMapping.json"), mappingType);
     }
 
     public PuppetAPI testApi() {

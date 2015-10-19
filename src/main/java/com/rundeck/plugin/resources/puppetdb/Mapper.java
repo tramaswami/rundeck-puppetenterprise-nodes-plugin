@@ -25,8 +25,10 @@ package com.rundeck.plugin.resources.puppetdb;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyMap;
 import static java.util.Objects.isNull;
 import static java.util.Optional.empty;
+import static java.util.stream.Collectors.toSet;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -35,23 +37,23 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.BiFunction;
 
 import com.dtolabs.rundeck.core.common.INodeEntry;
 import com.dtolabs.rundeck.core.common.NodeEntryImpl;
 import com.rundeck.plugin.resources.puppetdb.client.model.NodeWithFacts;
 import org.apache.commons.beanutils.PropertyUtilsBean;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 /**
- * InstanceToNodeMapper produces Rundeck node definitions from EC2 Instances
  *
- * @author Greg Schueler <a href="mailto:greg@dtosolutions.com">greg@dtosolutions.com</a>
  */
-public class Mapper implements BiFunction<NodeWithFacts, Map<String, Map<String, Object>>, Optional<INodeEntry>> {
+public class Mapper implements BiFunction<NodeWithFacts, Map<String, Object>, Optional<INodeEntry>> {
 
-    private static final List<String> REQUIRED_PROPERTIES = asList("hostname", "username", "nodename", "tags");
     private static Logger log = Logger.getLogger(ResourceModelFactory.class);
 
     private final PropertyUtilsBean propertyUtilsBean;
@@ -60,63 +62,123 @@ public class Mapper implements BiFunction<NodeWithFacts, Map<String, Map<String,
         this.propertyUtilsBean = new PropertyUtilsBean();
     }
 
-
     @Override
-    public Optional<INodeEntry> apply(final NodeWithFacts node,
-                                      final Map<String, Map<String, Object>> mappings) {
-        // 1.- create a new instance
+    public Optional<INodeEntry> apply(final NodeWithFacts puppetNode,
+                                      final Map<String, Object> mappings) {
+        // create a new instance
         final NodeEntryImpl result = newNodeTreeImpl();
 
-        // 2.- using configuration map everything
-        mappings.forEach((propertyName, mapping) -> {
-            final boolean isCollection = "tags".equals(propertyName) ||
-                    "attributes".equals(propertyName);
+        // parse every property BUT tags and attributes
+        try {
+            final Set<String> especialProperties = setOf("tags", "attributes");
+            final Map<String, String> readProperties = assembleMapOmitingKeys(puppetNode, mappings, especialProperties);
+            propertyUtilsBean.copyProperties(result, readProperties);
+        } catch (IllegalAccessException|InvocationTargetException|NoSuchMethodException e) {
+            log.warn("while trying to assemble Rundeck node from PuppetDB Node", e);
+        }
 
-            if (isCollection) {
-                return;
+        // parse attributes
+        final boolean hasAttributes = mappings.containsKey("attributes");
+        if (hasAttributes) {
+            final Object attributesMapping = mappings.getOrDefault("attributes", emptyMap());
+
+            final boolean isValidMapping = attributesMapping instanceof Map;
+            if (isValidMapping) {
+                final Map<String, String> newAttributes = assembleMap(puppetNode, (Map<String, Object>) attributesMapping);
+                result.getAttributes().putAll(newAttributes);
+            }
+        }
+
+        // parse tags
+        final boolean hasTags = mappings.containsKey("tags");
+        if (hasTags) {
+            final Object tagsMapping = mappings.getOrDefault("tags", emptyMap());
+            final boolean isValidMapping = tagsMapping instanceof List;
+            if (isValidMapping) {
+                final Set<String> newTags = assembleSet(puppetNode, (List<Map<String, String>>) tagsMapping);
+                result.getTags().addAll(newTags);
             }
 
-            final boolean isDefault = mapping.containsKey("default");
-            final boolean isPath = mapping.containsKey("path");
+        }
 
-            if (isDefault && isPath) {
-                // TODO: flag problem
-                final String template = "property: '%s' is misconfigured, " +
-                        "can't have default and path properties at the same time";
-                log.warn(template);
-                return;
-            }
-
-            if (isDefault) {
-                final String value = mapping.getOrDefault("default", "").toString();
-                if (isNotBlank(value)) {
-                    setNodeProperty(result, propertyName, value);
-                }
-            }
-
-            if (isPath) {
-                final String path = mapping.getOrDefault("path", "").toString();
-                if (isNotBlank(path)) {
-                    final String value = getNodeWithFactsProperty(node, path);
-                    if (isNotBlank(value)) {
-                        setNodeProperty(result, propertyName, value);
-                    }
-                }
-            }
-        });
-
-        // 3.- check if valid
+        // check if valid
         return validState(result) ? Optional.of(result) : empty();
     }
 
-    private String getNodeWithFactsProperty(final NodeWithFacts nodeWithFacts,
-                                            final String propertyPath) {
+    private Set<String> assembleSet(final NodeWithFacts puppetNode,
+                                    final List<Map<String, String>> mappings) {
+        return mappings.stream()
+                .map(propertyMapping -> getPuppetNodeProperty(puppetNode, propertyMapping))
+                .filter(StringUtils::isNotBlank)
+                .collect(toSet());
+    }
+
+    private <T> Set<T> setOf(T... ts) {
+        return new LinkedHashSet<>(asList(ts));
+    }
+
+    private Map<String, String> assembleMap(final NodeWithFacts puppetNode,
+                                            final Map<String, Object> mappings) {
+        final Map<String, String> result = new LinkedHashMap<>();
+
+        mappings.forEach((final String key, final Object _mapping) -> {
+            final boolean isValidMapping = _mapping instanceof Map;
+            if (!isValidMapping) {
+                log.warn("wrong mapping for property: 'key', please specify a json object with properties 'path' and/or 'default'");
+                return;
+            }
+
+            final Map<String, String> mapping = (Map<String, String>) _mapping;
+            final String value = getPuppetNodeProperty(puppetNode, mapping);
+            if (isNotBlank(value)) {
+                result.put(key, value);
+            }
+        });
+
+        return result;
+    }
+
+    private Map<String, String> assembleMapOmitingKeys(final NodeWithFacts puppetNode,
+                                                       final Map<String, Object> mappings,
+                                                       final Set<String> omitKeys) {
+        final Map<String, Object> newMappings = new LinkedHashMap<>(mappings);
+        omitKeys.forEach(newMappings::remove);
+        return assembleMap(puppetNode, newMappings);
+    }
+
+    private String getPuppetNodeProperty(final NodeWithFacts puppetNode,
+                                         final Map<String, String> propertyMapping) {
+        if (isNull(propertyMapping) || propertyMapping.isEmpty()) {
+            return "";
+        }
+
+        final boolean isPath = propertyMapping.containsKey("path");
+        if (isPath) {
+            final String value = getPuppetNodeProperty(puppetNode, propertyMapping.getOrDefault("path", ""));
+            if (isNotBlank(value)) {
+                return value;
+            }
+        }
+
+        final boolean isDefault = propertyMapping.containsKey("default");
+        if (isDefault) {
+            final String value = propertyMapping.getOrDefault("default", "");
+            if (isNotBlank(value)) {
+                return value;
+            }
+        }
+
+        return "";
+    }
+
+    private String getPuppetNodeProperty(final NodeWithFacts puppetNode,
+                                         final String propertyPath) {
         if (isBlank(propertyPath)) {
             return "";
         }
 
         try {
-            final Object value = propertyUtilsBean.getProperty(nodeWithFacts, propertyPath);
+            final Object value = propertyUtilsBean.getProperty(puppetNode, propertyPath);
 
             return isNull(value) ? "" : value.toString();
         } catch (IllegalAccessException|InvocationTargetException|NoSuchMethodException e) {
@@ -126,23 +188,6 @@ public class Mapper implements BiFunction<NodeWithFacts, Map<String, Map<String,
         }
 
         return "";
-    }
-
-    private void setNodeProperty(final NodeEntryImpl nodeEntry,
-                                 final String propertyName,
-                                 final String value) {
-        if (isBlank(propertyName) || isBlank(value)) {
-            return;
-        }
-
-        try {
-            propertyUtilsBean.setProperty(nodeEntry, propertyName, value);
-        } catch (IllegalAccessException|InvocationTargetException|NoSuchMethodException e) {
-            e.printStackTrace();
-            final String template = "can't set NodeEntry property '%s', value: '%s'";
-            final String message = format(template, propertyName, value);
-            log.warn(message, e);
-        }
     }
 
     private NodeEntryImpl newNodeTreeImpl() {
@@ -164,208 +209,32 @@ public class Mapper implements BiFunction<NodeWithFacts, Map<String, Map<String,
             return false;
         }
 
-        return true;
+        final String nodename = nodeEntry.getNodename();
+        final String hostname = nodeEntry.getHostname();
+        final String username = nodeEntry.getUsername();
+        final Set tags = nodeEntry.getTags();
+
+        return isNotBlank(nodename) &&
+                isNotBlank(hostname) &&
+                isNotBlank(username) &&
+                !isEmpty(tags);
     }
 
+    private boolean isEmpty(final Set<?> tags) {
+        if (null == tags) {
+            return true;
+        }
 
-    /*
-    private final Properties mapping;
+        if (tags.isEmpty()) {
+            return true;
+        }
 
-    /**
-     * Create with the credentials and mapping definition
-    InstanceToNodeMapper(final Properties mapping) {
-        this.mapping = mapping;
+        return !tags.stream()
+                .filter(Objects::nonNull)
+                .map(Object::toString)
+                .filter(StringUtils::isNotBlank)
+                .findFirst()
+                .isPresent();
     }
-
-    /**
-     * Convert an AWS EC2 Instance to a RunDeck INodeEntry based on the mapping input
-    static INodeEntry instanceToNode(final Properties mapping) throws GeneratorException {
-        final NodeEntryImpl node = new NodeEntryImpl();
-
-
-
-        //evaluate single settings.selector=tags/* mapping
-        if ("tags/*".equals(mapping.getProperty("attributes.selector"))) {
-            System.out.println("primer filtro alcanzado por: " + mapping.getProperty("attributes.selector"));
-
-        }
-
-        if (null != mapping.getProperty("tags.selector")) {
-            final String selector = mapping.getProperty("tags.selector");
-            final String value = applySelector(inst, selector, mapping.getProperty("tags.default"), true);
-            if (null != value) {
-                final String[] values = value.split(",");
-                final HashSet<String> tagset = new HashSet<String>();
-                for (final String s : values) {
-                    tagset.add(s.trim());
-                }
-                if (null == node.getTags()) {
-                    node.setTags(tagset);
-                } else {
-                    final HashSet orig = new HashSet(node.getTags());
-                    orig.addAll(tagset);
-                    node.setTags(orig);
-                }
-            }
-        }
-        if (null == node.getTags()) {
-            node.setTags(new HashSet());
-        }
-        final HashSet orig = new HashSet(node.getTags());
-        //apply specific tag selectors
-        final Pattern tagPat = Pattern.compile("^tag\\.(.+?)\\.selector$");
-        //evaluate tag selectors
-        for (final Object o : mapping.keySet()) {
-            final String key = (String) o;
-            final String selector = mapping.getProperty(key);
-            //split selector by = if present
-            final String[] selparts = selector.split("=");
-            final Matcher m = tagPat.matcher(key);
-            if (m.matches()) {
-                final String tagName = m.group(1);
-                if (null == node.getAttributes()) {
-                    node.setAttributes(new HashMap<String, String>());
-                }
-                final String value = applySelector(inst, selparts[0], null);
-                if (null != value) {
-                    if (selparts.length > 1 && !value.equals(selparts[1])) {
-                        continue;
-                    }
-                    //use add the tag if the value is not null
-                    orig.add(tagName);
-                }
-            }
-        }
-        node.setTags(orig);
-
-        //apply default values which do not have corresponding selector
-        final Pattern attribDefPat = Pattern.compile("^([^.]+?)\\.default$");
-        //evaluate selectors
-        for (final Object o : mapping.keySet()) {
-            final String key = (String) o;
-            final String value = mapping.getProperty(key);
-            final Matcher m = attribDefPat.matcher(key);
-            if (m.matches() && (!mapping.containsKey(key + ".selector") || "".equals(mapping.getProperty(
-                key + ".selector")))) {
-                final String attrName = m.group(1);
-                if (null == node.getAttributes()) {
-                    node.setAttributes(new HashMap<String, String>());
-                }
-                if (null != value) {
-                    node.getAttributes().put(attrName, value);
-                }
-            }
-        }
-
-        final Pattern attribPat = Pattern.compile("^([^.]+?)\\.selector$");
-        //evaluate selectors
-        for (final Object o : mapping.keySet()) {
-            final String key = (String) o;
-            final String selector = mapping.getProperty(key);
-            final Matcher m = attribPat.matcher(key);
-            if (m.matches()) {
-                final String attrName = m.group(1);
-                if(attrName.equals("tags")){
-                    //already handled
-                    continue;
-                }
-                if (null == node.getAttributes()) {
-                    node.setAttributes(new HashMap<String, String>());
-                }
-                final String value = applySelector(inst, selector, mapping.getProperty(attrName + ".default"));
-                if (null != value) {
-                    //use nodename-settingname to make the setting unique to the node
-                    node.getAttributes().put(attrName, value);
-                }
-            }
-        }
-//        String hostSel = mapping.getProperty("hostname.selector");
-//        String host = applySelector(inst, hostSel, mapping.getProperty("hostname.default"));
-//        if (null == node.getHostname()) {
-//            System.err.println("Unable to determine hostname for instance: " + inst.getInstanceId());
-//            return null;
-//        }
-        String name = node.getNodename();
-        if (null == name || "".equals(name)) {
-            name = node.getHostname();
-        }
-        if (null == name || "".equals(name)) {
-            name = inst.getInstanceId();
-        }
-        node.setNodename(name);
-
-        return node;
-    }
-
-    /**
-     * Return the result of the selector applied to the instance, otherwise return the defaultValue. The selector can be
-     * a comma-separated list of selectors
-    public static String applySelector(final Instance inst, final String selector, final String defaultValue) throws
-        GeneratorException {
-        return applySelector(inst, selector, defaultValue, false);
-    }
-
-    /**
-     * Return the result of the selector applied to the instance, otherwise return the defaultValue. The selector can be
-     * a comma-separated list of selectors.
-     * @param inst the instance
-     * @param selector the selector string
-     * @param defaultValue a default value to return if there is no result from the selector
-     * @param tagMerge if true, allow | separator to merge multiple values
-    public static String applySelector(final Instance inst, final String selector, final String defaultValue,
-                                       final boolean tagMerge) throws
-        GeneratorException {
-
-        if (null != selector) {
-            for (final String selPart : selector.split(",")) {
-                if (tagMerge) {
-                    final StringBuilder sb = new StringBuilder();
-                    for (final String subPart : selPart.split(Pattern.quote("|"))) {
-                        final String val = applySingleSelector(inst, subPart);
-                        if (null != val) {
-                            if (sb.length() > 0) {
-                                sb.append(",");
-                            }
-                            sb.append(val);
-                        }
-                    }
-                    if (sb.length() > 0) {
-                        return sb.toString();
-                    }
-                } else {
-                    final String val = applySingleSelector(inst, selPart);
-                    if (null != val) {
-                        return val;
-                    }
-                }
-            }
-        }
-        return defaultValue;
-    }
-
-    private static String applySingleSelector(final Instance inst, final String selector) throws
-        GeneratorException {
-        if (null != selector && !"".equals(selector) && selector.startsWith("tags/")) {
-            final String tag = selector.substring("tags/".length());
-            final List<Tag> tags = inst.getTags();
-            for (final Tag tag1 : tags) {
-                if (tag.equals(tag1.getKey())) {
-                    return tag1.getValue();
-                }
-            }
-        } else if (null != selector && !"".equals(selector)) {
-            try {
-                final String value = BeanUtils.getProperty(inst, selector);
-                if (null != value) {
-                    return value;
-                }
-            } catch (Exception e) {
-                throw new GeneratorException(e);
-            }
-        }
-
-        return null;
-    }
-    */
 
 }
