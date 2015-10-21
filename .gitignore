@@ -6,3 +6,4 @@ build/
 .idea
 ssl/
 /.nb-gradle/
+!/src/main/java/com/puppetlabs/puppetdb/javaclient/ssl/
