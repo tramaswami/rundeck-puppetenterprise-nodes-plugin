@@ -44,7 +44,7 @@ import java.util.function.BiFunction;
 
 import com.dtolabs.rundeck.core.common.INodeEntry;
 import com.dtolabs.rundeck.core.common.NodeEntryImpl;
-import com.rundeck.plugin.resources.puppetdb.client.model.NodeWithFacts;
+import com.rundeck.plugin.resources.puppetdb.client.model.PuppetDBNode;
 import org.apache.commons.beanutils.PropertyUtilsBean;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -52,7 +52,7 @@ import org.apache.log4j.Logger;
 /**
  *
  */
-public class Mapper implements BiFunction<NodeWithFacts, Map<String, Object>, Optional<INodeEntry>> {
+public class Mapper implements BiFunction<PuppetDBNode, Map<String, Object>, Optional<INodeEntry>> {
 
     private static Logger log = Logger.getLogger(ResourceModelFactory.class);
 
@@ -63,7 +63,7 @@ public class Mapper implements BiFunction<NodeWithFacts, Map<String, Object>, Op
     }
 
     @Override
-    public Optional<INodeEntry> apply(final NodeWithFacts puppetNode,
+    public Optional<INodeEntry> apply(final PuppetDBNode puppetNode,
                                       final Map<String, Object> mappings) {
         // create a new instance
         final NodeEntryImpl result = newNodeTreeImpl();
@@ -92,12 +92,15 @@ public class Mapper implements BiFunction<NodeWithFacts, Map<String, Object>, Op
         // parse tags
         final boolean hasTags = mappings.containsKey("tags");
         if (hasTags) {
+            /*
+            for now, tags is every tag we found.
             final Object tagsMapping = mappings.getOrDefault("tags", emptyMap());
             final boolean isValidMapping = tagsMapping instanceof List;
             if (isValidMapping) {
                 final Set<String> newTags = assembleSet(puppetNode, (List<Map<String, String>>) tagsMapping);
                 result.getTags().addAll(newTags);
             }
+            */
 
         }
 
@@ -105,7 +108,7 @@ public class Mapper implements BiFunction<NodeWithFacts, Map<String, Object>, Op
         return validState(result) ? Optional.of(result) : empty();
     }
 
-    private Set<String> assembleSet(final NodeWithFacts puppetNode,
+    private Set<String> assembleSet(final PuppetDBNode puppetNode,
                                     final List<Map<String, String>> mappings) {
         return mappings.stream()
                 .map(propertyMapping -> getPuppetNodeProperty(puppetNode, propertyMapping))
@@ -113,11 +116,11 @@ public class Mapper implements BiFunction<NodeWithFacts, Map<String, Object>, Op
                 .collect(toSet());
     }
 
-    private <T> Set<T> setOf(T... ts) {
+    public <T> Set<T> setOf(T... ts) {
         return new LinkedHashSet<>(asList(ts));
     }
 
-    private Map<String, String> assembleMap(final NodeWithFacts puppetNode,
+    private Map<String, String> assembleMap(final PuppetDBNode puppetNode,
                                             final Map<String, Object> mappings) {
         final Map<String, String> result = new LinkedHashMap<>();
 
@@ -138,7 +141,7 @@ public class Mapper implements BiFunction<NodeWithFacts, Map<String, Object>, Op
         return result;
     }
 
-    private Map<String, String> assembleMapOmitingKeys(final NodeWithFacts puppetNode,
+    private Map<String, String> assembleMapOmitingKeys(final PuppetDBNode puppetNode,
                                                        final Map<String, Object> mappings,
                                                        final Set<String> omitKeys) {
         final Map<String, Object> newMappings = new LinkedHashMap<>(mappings);
@@ -146,7 +149,7 @@ public class Mapper implements BiFunction<NodeWithFacts, Map<String, Object>, Op
         return assembleMap(puppetNode, newMappings);
     }
 
-    private String getPuppetNodeProperty(final NodeWithFacts puppetNode,
+    private String getPuppetNodeProperty(final PuppetDBNode puppetNode,
                                          final Map<String, String> propertyMapping) {
         if (isNull(propertyMapping) || propertyMapping.isEmpty()) {
             return "";
@@ -171,7 +174,7 @@ public class Mapper implements BiFunction<NodeWithFacts, Map<String, Object>, Op
         return "";
     }
 
-    private String getPuppetNodeProperty(final NodeWithFacts puppetNode,
+    private String getPuppetNodeProperty(final PuppetDBNode puppetNode,
                                          final String propertyPath) {
         if (isBlank(propertyPath)) {
             return "";

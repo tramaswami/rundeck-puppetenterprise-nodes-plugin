@@ -57,7 +57,7 @@ import com.google.gson.reflect.TypeToken;
 import com.rundeck.plugin.resources.puppetdb.client.DefaultPuppetAPI;
 import com.rundeck.plugin.resources.puppetdb.client.PuppetAPI;
 import com.rundeck.plugin.resources.puppetdb.client.model.Node;
-import com.rundeck.plugin.resources.puppetdb.client.model.NodeWithFacts;
+import com.rundeck.plugin.resources.puppetdb.client.model.PuppetDBNode;
 import org.apache.log4j.Logger;
 
 @Plugin(name = "puppet-enterprise", service = "ResourceModelSource")
@@ -87,7 +87,7 @@ public class ResourceModelFactory implements ResourceModelSourceFactory, Describ
             }
 
             // build nodes with facts and tags attached
-            final List<NodeWithFacts> puppetNodes = nodes.stream()
+            final List<PuppetDBNode> puppetNodes = nodes.stream()
                     .parallel()
                     .map(puppetAPI::getNodeWithFacts)
                     .collect(toList());

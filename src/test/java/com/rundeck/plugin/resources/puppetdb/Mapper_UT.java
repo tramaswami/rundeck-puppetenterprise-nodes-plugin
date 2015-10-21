@@ -1,5 +1,6 @@
 package com.rundeck.plugin.resources.puppetdb;
 
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -17,7 +18,8 @@ import com.google.gson.reflect.TypeToken;
 import com.rundeck.plugin.resources.puppetdb.client.PuppetAPI;
 import com.rundeck.plugin.resources.puppetdb.client.model.Fact;
 import com.rundeck.plugin.resources.puppetdb.client.model.Node;
-import com.rundeck.plugin.resources.puppetdb.client.model.NodeWithFacts;
+import com.rundeck.plugin.resources.puppetdb.client.model.NodeClass;
+import com.rundeck.plugin.resources.puppetdb.client.model.PuppetDBNode;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -41,14 +43,14 @@ public class Mapper_UT {
 
     @Test
     public void test_known_mapping() {
-        final List<NodeWithFacts> nodesWithFacts = testApi.getNodes()
+        final List<PuppetDBNode> nodesWithFacts = testApi.getNodes()
                 .stream()
                 .map(testApi::getNodeWithFacts)
                 .collect(toList());
 
-        final NodeWithFacts nodeWithFacts = nodesWithFacts.get(0);
+        final PuppetDBNode puppetDBNode = nodesWithFacts.get(0);
 
-        final Optional<INodeEntry> maybeNode = mapper.apply(nodeWithFacts, mapping);
+        final Optional<INodeEntry> maybeNode = mapper.apply(puppetDBNode, mapping);
         final INodeEntry nodeEntry = maybeNode.orElse(null);
 
         assertTrue("maybeNode should be present", maybeNode.isPresent());
@@ -71,6 +73,11 @@ public class Mapper_UT {
             @Override
             public List<Fact> getFactsForNode(final Node node) {
                 return gson.fromJson(readFile("facts.json"), Fact.LIST);
+            }
+
+            @Override
+            public List<NodeClass> getClassesForNode(final Node node) {
+                return emptyList();
             }
         };
     }
