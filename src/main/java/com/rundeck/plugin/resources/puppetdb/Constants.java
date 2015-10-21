@@ -22,7 +22,7 @@ public interface Constants {
             .property(PropertyUtil.integer(PROPERTY_PUPPETDB_SSL_DIR, "PuppetDB SSL Directory", "local directory for SSL, if null it'll use http, "
                     + "it shoud contain <ssl directory>/private_keys/<puppetdb host>.pem "
                     + "and <ssl directory>/certs/<puppetdb host>.pem "
-                    + "and <ssl directory>/ca/ca_crt.pem", true, null))
+                    + "and <ssl directory>/ca/ca_crt.pem", false, null))
             .property(PropertyUtil.string(PROPERTY_MAPPING_FILE, "Property Mapping JSON", "JSON File describing mapping between PuppetDB Data and Rundeck Data", false, ""))
             .build();
 
