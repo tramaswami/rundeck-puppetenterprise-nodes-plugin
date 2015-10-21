@@ -1,23 +1,19 @@
-Rundeck EC2 Nodes Plugin
+Rundeck Puppet Enterprise Nodes Plugin
 ========================
 
-Version: 1.5
+Version: 0.1
 
 This is a Resource Model Source plugin for [RunDeck][] 1.5+ that provides
-Amazon EC2 Instances as nodes for the RunDeck server.
+Puppet Enterprise Nodes as nodes for the RunDeck server.
 
 [RunDeck]: http://rundeck.org
-
-NOTE: For Rundeck 1.4, you will need to use plugin [version 1.2][].
-
-[version 1.2]: https://github.com/gschueler/rundeck-ec2-nodes-plugin/tree/v1.2
 
 Installation
 ------------
 
-Download from the [releases page](https://github.com/rundeck-plugins/rundeck-ec2-nodes-plugin/releases).
+Download from the [releases page](https://github.com/latamdevs/rundeck-puppetenterprise-nodes-plugin/releases).
 
-Put the `rundeck-ec2-nodes-plugin-1.3.jar` into your `$RDECK_BASE/libext` dir.
+Put the `rundeck-puppetenterprise-nodes-plugin-0.1.jar` into your `$RDECK_BASE/libext` dir.
 
 Usage
 -----
@@ -28,25 +24,20 @@ file to configure the sources.
 
 See: [Resource Model Source Configuration](http://rundeck.org/1.5/manual/plugins.html#resource-model-source-configuration)
 
-The provider name is: `aws-ec2`
+The provider name is: `puppet-enterprise`
 
 Here are the configuration properties:
 
-* `accessKey`: API AccessKey value
-* `secretKey`: API SecretKey value
-* `endpoint` - the AWS endpoint to use, or blank for the default (see [Amazon EC2 Regions and Endpoints](http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region))
-* `refreshInterval`: Time in seconds used as minimum interval between calls to the AWS API. (default 30)
-* `filter` A set of ";" separated query filters ("$Name=$Value") for the AWS EC2 API, see below.
-* `runningOnly`: if "true", automatically filter the * instances by "instance-state-name=running"
-* `useDefaultMapping`: if "true", base all mapping definitions off the default mapping provided.
-* `mappingParams`: A set of ";" separated mapping entries
+* `host`: Puppet Enterprise Master host
+* `port`: Puppet Enterprise Master port
+* `sslDir`: name of the ssl dir containing puppet certificates
 * `mappingFile`: Path to a java properties-formatted mapping definition file.
 
 ## Filter definition
 
-The syntax for defining filters uses `$Name=$Value[;$Name=$value[;...]]` for any of the allowed filter names (see [DescribeInstances][1] for the available filter Names).  *Note*: you do not need to specify `Filter.1.Name=$Name`, etc. as described in the EC2 API documentation, this will handled for you.  Simply list the Name = Value pairs, separated by `;`.
+The syntax for defining filters uses `$Name=$Value[;$Name=$value[;...]]` for any of the allowed filter names (see [DescribeInstances][1] for the available filter Names).  *Note*: you do not need to specify `Filter.1.Name=$Name`, etc. as described in the Puppet Enterprise API documentation, this will handled for you.  Simply list the Name = Value pairs, separated by `;`.
 
- [1]: http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeInstances.html
+ [1]: http://docs.amazonwebservices.com/AWSPuppet Enterprise/latest/APIReference/ApiReference-query-DescribeInstances.html
 
 Example: to filter based on a Tag named "MyTag" with a value of "Some Tag Value":
 
@@ -63,16 +54,16 @@ Example combining matching a tag value and the instance type:
 Mapping Definition
 ----------
 
-RunDeck Node attributes are configured by mapping EC2 Instance properties via a
+RunDeck Node attributes are configured by mapping Puppet Enterprise Instance properties via a
 mapping configuration.
 
 The mapping declares the node attributes that will be set, and what their values
-will be set to using a "selector" on properties of the EC2 Instance object.
+will be set to using a "selector" on properties of the Puppet Enterprise Instance object.
 
 Here is the default mapping:
 
-    description.default=EC2 node instance
-    editUrl.default=https://console.aws.amazon.com/ec2/home#s=Instances&selectInstance=${node.instanceId}
+    description.default=Puppet Enterprise node instance
+    editUrl.default=https://console.aws.amazon.com/Puppet Enterprise/home#s=Instances&selectInstance=${node.instanceId}
     hostname.selector=publicDnsName
     instanceId.selector=instanceId
     nodename.selector=tags/Name,instanceId
@@ -90,9 +81,9 @@ Here is the default mapping:
     tag.stopped.selector=state.name=stopped
     tag.stopping.selector=state.name=stopping
     tag.terminated.selector=state.name=terminated
-    tags.default=ec2
+    tags.default=Puppet Enterprise
     tags.selector=tags/Rundeck-Tags
-    username.default=ec2-user
+    username.default=Puppet Enterprise-user
     username.selector=tags/Rundeck-User
 
 Configuring the Mapping
@@ -119,12 +110,12 @@ automatically be set to the instance ID if no other value is defined.
 
 For purposes of the mapping definition, a `field selector` is either:
 
-* An EC2 fieldname, or dot-separated field names
+* An Puppet Enterprise fieldname, or dot-separated field names
 * "tags/" followed by a Tag name, e.g. "tags/My Tag"
 * "tags/*" for use by the `attributes.selector` mapping
 
 Selectors use the Apache [BeanUtils](http://commons.apache.org/beanutils/) to extract a property value from the AWS API
-[Instance class](http://docs.amazonwebservices.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/ec2/model/Instance.html).
+[Instance class](http://docs.amazonwebservices.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/Puppet Enterprise/model/Instance.html).
 This means you can use dot-separated fieldnames to traverse the object graph.
 E.g. "state.name" to specify the "name" field of the State property of the Instance.
 
@@ -153,12 +144,12 @@ You can also use the `<field selector>=<value>` feature to set a tag only if the
 ### Tags selector
 
 When defining field selector for the `tags` node property, the string value selected (if any) will
-be treated as a comma-separated list of strings to use as node tags.  You could, for example, set a custom EC2 Tag on
+be treated as a comma-separated list of strings to use as node tags.  You could, for example, set a custom Puppet Enterprise Tag on
 an instance to contain this list of tags, in this example from the simplemapping.properties file:
 
     tags.selector=tags/Rundeck-Tags
 
-So creating the "Rundeck-Tags" Tag on the EC2 Instance with a value of "alpha, beta" will result in the node having
+So creating the "Rundeck-Tags" Tag on the Puppet Enterprise Instance with a value of "alpha, beta" will result in the node having
 those two node tags.
 
 The tags.selector also supports a "merge" ability, so you can merge multiple Instance Tags into the RunDeck tags by separating multiple selectors with a "|" character:
@@ -166,10 +157,10 @@ The tags.selector also supports a "merge" ability, so you can merge multiple Ins
     tags.selector=tags/Environment|tags/Role
 
 
-Mapping EC2 Instances to Rundeck Nodes
+Mapping Puppet Enterprise Instances to Rundeck Nodes
 =================
 
-Rundeck node definitions specify mainly the pertinent data for connecting to and organizing the Nodes.  EC2 Instances have metadata that can be mapped onto the fields used for Rundeck Nodes.
+Rundeck node definitions specify mainly the pertinent data for connecting to and organizing the Nodes.  Puppet Enterprise Instances have metadata that can be mapped onto the fields used for Rundeck Nodes.
 
 Rundeck nodes have the following metadata fields:
 
@@ -187,65 +178,9 @@ Rundeck nodes have the following metadata fields:
 
 In addition, Nodes can have arbitrary attribute values.
 
-EC2 Instance Field Selectors
------------------
+Puppet Enterprise Instances can also have "Tags" which are key/value pairs attached to the Instance.  A common Tag is "Name" which could be a unique identifier for the Instance, making it a useful mapping to the Node's name field.  Note that Puppet Enterprise Tags differ from Rundeck Node tags: Rundeck tags are simple string labels and are not key/value pairs.
 
-EC2 Instances have a set of metadata that can be mapped to any of the Rundeck node fields, or to Settings or tags for the node.
-
-EC2 fields:
-
-* amiLaunchIndex
-* architecture
-* clientToken
-* imageId
-* instanceId
-* instanceLifecycle
-* instanceType
-* kernelId
-* keyName
-* launchTime
-* license
-* platform
-* privateDnsName
-* privateIpAddress
-* publicDnsName
-* publicIpAddress
-* ramdiskId
-* rootDeviceName
-* rootDeviceType
-* spotInstanceRequestId
-* state
-* stateReason
-* stateTransitionReason
-* subnetId
-* virtualizationType
-* vpcId
-* `tags/*`
-
-EC2 Instances can also have "Tags" which are key/value pairs attached to the Instance.  A common Tag is "Name" which could be a unique identifier for the Instance, making it a useful mapping to the Node's name field.  Note that EC2 Tags differ from Rundeck Node tags: Rundeck tags are simple string labels and are not key/value pairs.
-
-Authenticating to EC2 Nodes with Rundeck
------------
-
-Once you get your EC2 Instances listed in Rundeck as Nodes, you may be wondering "Now how do I use this?"
-
-Rundeck uses SSH by default with private key authentication, so in order to connect to your EC2 instances out
-of the box you will need to configure Rundeck to use the right private SSH key to connect to your nodes,
-which can be done in either of a few ways:
-
-1. Copy your private key to the default location used by Rundeck which is `~/.ssh/id_rsa`
-2. Copy your private key elsewhere, and override it on a project level. Change project.properties and set the `project.ssh-keypath` to point to the file.
-3. Copy your private key elsewhere, and set the location as an attribute on your nodes (shown below)
-
-To set the ssh keypath attribute on the EC2 Nodes produced by the plugin, you can modify your mapping configuration.
-
-E.g. in the "Mapping Params" field, set:
-
-`Mapping Params: ssh-keypath.default=/path/to/key`
-
-This will set the "ssh-keypath" attribute on your EC2 Nodes, allowing correct private key ssh authentication.
-
-The default mapping also configures a default `username` attribute to be `ec2-user`, but if you want to change the default set:
+The default mapping also configures a default `username` attribute to be `Puppet Enterprise-user`, but if you want to change the default set:
 
 `Mapping Params: ssh-keypath.default=/path/to/key;username.default=my-username`
 
