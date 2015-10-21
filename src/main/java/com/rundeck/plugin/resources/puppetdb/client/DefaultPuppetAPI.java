@@ -13,6 +13,7 @@ import com.puppetlabs.puppetdb.javaclient.impl.PEM_SSLSocketFactoryProvider;
 import com.rundeck.plugin.resources.puppetdb.Constants;
 import com.rundeck.plugin.resources.puppetdb.client.model.Fact;
 import com.rundeck.plugin.resources.puppetdb.client.model.Node;
+import com.rundeck.plugin.resources.puppetdb.client.model.NodeClass;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -72,6 +73,31 @@ public class DefaultPuppetAPI implements PuppetAPI, Constants {
             return GSON.fromJson(responseBody, Node.LIST);
         } catch (IOException e) {
             LOG.warn("while getNodes()", e);
+        }
+
+        return emptyList();
+    }
+
+    @Override
+    public List<NodeClass> getClassesForNode(final Node node) {
+        final CloseableHttpClient httpclient = puppetProtocol.equals(HTTPS) ? getHttpsClient() : new DefaultHttpClient();
+        final HttpGet httpGet = new HttpGet(getBaseUrl("pdb/query/v4/nodes/localhost/resources/Class"));
+
+        try (final CloseableHttpResponse response = httpclient.execute(httpGet)) {
+            final int statusCode = response.getStatusLine().getStatusCode();
+            final boolean ok = statusCode == HttpStatus.SC_OK;
+
+            if (!ok) {
+                LOG.warn(format("getClasses(%s) ended with status code: %d", node.getCertname(), statusCode));
+                return emptyList();
+            }
+
+            final HttpEntity entity = response.getEntity();
+            final String responseBody = EntityUtils.toString(entity);
+
+            return GSON.fromJson(responseBody, NodeClass.LIST);
+        } catch (IOException e) {
+            LOG.warn("while getClasses()", e);
         }
 
         return emptyList();
