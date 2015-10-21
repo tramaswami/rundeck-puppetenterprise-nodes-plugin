@@ -1,6 +1,5 @@
 package com.rundeck.plugin.resources.puppetdb;
 
-import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -23,12 +22,10 @@ import com.rundeck.plugin.resources.puppetdb.client.model.PuppetDBNode;
 import org.junit.Before;
 import org.junit.Test;
 
-public class Mapper_UT {
+public class UTMapper {
 
-    // class under test
     Mapper mapper;
 
-    // support
     Gson gson;
     PuppetAPI testApi;
     Map<String, Object> mapping;
@@ -77,7 +74,7 @@ public class Mapper_UT {
 
             @Override
             public List<NodeClass> getClassesForNode(final Node node) {
-                return emptyList();
+                return gson.fromJson(readFile("classes.json"), NodeClass.LIST);
             }
         };
     }

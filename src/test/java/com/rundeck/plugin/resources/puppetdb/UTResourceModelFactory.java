@@ -7,7 +7,7 @@ import java.util.Properties;
 import com.dtolabs.rundeck.core.plugins.configuration.ConfigurationException;
 import org.junit.Test;
 
-public class ResourceModelFactory_UT implements Constants {
+public class UTResourceModelFactory implements Constants {
 
     @Test
     public void test_required_properties() throws ConfigurationException {

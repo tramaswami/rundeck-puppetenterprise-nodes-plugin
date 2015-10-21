@@ -34,15 +34,5 @@
       "path": "facts.os.distro.codename"
     }
   },
-  "tags": [
-    {
-      "path": "facts.hardwareisa"
-    },
-    {
-      "default": "value2"
-    },
-    {
-      "path": "facts.os.distro.codename"
-    }
-  ]
+  "tags": [ "for now, tags is every puppet class found" ]
 }

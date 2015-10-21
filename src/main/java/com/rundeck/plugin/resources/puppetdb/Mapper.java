@@ -92,8 +92,10 @@ public class Mapper implements BiFunction<PuppetDBNode, Map<String, Object>, Opt
         // parse tags
         final boolean hasTags = mappings.containsKey("tags");
         if (hasTags) {
+            // TODO: for now, tags is every tag we found.
+            result.getTags().addAll(puppetNode.getClasses());
+
             /*
-            for now, tags is every tag we found.
             final Object tagsMapping = mappings.getOrDefault("tags", emptyMap());
             final boolean isValidMapping = tagsMapping instanceof List;
             if (isValidMapping) {

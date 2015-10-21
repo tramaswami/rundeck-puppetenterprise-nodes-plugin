@@ -19,5 +19,12 @@ public class NodeClass {
         this.title = title;
     }
 
+    @Override
+    public String toString() {
+        return "NodeClass{" +
+                "title='" + title + '\'' +
+                '}';
+    }
+
 }
 

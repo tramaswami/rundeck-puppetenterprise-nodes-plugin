@@ -51,7 +51,7 @@ public class DefaultPuppetAPI implements PuppetAPI, Constants {
         final Properties properties = new Properties();
         //properties.put(PROPERTY_PUPPETDB_SSL_DIR, "ssl");
         properties.put(PROPERTY_PUPPETDB_HOST, "localhost");
-        properties.put(PROPERTY_PUPPETDB_PORT, "8080");
+        properties.put(PROPERTY_PUPPETDB_PORT, "8081");
         PuppetAPI api = new DefaultPuppetAPI(properties);
         List<Node> n = api.getNodes();
         for(Node nn : n){
