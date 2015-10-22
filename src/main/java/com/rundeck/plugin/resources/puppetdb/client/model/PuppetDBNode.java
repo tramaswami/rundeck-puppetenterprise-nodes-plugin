@@ -1,9 +1,7 @@
 package com.rundeck.plugin.resources.puppetdb.client.model;
 
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
-
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -17,8 +15,16 @@ public final class PuppetDBNode {
                         final List<Fact> facts,
                         final List<NodeClass> nodeClasses) {
         this.node = node;
-        this.facts = facts.stream().collect(toMap(Fact::getName, Fact::getValue));
-        this.classes = nodeClasses.stream().map(NodeClass::getTitle).collect(toList());
+
+        this.facts = new LinkedHashMap<>();
+        for (final Fact fact : facts) {
+            this.facts.put(fact.getName(), fact.getValue());
+        }
+
+        this.classes = new LinkedList<>();
+        for (final NodeClass nodeClass : nodeClasses) {
+            this.classes.add(nodeClass.getTitle());
+        }
     }
 
     public String getCertname() {

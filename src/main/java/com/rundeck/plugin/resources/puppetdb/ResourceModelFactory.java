@@ -25,9 +25,6 @@ package com.rundeck.plugin.resources.puppetdb;
 
 import static java.lang.String.format;
 import static java.util.Collections.emptyMap;
-import static java.util.Objects.isNull;
-import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -36,14 +33,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Properties;
 import java.util.Scanner;
 
 import com.dtolabs.rundeck.core.common.Framework;
 import com.dtolabs.rundeck.core.common.INodeEntry;
+import com.dtolabs.rundeck.core.common.INodeSet;
 import com.dtolabs.rundeck.core.common.NodeSetImpl;
 import com.dtolabs.rundeck.core.plugins.Plugin;
 import com.dtolabs.rundeck.core.plugins.configuration.ConfigurationException;
@@ -51,7 +49,13 @@ import com.dtolabs.rundeck.core.plugins.configuration.Describable;
 import com.dtolabs.rundeck.core.plugins.configuration.Description;
 import com.dtolabs.rundeck.core.plugins.configuration.Property;
 import com.dtolabs.rundeck.core.resources.ResourceModelSource;
+import com.dtolabs.rundeck.core.resources.ResourceModelSourceException;
 import com.dtolabs.rundeck.core.resources.ResourceModelSourceFactory;
+import com.google.common.base.Function;
+import com.google.common.base.Joiner;
+import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
+import com.google.common.collect.FluentIterable;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.rundeck.plugin.resources.puppetdb.client.DefaultPuppetAPI;
@@ -79,28 +83,40 @@ public class ResourceModelFactory implements ResourceModelSourceFactory, Describ
         final Mapper mapper = new Mapper();
         final Map<String, Object> mapping = getMapping(properties);
 
-        return () -> {
-            // get list of nodes without filtering
-            final List<Node> nodes = puppetAPI.getNodes();
-            if (isNull(nodes) || nodes.isEmpty()) {
-                return new NodeSetImpl();
+        return new ResourceModelSource() {
+            @Override
+            public INodeSet getNodes() throws ResourceModelSourceException {
+                // get list of nodes without filtering
+                final List<Node> nodes = puppetAPI.getNodes();
+                if (null == nodes || nodes.isEmpty()) {
+                    return new NodeSetImpl();
+                }
+
+                // build nodes with facts and tags attached
+                final List<PuppetDBNode> puppetNodes = FluentIterable.from(nodes)
+                        .transform(puppetAPI.queryNode())
+                        .toList();
+
+                final List<INodeEntry> rundeckNodes = FluentIterable.from(puppetNodes)
+                        .transform(mapper.withFixedMapping(mapping))
+                        .filter(new Predicate<Optional<INodeEntry>>() {
+                            @Override
+                            public boolean apply(final Optional<INodeEntry> input) {
+                                return input.isPresent();
+                            }
+                        })
+                        .transform(new Function<Optional<INodeEntry>, INodeEntry>() {
+                            @Override
+                            public INodeEntry apply(final Optional<INodeEntry> input) {
+                                return input.get();
+                            }
+                        })
+                        .toList();
+
+                final NodeSetImpl nodeSet = new NodeSetImpl();
+                nodeSet.putNodes(rundeckNodes);
+                return nodeSet;
             }
-
-            // build nodes with facts and tags attached
-            final List<PuppetDBNode> puppetNodes = nodes.stream()
-                    .parallel()
-                    .map(puppetAPI::getNodeWithFacts)
-                    .collect(toList());
-
-            final List<INodeEntry> rundeckNodes = puppetNodes.stream()
-                    .map(puppetNode -> mapper.apply(puppetNode, mapping))
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .collect(toList());
-
-            final NodeSetImpl nodeSet = new NodeSetImpl();
-            nodeSet.putNodes(rundeckNodes);
-            return nodeSet;
         };
     }
 
@@ -112,11 +128,7 @@ public class ResourceModelFactory implements ResourceModelSourceFactory, Describ
     public PuppetAPI getPuppetAPI(final Properties properties) throws ConfigurationException {
         final List<Property> missingProperties = getMissingProperties(properties);
         if (isNotEmpty(missingProperties)) {
-            final String missingPropertiesNames = missingProperties
-                    .stream()
-                    .map(Property::getName)
-                    .collect(joining(","));
-
+            final String missingPropertiesNames = joinPropertyNames(missingProperties);
 
             final String template = "Can't start %s plugin, Missing properties: '%s'";
             final String message = format(template, PROVIDER_NAME, missingPropertiesNames);
@@ -127,18 +139,40 @@ public class ResourceModelFactory implements ResourceModelSourceFactory, Describ
         return new DefaultPuppetAPI(properties);
     }
 
-    private List<Property> getMissingProperties(final Properties properties) {
-        return getDescription()
-                .getProperties()
-                .stream()
-                .filter(Property::isRequired)
-                .filter(property -> {
-                    final String key = property.getName();
-                    final String value = properties.getProperty(key);
-                    return isBlank(value);
-                })
-                .collect(toList());
+    private String joinPropertyNames(final List<Property> properties) {
+        final Function<Property, String> getName = new Function<Property, String>() {
+            @Override
+            public String apply(final Property input) {
+                return input.getName();
+            }
+        };
 
+        return FluentIterable.from(properties)
+                .transform(getName)
+                .join(Joiner.on(","));
+    }
+
+    private List<Property> getMissingProperties(final Properties properties) {
+        final List<Property> result = new ArrayList<>();
+
+
+        final Description description = getDescription();
+        for (final Property property : description.getProperties()) {
+            if (!property.isRequired()) {
+                continue;
+            }
+
+            final String key = property.getName();
+            final String value = properties.getProperty(key, "");
+
+            final boolean isMissing = isBlank(value);
+            if (isMissing) {
+                result.add(property);
+            }
+
+        }
+
+        return result;
     }
 
     public Map<String, Object> getMapping(final Properties properties) {

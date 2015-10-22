@@ -25,34 +25,27 @@ package com.rundeck.plugin.resources.puppetdb;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptyMap;
-import static java.util.Objects.isNull;
-import static java.util.Optional.empty;
-import static java.util.stream.Collectors.toSet;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
-import java.util.function.BiFunction;
 
 import com.dtolabs.rundeck.core.common.INodeEntry;
 import com.dtolabs.rundeck.core.common.NodeEntryImpl;
+import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.rundeck.plugin.resources.puppetdb.client.model.PuppetDBNode;
 import org.apache.commons.beanutils.PropertyUtilsBean;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 /**
  *
  */
-public class Mapper implements BiFunction<PuppetDBNode, Map<String, Object>, Optional<INodeEntry>> {
+public class Mapper {
 
     private static Logger log = Logger.getLogger(ResourceModelFactory.class);
 
@@ -62,7 +55,6 @@ public class Mapper implements BiFunction<PuppetDBNode, Map<String, Object>, Opt
         this.propertyUtilsBean = new PropertyUtilsBean();
     }
 
-    @Override
     public Optional<INodeEntry> apply(final PuppetDBNode puppetNode,
                                       final Map<String, Object> mappings) {
         // create a new instance
@@ -80,9 +72,9 @@ public class Mapper implements BiFunction<PuppetDBNode, Map<String, Object>, Opt
         // parse attributes
         final boolean hasAttributes = mappings.containsKey("attributes");
         if (hasAttributes) {
-            final Object attributesMapping = mappings.getOrDefault("attributes", emptyMap());
+            final Object attributesMapping = mappings.get("attributes");
 
-            final boolean isValidMapping = attributesMapping instanceof Map;
+            final boolean isValidMapping = null != attributesMapping && attributesMapping instanceof Map;
             if (isValidMapping) {
                 final Map<String, String> newAttributes = assembleMap(puppetNode, (Map<String, Object>) attributesMapping);
                 result.getAttributes().putAll(newAttributes);
@@ -107,15 +99,7 @@ public class Mapper implements BiFunction<PuppetDBNode, Map<String, Object>, Opt
         }
 
         // check if valid
-        return validState(result) ? Optional.of(result) : empty();
-    }
-
-    private Set<String> assembleSet(final PuppetDBNode puppetNode,
-                                    final List<Map<String, String>> mappings) {
-        return mappings.stream()
-                .map(propertyMapping -> getPuppetNodeProperty(puppetNode, propertyMapping))
-                .filter(StringUtils::isNotBlank)
-                .collect(toSet());
+        return validState(result) ? Optional.<INodeEntry>of(result) : Optional.<INodeEntry>absent();
     }
 
     public <T> Set<T> setOf(T... ts) {
@@ -126,19 +110,21 @@ public class Mapper implements BiFunction<PuppetDBNode, Map<String, Object>, Opt
                                             final Map<String, Object> mappings) {
         final Map<String, String> result = new LinkedHashMap<>();
 
-        mappings.forEach((final String key, final Object _mapping) -> {
-            final boolean isValidMapping = _mapping instanceof Map;
+        for (Map.Entry<String, Object> entry : mappings.entrySet()) {
+            final String key = entry.getKey();
+
+            final boolean isValidMapping = entry.getValue() instanceof Map;
             if (!isValidMapping) {
                 log.warn("wrong mapping for property: 'key', please specify a json object with properties 'path' and/or 'default'");
-                return;
+                continue;
             }
 
-            final Map<String, String> mapping = (Map<String, String>) _mapping;
+            final Map<String, String> mapping = (Map<String, String>) entry.getValue();
             final String value = getPuppetNodeProperty(puppetNode, mapping);
             if (isNotBlank(value)) {
                 result.put(key, value);
             }
-        });
+        }
 
         return result;
     }
@@ -147,19 +133,23 @@ public class Mapper implements BiFunction<PuppetDBNode, Map<String, Object>, Opt
                                                        final Map<String, Object> mappings,
                                                        final Set<String> omitKeys) {
         final Map<String, Object> newMappings = new LinkedHashMap<>(mappings);
-        omitKeys.forEach(newMappings::remove);
+
+        for (final String key : omitKeys) {
+            newMappings.remove(key);
+        }
+
         return assembleMap(puppetNode, newMappings);
     }
 
     private String getPuppetNodeProperty(final PuppetDBNode puppetNode,
                                          final Map<String, String> propertyMapping) {
-        if (isNull(propertyMapping) || propertyMapping.isEmpty()) {
+        if (null == propertyMapping || propertyMapping.isEmpty()) {
             return "";
         }
 
         final boolean isPath = propertyMapping.containsKey("path");
         if (isPath) {
-            final String value = getPuppetNodeProperty(puppetNode, propertyMapping.getOrDefault("path", ""));
+            final String value = getPuppetNodeProperty(puppetNode, propertyMapping.get("path"));
             if (isNotBlank(value)) {
                 return value;
             }
@@ -167,7 +157,7 @@ public class Mapper implements BiFunction<PuppetDBNode, Map<String, Object>, Opt
 
         final boolean isDefault = propertyMapping.containsKey("default");
         if (isDefault) {
-            final String value = propertyMapping.getOrDefault("default", "");
+            final String value = propertyMapping.get("default");
             if (isNotBlank(value)) {
                 return value;
             }
@@ -178,14 +168,16 @@ public class Mapper implements BiFunction<PuppetDBNode, Map<String, Object>, Opt
 
     private String getPuppetNodeProperty(final PuppetDBNode puppetNode,
                                          final String propertyPath) {
-        if (isBlank(propertyPath)) {
+        if (isBlank(propertyPath) || null == puppetNode) {
             return "";
         }
+
+
 
         try {
             final Object value = propertyUtilsBean.getProperty(puppetNode, propertyPath);
 
-            return isNull(value) ? "" : value.toString();
+            return null == value ? "" : value.toString();
         } catch (IllegalAccessException|InvocationTargetException|NoSuchMethodException e) {
             final String template = "can't parse propertyPath: '%s'";
             final String message = format(template, propertyPath);
@@ -198,19 +190,19 @@ public class Mapper implements BiFunction<PuppetDBNode, Map<String, Object>, Opt
     private NodeEntryImpl newNodeTreeImpl() {
         final NodeEntryImpl result = new NodeEntryImpl();
 
-        if (isNull(result.getTags())) {
+        if (null == result.getTags()) {
             result.setTags(new LinkedHashSet<>());
         }
 
-        if (isNull(result.getAttributes())) {
-            result.setAttributes(new LinkedHashMap<>());
+        if (null == result.getAttributes()) {
+            result.setAttributes(new LinkedHashMap<String, String>());
         }
 
         return result;
     }
 
     private boolean validState(final INodeEntry nodeEntry) {
-        if (isNull(nodeEntry)) {
+        if (null == nodeEntry) {
             return false;
         }
 
@@ -234,12 +226,23 @@ public class Mapper implements BiFunction<PuppetDBNode, Map<String, Object>, Opt
             return true;
         }
 
-        return !tags.stream()
-                .filter(Objects::nonNull)
-                .map(Object::toString)
-                .filter(StringUtils::isNotBlank)
-                .findFirst()
-                .isPresent();
+        for (final Object tag : tags) {
+            if (null != tag && isNotBlank(tag.toString())) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public Function<PuppetDBNode, Optional<INodeEntry>> withFixedMapping(final Map<String, Object> mapping) {
+        final Mapper mapper = this;
+        return new Function<PuppetDBNode, Optional<INodeEntry>>() {
+            @Override
+            public Optional<INodeEntry> apply(final PuppetDBNode input) {
+                return mapper.apply(input, mapping);
+            }
+        };
     }
 
 }

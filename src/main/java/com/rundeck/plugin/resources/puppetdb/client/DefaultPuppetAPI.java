@@ -28,7 +28,7 @@ import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 
-public class DefaultPuppetAPI implements PuppetAPI, Constants {
+public class DefaultPuppetAPI extends PuppetAPI implements Constants {
 
     private static final String HTTPS = "https";
 

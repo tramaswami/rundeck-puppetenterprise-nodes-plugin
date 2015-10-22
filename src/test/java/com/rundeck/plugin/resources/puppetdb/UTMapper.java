@@ -1,6 +1,5 @@
 package com.rundeck.plugin.resources.puppetdb;
 
-import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -8,10 +7,12 @@ import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Scanner;
 
 import com.dtolabs.rundeck.core.common.INodeEntry;
+import com.google.common.base.Optional;
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.rundeck.plugin.resources.puppetdb.client.PuppetAPI;
@@ -40,15 +41,14 @@ public class UTMapper {
 
     @Test
     public void test_known_mapping() {
-        final List<PuppetDBNode> nodesWithFacts = testApi.getNodes()
-                .stream()
-                .map(testApi::getNodeWithFacts)
-                .collect(toList());
+        final ImmutableList<PuppetDBNode> nodesWithFacts = FluentIterable.from(testApi.getNodes())
+                .transform(testApi.queryNode())
+                .toList();
 
         final PuppetDBNode puppetDBNode = nodesWithFacts.get(0);
 
         final Optional<INodeEntry> maybeNode = mapper.apply(puppetDBNode, mapping);
-        final INodeEntry nodeEntry = maybeNode.orElse(null);
+        final INodeEntry nodeEntry = maybeNode.orNull();
 
         assertTrue("maybeNode should be present", maybeNode.isPresent());
         assertEquals("nodeEntry.hostname should be 100.112.162.79", "100.112.162.79", nodeEntry.getHostname());
