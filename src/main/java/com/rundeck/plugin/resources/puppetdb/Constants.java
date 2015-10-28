@@ -19,7 +19,7 @@ public interface Constants {
             .description("Produces Nodes from PuppetDB")
             .property(PropertyUtil.string(PROPERTY_PUPPETDB_HOST, "PuppetDB Host", "Puppet DB hostname", true, null))
             .property(PropertyUtil.integer(PROPERTY_PUPPETDB_PORT, "PuppetDB Port", "Puppet DB port (defaults to 8001)", true, "8081"))
-            .property(PropertyUtil.integer(PROPERTY_PUPPETDB_SSL_DIR, "PuppetDB SSL Directory", "local directory for SSL, if null it'll use http, "
+            .property(PropertyUtil.string(PROPERTY_PUPPETDB_SSL_DIR, "PuppetDB SSL Directory", "local directory for SSL, if null it'll use http, "
                     + "it shoud contain <ssl directory>/private_keys/<puppetdb host>.pem "
                     + "and <ssl directory>/certs/<puppetdb host>.pem "
                     + "and <ssl directory>/ca/ca_crt.pem", false, null))
