@@ -81,7 +81,8 @@ public class DefaultPuppetAPI extends PuppetAPI implements Constants {
     @Override
     public List<NodeClass> getClassesForNode(final Node node) {
         final CloseableHttpClient httpclient = puppetProtocol.equals(HTTPS) ? getHttpsClient() : new DefaultHttpClient();
-        final HttpGet httpGet = new HttpGet(getBaseUrl("pdb/query/v4/nodes/localhost/resources/Class"));
+        final String url = format(getBaseUrl("pdb/query/v4/nodes/%s/resources/Class"), node.getCertname());
+        final HttpGet httpGet = new HttpGet(url);
 
         try (final CloseableHttpResponse response = httpclient.execute(httpGet)) {
             final int statusCode = response.getStatusLine().getStatusCode();
