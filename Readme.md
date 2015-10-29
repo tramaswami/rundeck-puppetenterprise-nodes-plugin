@@ -8,6 +8,20 @@ Puppet Enterprise Nodes as nodes for the RunDeck server.
 
 [RunDeck]: http://rundeck.org
 
+Previous Check
+------------
+
+You'll need to connect to a puppet HOST and PORT (default 8080), please test your configuration with this curl:
+curl http://HOST:PORT/pdb/query/v4/nodes
+
+or in the case of SSL (default port 8081):
+curl 'https://HOST:PORT/pdb/query/v4/nodes' \
+  --tlsv1 \
+  --cacert /etc/puppet/ssl/certs/ca.pem \
+  --cert /etc/puppet/ssl/certs/<node>.pem \
+  --key /etc/puppet/ssl/private_keys/<node>.pem \
+
+
 Installation
 ------------
 
