@@ -15,12 +15,12 @@
  */
 
 /*
-* NodeGenerator.java
-* 
-* User: Greg Schueler <a href="mailto:greg@dtosolutions.com">greg@dtosolutions.com</a>
-* Created: Oct 18, 2010 7:03:37 PM
-* 
-*/
+ * NodeGenerator.java
+ * 
+ * User: Greg Schueler <a href="mailto:greg@dtosolutions.com">greg@dtosolutions.com</a>
+ * Created: Oct 18, 2010 7:03:37 PM
+ * 
+ */
 package com.rundeck.plugin.resources.puppetdb;
 
 import static java.lang.String.format;
@@ -39,6 +39,7 @@ import com.dtolabs.rundeck.core.common.NodeEntryImpl;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.rundeck.plugin.resources.puppetdb.client.model.PuppetDBNode;
+import org.apache.commons.beanutils.NestedNullException;
 import org.apache.commons.beanutils.PropertyUtilsBean;
 import org.apache.log4j.Logger;
 
@@ -56,7 +57,7 @@ public class Mapper {
     }
 
     public Optional<INodeEntry> apply(final PuppetDBNode puppetNode,
-                                      final Map<String, Object> mappings) {
+            final Map<String, Object> mappings) {
         // create a new instance
         final NodeEntryImpl result = newNodeTreeImpl();
 
@@ -65,7 +66,7 @@ public class Mapper {
             final Set<String> especialProperties = setOf("tags", "attributes");
             final Map<String, String> readProperties = assembleMapOmitingKeys(puppetNode, mappings, especialProperties);
             propertyUtilsBean.copyProperties(result, readProperties);
-        } catch (IllegalAccessException|InvocationTargetException|NoSuchMethodException e) {
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             log.warn("while trying to assemble Rundeck node from PuppetDB Node", e);
         }
 
@@ -88,14 +89,13 @@ public class Mapper {
             result.getTags().addAll(puppetNode.getClasses());
 
             /*
-            final Object tagsMapping = mappings.getOrDefault("tags", emptyMap());
-            final boolean isValidMapping = tagsMapping instanceof List;
-            if (isValidMapping) {
-                final Set<String> newTags = assembleSet(puppetNode, (List<Map<String, String>>) tagsMapping);
-                result.getTags().addAll(newTags);
-            }
-            */
-
+             final Object tagsMapping = mappings.getOrDefault("tags", emptyMap());
+             final boolean isValidMapping = tagsMapping instanceof List;
+             if (isValidMapping) {
+             final Set<String> newTags = assembleSet(puppetNode, (List<Map<String, String>>) tagsMapping);
+             result.getTags().addAll(newTags);
+             }
+             */
         }
 
         // check if valid
@@ -107,7 +107,7 @@ public class Mapper {
     }
 
     private Map<String, String> assembleMap(final PuppetDBNode puppetNode,
-                                            final Map<String, Object> mappings) {
+            final Map<String, Object> mappings) {
         final Map<String, String> result = new LinkedHashMap<>();
 
         for (Map.Entry<String, Object> entry : mappings.entrySet()) {
@@ -130,8 +130,8 @@ public class Mapper {
     }
 
     private Map<String, String> assembleMapOmitingKeys(final PuppetDBNode puppetNode,
-                                                       final Map<String, Object> mappings,
-                                                       final Set<String> omitKeys) {
+            final Map<String, Object> mappings,
+            final Set<String> omitKeys) {
         final Map<String, Object> newMappings = new LinkedHashMap<>(mappings);
 
         for (final String key : omitKeys) {
@@ -142,7 +142,7 @@ public class Mapper {
     }
 
     private String getPuppetNodeProperty(final PuppetDBNode puppetNode,
-                                         final Map<String, String> propertyMapping) {
+            final Map<String, String> propertyMapping) {
         if (null == propertyMapping || propertyMapping.isEmpty()) {
             return "";
         }
@@ -167,19 +167,15 @@ public class Mapper {
     }
 
     private String getPuppetNodeProperty(final PuppetDBNode puppetNode,
-                                         final String propertyPath) {
+            final String propertyPath) {
         if (isBlank(propertyPath) || null == puppetNode) {
             return "";
         }
 
-
-
         try {
             final Object value = propertyUtilsBean.getProperty(puppetNode, propertyPath);
             return null == value ? "" : value.toString();
-        // } catch (NestedNullException ex) {
-            // return "";
-        } catch (IllegalAccessException|InvocationTargetException|NoSuchMethodException e) {
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | NestedNullException e) {
             final String template = "can't parse propertyPath: '%s'";
             final String message = format(template, propertyPath);
             log.warn(message, e);
@@ -212,10 +208,10 @@ public class Mapper {
         final String username = nodeEntry.getUsername();
         final Set tags = nodeEntry.getTags();
 
-        return isNotBlank(nodename) &&
-                isNotBlank(hostname) &&
-                isNotBlank(username) &&
-                !isEmpty(tags);
+        return isNotBlank(nodename)
+                && isNotBlank(hostname)
+                && isNotBlank(username)
+                && !isEmpty(tags);
     }
 
     private boolean isEmpty(final Set<?> tags) {
