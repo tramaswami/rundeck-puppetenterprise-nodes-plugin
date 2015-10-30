@@ -1,0 +1,38 @@
+{
+  "osFamily": {
+    "path": "facts.os.family"
+  },
+  "osArch": {
+    "path": "facts.architecture"
+  },
+  "osVersion": {
+    "path": "facts.kernelversion"
+  },
+  "osName": {
+    "path": "facts.os.name"
+  },
+  "nodename": {
+    "path": "certname"
+  },
+  "username": {
+    "default": "username"
+  },
+  "hostname": {
+    "path": "facts.ipaddress"
+  },
+  "description": {
+    "default": "this is a cool an amazing description"
+  },
+  "attributes": {
+    "firstAttribute": {
+      "path": "facts.hardwareisa"
+    },
+    "secondAttribute": {
+      "default": "value2"
+    },
+    "thirdAttribute": {
+      "path": "facts.os.distro.codename"
+    }
+  },
+  "tags": [ "for now, tags is every puppet class found" ]
+}
