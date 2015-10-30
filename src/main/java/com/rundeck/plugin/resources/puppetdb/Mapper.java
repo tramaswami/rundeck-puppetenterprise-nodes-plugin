@@ -176,8 +176,9 @@ public class Mapper {
 
         try {
             final Object value = propertyUtilsBean.getProperty(puppetNode, propertyPath);
-
             return null == value ? "" : value.toString();
+        // } catch (NestedNullException ex) {
+            // return "";
         } catch (IllegalAccessException|InvocationTargetException|NoSuchMethodException e) {
             final String template = "can't parse propertyPath: '%s'";
             final String message = format(template, propertyPath);

@@ -633,6 +633,12 @@
   {
     "certname": "localhost",
     "environment": "production",
+    "name": "hardwareisa",
+    "value": null
+  },
+  {
+    "certname": "localhost",
+    "environment": "production",
     "name": "blockdevice_sdb_size",
     "value": 306016419840
   },

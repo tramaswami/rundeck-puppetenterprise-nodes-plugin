@@ -36,11 +36,12 @@ public class UTMapper {
         this.mapper = new Mapper();
         this.gson = new Gson();
         this.testApi = testApi();
-        this.mapping = getMapping();
     }
 
     @Test
     public void test_known_mapping() {
+        this.mapping = getMapping("known_mapping.json");
+
         final ImmutableList<PuppetDBNode> nodesWithFacts = FluentIterable.from(testApi.getNodes())
                 .transform(testApi.queryNode())
                 .toList();
@@ -55,9 +56,28 @@ public class UTMapper {
         assertEquals("nodeEntry.username should be username", "username", nodeEntry.getUsername());
     }
 
-    public Map<String, Object> getMapping() {
+    @Test
+    public void test_known_mapping_with_missing_property() {
+        this.mapping = getMapping("known_mapping_with_missing_property.json");
+
+        final ImmutableList<PuppetDBNode> nodesWithFacts = FluentIterable.from(testApi.getNodes())
+                .transform(testApi.queryNode())
+                .toList();
+
+        final PuppetDBNode puppetDBNode = nodesWithFacts.get(0);
+
+
+        final Optional<INodeEntry> maybeNode = mapper.apply(puppetDBNode, mapping);
+        final INodeEntry nodeEntry = maybeNode.orNull();
+
+        assertTrue("maybeNode should be present", maybeNode.isPresent());
+        assertEquals("nodeEntry.hostname should be 100.112.162.79", "100.112.162.79", nodeEntry.getHostname());
+        assertEquals("nodeEntry.username should be username", "username", nodeEntry.getUsername());
+    }
+
+    public Map<String, Object> getMapping(final String fileName) {
         final Type mappingType = new TypeToken<Map<String, Object>>() {}.getType();
-        return gson.fromJson(readFile("knownMapping.json"), mappingType);
+        return gson.fromJson(readFile(fileName), mappingType);
     }
 
     public PuppetAPI testApi() {

@@ -1,6 +1,6 @@
 {
   "osFamily": {
-    "path": "facts.os.family"
+    "path": "distro.codename"
   },
   "osArch": {
     "path": "facts.architecture"
@@ -25,7 +25,7 @@
   },
   "attributes": {
     "firstAttribute": {
-      "path": "facts.hardwareisa"
+      "path": "distro.nullplaceholder"
     },
     "secondAttribute": {
       "default": "value2"
