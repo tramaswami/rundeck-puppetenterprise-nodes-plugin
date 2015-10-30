@@ -1,7 +1,7 @@
 Rundeck Puppet Enterprise Nodes Plugin
 ========================
 
-Version: 0.2
+Version: 0.2.3
 
 This is a Resource Model Source plugin for [RunDeck][] 1.5+ that provides
 Puppet Enterprise Nodes as nodes for the RunDeck server.
@@ -18,8 +18,8 @@ or in the case of SSL (default port 8081):
 curl 'https://HOST:PORT/pdb/query/v4/nodes' \
   --tlsv1 \
   --cacert /etc/puppet/ssl/certs/ca.pem \
-  --cert /etc/puppet/ssl/certs/<node>.pem \
-  --key /etc/puppet/ssl/private_keys/<node>.pem \
+  --cert /etc/puppet/ssl/certs/<HOST>.pem \
+  --key /etc/puppet/ssl/private_keys/<HOST>.pem \
 
 
 Installation
@@ -44,7 +44,10 @@ Here are the configuration properties:
 
 * `host`: Puppet Enterprise Master host
 * `port`: Puppet Enterprise Master port
-* `sslDir`: name of the ssl dir containing puppet certificates
+* `sslDir`: name of the ssl dir containing puppet certificates, if null plugin will use HTTP instead of HTTPS, this dir should contain:
+ * <ssldir>/private_keys/<host>.pem
+ * <ssldir>/certs/<host>.pem
+ * <ssldir>/ca/ca_crt.pem
 * `mappingFile`: Path to a java properties-formatted mapping definition file.
 
 Mapping Definition

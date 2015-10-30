@@ -6,7 +6,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Contributors: Puppet Labs, miguel@variacode.com
- * 
+ *
  */
 package com.puppetlabs.puppetdb.javaclient.impl;
 
@@ -98,8 +98,8 @@ public class PEM_SSLSocketFactoryProvider extends AbstractSSLSocketFactoryProvid
         if (caCertPem.canRead()) {
             prefs.setCaCertPEM(caCertPem);
         }
-        prefs.setCertPEM(new File(new File(sslDir, "certs"), "localhost.pem"));
-        prefs.setPrivateKeyPEM(new File(new File(sslDir, "private_keys"), "localhost.pem"));
+        prefs.setCertPEM(new File(new File(sslDir, "certs"), host + ".pem"));
+        prefs.setPrivateKeyPEM(new File(new File(sslDir, "private_keys"), host + ".pem"));
         return prefs;
     }
 }

@@ -17,11 +17,11 @@ public interface Constants {
             .name(PROVIDER_NAME)
             .title("PuppetDB Nodes Plugin")
             .description("Produces Nodes from PuppetDB")
-            .property(PropertyUtil.string(PROPERTY_PUPPETDB_HOST, "PuppetDB Host", "Puppet DB hostname", true, null))
+            .property(PropertyUtil.string(PROPERTY_PUPPETDB_HOST, "PuppetDB Host", "Puppet DB hostname (ie localhost)", true, null))
             .property(PropertyUtil.integer(PROPERTY_PUPPETDB_PORT, "PuppetDB Port", "Puppet DB port (defaults to 8001)", true, "8081"))
             .property(PropertyUtil.string(PROPERTY_PUPPETDB_SSL_DIR, "PuppetDB SSL Directory", "local directory for SSL, if null it'll use http, "
-                    + "it shoud contain <ssl directory>/private_keys/<puppetdb host>.pem "
-                    + "and <ssl directory>/certs/<puppetdb host>.pem "
+                    + "it should contain <ssl directory>/private_keys/<puppetdb host>.pem "
+                    + ", <ssl directory>/certs/<puppetdb host>.pem "
                     + "and <ssl directory>/ca/ca_crt.pem", false, null))
             .property(PropertyUtil.string(PROPERTY_MAPPING_FILE, "Property Mapping JSON", "JSON File describing mapping between PuppetDB Data and Rundeck Data", false, ""))
             .build();
