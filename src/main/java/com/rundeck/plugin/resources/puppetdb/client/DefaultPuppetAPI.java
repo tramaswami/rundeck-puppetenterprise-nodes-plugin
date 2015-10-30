@@ -63,7 +63,7 @@ public class DefaultPuppetAPI extends PuppetAPI implements Constants {
             final boolean ok = statusCode == HttpStatus.SC_OK;
 
             if (!ok) {
-                LOG.warn(format("getNodes() ended with status code: %d", statusCode));
+                LOG.warn(format("getNodes() ended with status code: %d msg: %s", statusCode, streamToString(response.getEntity().getContent())));
                 return emptyList();
             }
 
@@ -78,6 +78,12 @@ public class DefaultPuppetAPI extends PuppetAPI implements Constants {
         return emptyList();
     }
 
+    static String streamToString(java.io.InputStream is) {
+        try (java.util.Scanner s = new java.util.Scanner(is)) {
+            return s.useDelimiter("\\A").hasNext() ? s.next() : "";
+        }
+    }
+
     @Override
     public List<NodeClass> getClassesForNode(final Node node) {
         final CloseableHttpClient httpclient = puppetProtocol.equals(HTTPS) ? getHttpsClient() : new DefaultHttpClient();
@@ -89,7 +95,8 @@ public class DefaultPuppetAPI extends PuppetAPI implements Constants {
             final boolean ok = statusCode == HttpStatus.SC_OK;
 
             if (!ok) {
-                LOG.warn(format("getClasses(%s) ended with status code: %d", node.getCertname(), statusCode));
+                String statusMsg = streamToString(response.getEntity().getContent());
+                LOG.warn(format("getClasses(%s) ended with status code: %d msg: %s", node.getCertname(), statusCode, statusMsg));
                 return emptyList();
             }
 
@@ -115,9 +122,7 @@ public class DefaultPuppetAPI extends PuppetAPI implements Constants {
             final boolean ok = statusCode == HttpStatus.SC_OK;
 
             if (!ok) {
-                LOG.warn(format("getFacts(%s) ended with status code: %d",
-                        node.getCertname(),
-                        statusCode));
+                LOG.warn(format("getFacts(%s) ended with status code: %d msg: %s", node.getCertname(), statusCode, streamToString(response.getEntity().getContent())));
                 return emptyList();
             }
 
