@@ -1,0 +1,15 @@
+{
+  "nodename": {
+    "path": "certname"
+  },
+  "username": {
+    "default": "username"
+  },
+  "hostname": {
+    "default": "localhost"
+  },
+  "description": {
+    "default": "this is a cool an amazing description"
+  },
+  "tags": [ "" ]
+}
