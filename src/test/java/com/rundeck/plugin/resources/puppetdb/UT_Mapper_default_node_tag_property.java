@@ -19,6 +19,8 @@ import com.google.common.base.Optional;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.rundeck.plugin.resources.puppetdb.client.model.PuppetDBNode;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class UT_Mapper_default_node_tag_property implements Constants {
 
@@ -52,11 +54,11 @@ public class UT_Mapper_default_node_tag_property implements Constants {
         // object under test, default mapping with no properties
         final Properties properties = new Properties();
         properties.put(PROPERTY_DEFAULT_NODE_TAG, knownDefaultTag);
-    
+
         final Mapper mapper = new Mapper(properties);
 
         // read test-specific mapping
-        final Map<String, Object> mappings = getMapping("default_node_tag_property/mapping.json"); 
+        final Map<String, Object> mappings = getMapping("default_node_tag_property/mapping.json");
 
         final PuppetDBNode puppetNode = newPuppetDBNodeMock();
 
@@ -84,7 +86,7 @@ public class UT_Mapper_default_node_tag_property implements Constants {
         final Mapper mapper = new Mapper(emptyProperties);
 
         // read test-specific mapping
-        final Map<String, Object> mappings = getMapping("default_node_tag_property/mapping.json"); 
+        final Map<String, Object> mappings = getMapping("default_node_tag_property/mapping.json");
 
         final PuppetDBNode puppetNode = newPuppetDBNodeMock();
 
@@ -95,13 +97,13 @@ public class UT_Mapper_default_node_tag_property implements Constants {
     }
 
     private PuppetDBNode newPuppetDBNodeMock() {
-    	final PuppetDBNode puppet = Mockito.mock(PuppetDBNode.class);
+        final PuppetDBNode puppet = Mockito.mock(PuppetDBNode.class);
 
-    	Mockito.when(puppet.getCertname()).thenReturn("certname");
-    	Mockito.when(puppet.getClasses()).thenReturn(Collections.emptyList());
-    	Mockito.when(puppet.getFacts()).thenReturn(Collections.emptyMap());
+        Mockito.when(puppet.getCertname()).thenReturn("certname");
+        Mockito.when(puppet.getClasses()).thenReturn(new ArrayList<String>());
+        Mockito.when(puppet.getFacts()).thenReturn(new HashMap<String, Object>());
 
-    	return puppet;
+        return puppet;
 
     }
 
@@ -123,6 +125,5 @@ public class UT_Mapper_default_node_tag_property implements Constants {
 
         return "";
     }
-
 
 }
