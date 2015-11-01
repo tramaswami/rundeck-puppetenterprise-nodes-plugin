@@ -2,8 +2,17 @@
 *.ipr
 *.iml
 *.iws
+*.*.swp
 build/
 .idea
 ssl/
 /.nb-gradle/
 !/src/main/java/com/puppetlabs/puppetdb/javaclient/ssl/
+
+.classpath
+.project
+.settings/
+bin/
+
+
+

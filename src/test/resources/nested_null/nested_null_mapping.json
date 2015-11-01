@@ -1,0 +1,35 @@
+{
+  "osFamily": {
+    "path": "facts.os.family"
+  },
+  "osArch": {
+    "path": "facts.architecture"
+  },
+  "osVersion": {
+    "path": "facts.kernelversion"
+  },
+  "osName": {
+    "path": "facts.os.name"
+  },
+  "nodename": {
+    "path": "certname"
+  },
+  "username": {
+    "default": "username"
+  },
+  "hostname": {
+    "path": "facts.ipaddress"
+  },
+  "description": {
+    "default": "this is a cool an amazing description"
+  },
+  "attributes": {
+    "nestedNull": {
+      "path": "facts.os.distro.nonExistingProperty.afterNonExistingProperty"
+    },
+    "fixedProperty": {
+      "default": "fixedValue"
+    }
+  },
+  "tags": [ "for now, tags is every puppet class found" ]
+}

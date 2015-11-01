@@ -121,7 +121,7 @@ public class Mapper {
 
             final Map<String, String> mapping = (Map<String, String>) entry.getValue();
             final String value = getPuppetNodeProperty(puppetNode, mapping);
-            if (isNotBlank(value)) {
+            if (null != value) { 
                 result.put(key, value);
             }
         }

@@ -24,7 +24,7 @@ import java.util.Map.Entry;
 import org.junit.Before;
 import org.junit.Test;
 
-public class UTMapper {
+public class UT_Mapper_simple {
 
     Mapper mapper;
 
@@ -41,8 +41,7 @@ public class UTMapper {
 
     @Test
     public void test_known_mapping() {
-        this.mapping = getMapping("known_mapping.json");
-
+        this.mapping = getMapping("simple/known_mapping.json"); 
         final ImmutableList<PuppetDBNode> nodesWithFacts = FluentIterable.from(testApi.getNodes())
                 .transform(testApi.queryNode())
                 .toList();
@@ -59,7 +58,7 @@ public class UTMapper {
 
     @Test
     public void test_known_mapping_with_missing_property() {
-        this.mapping = getMapping("known_mapping_with_missing_property.json");
+        this.mapping = getMapping("simple/known_mapping_with_missing_property.json");
 
         final ImmutableList<PuppetDBNode> nodesWithFacts = FluentIterable.from(testApi.getNodes())
                 .transform(testApi.queryNode())
@@ -105,17 +104,17 @@ public class UTMapper {
         return new PuppetAPI() {
             @Override
             public List<Node> getNodes() {
-                return gson.fromJson(readFile("nodes.json"), Node.LIST);
+                return gson.fromJson(readFile("simple/nodes.json"), Node.LIST);
             }
 
             @Override
             public List<Fact> getFactsForNode(final Node node) {
-                return gson.fromJson(readFile("facts.json"), Fact.LIST);
+                return gson.fromJson(readFile("simple/facts.json"), Fact.LIST);
             }
 
             @Override
             public List<NodeClass> getClassesForNode(final Node node) {
-                return gson.fromJson(readFile("classes.json"), NodeClass.LIST);
+                return gson.fromJson(readFile("simple/classes.json"), NodeClass.LIST);
             }
         };
     }
@@ -132,4 +131,5 @@ public class UTMapper {
 
         return "";
     }
+
 }

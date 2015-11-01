@@ -63,7 +63,7 @@ public class DefaultPuppetAPI extends PuppetAPI implements Constants {
             final boolean ok = statusCode == HttpStatus.SC_OK;
 
             if (!ok) {
-                LOG.warn(format("getNodes() ended with status code: %d msg: %s", statusCode, streamToString(response.getEntity().getContent())));
+                LOG.warn(format("getNodes() ended with status code: %d msg: %s", statusCode, streamToString(response)));
                 return emptyList();
             }
 
@@ -78,7 +78,8 @@ public class DefaultPuppetAPI extends PuppetAPI implements Constants {
         return emptyList();
     }
 
-    static String streamToString(java.io.InputStream is) {
+    private static String streamToString(final CloseableHttpResponse response) throws IOException {
+        final java.io.InputStream is = response.getEntity().getContent();
         try (java.util.Scanner s = new java.util.Scanner(is)) {
             return s.useDelimiter("\\A").hasNext() ? s.next() : "";
         }
@@ -95,7 +96,7 @@ public class DefaultPuppetAPI extends PuppetAPI implements Constants {
             final boolean ok = statusCode == HttpStatus.SC_OK;
 
             if (!ok) {
-                String statusMsg = streamToString(response.getEntity().getContent());
+                String statusMsg = streamToString(response);
                 LOG.warn(format("getClasses(%s) ended with status code: %d msg: %s", node.getCertname(), statusCode, statusMsg));
                 return emptyList();
             }
@@ -122,7 +123,7 @@ public class DefaultPuppetAPI extends PuppetAPI implements Constants {
             final boolean ok = statusCode == HttpStatus.SC_OK;
 
             if (!ok) {
-                LOG.warn(format("getFacts(%s) ended with status code: %d msg: %s", node.getCertname(), statusCode, streamToString(response.getEntity().getContent())));
+                LOG.warn(format("getFacts(%s) ended with status code: %d msg: %s", node.getCertname(), statusCode, streamToString(response)));
                 return emptyList();
             }
 
@@ -150,3 +151,4 @@ public class DefaultPuppetAPI extends PuppetAPI implements Constants {
     }
 
 }
+
