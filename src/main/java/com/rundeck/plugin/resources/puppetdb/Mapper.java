@@ -25,6 +25,7 @@ package com.rundeck.plugin.resources.puppetdb;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
+
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -32,32 +33,39 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
+
+import org.apache.commons.beanutils.NestedNullException;
+import org.apache.commons.beanutils.PropertyUtilsBean;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 
 import com.dtolabs.rundeck.core.common.INodeEntry;
 import com.dtolabs.rundeck.core.common.NodeEntryImpl;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.rundeck.plugin.resources.puppetdb.client.model.PuppetDBNode;
-import org.apache.commons.beanutils.NestedNullException;
-import org.apache.commons.beanutils.PropertyUtilsBean;
-import org.apache.log4j.Logger;
 
 /**
  *
  */
-public class Mapper {
+public class Mapper implements Constants {
 
     private static Logger log = Logger.getLogger(ResourceModelFactory.class);
 
+    private final Properties properties;
     private final PropertyUtilsBean propertyUtilsBean;
 
-    public Mapper() {
+    public Mapper(final Properties properties) {
+        this.properties = properties;
         this.propertyUtilsBean = new PropertyUtilsBean();
     }
 
     public Optional<INodeEntry> apply(final PuppetDBNode puppetNode,
             final Map<String, Object> mappings) {
+
         // create a new instance
         final NodeEntryImpl result = newNodeTreeImpl();
 
@@ -82,11 +90,18 @@ public class Mapper {
             }
         }
 
+
         // parse tags
         final boolean hasTags = mappings.containsKey("tags");
         if (hasTags) {
             // TODO: for now, tags is every tag we found.
             result.getTags().addAll(puppetNode.getClasses());
+
+            // add default tag if any
+            final Optional<String> defaultNodeTag = getDefaultNodeTag();
+            if (defaultNodeTag.isPresent()) {
+                result.getTags().add(defaultNodeTag.get());
+            }
 
             /*
              final Object tagsMapping = mappings.getOrDefault("tags", emptyMap());
@@ -98,8 +113,19 @@ public class Mapper {
              */
         }
 
+
         // check if valid
-        return validState(result) ? Optional.<INodeEntry>of(result) : Optional.<INodeEntry>absent();
+        return isNodeInValidState(result) ? Optional.<INodeEntry> of(result) : Optional.<INodeEntry> absent();
+    }
+
+    final Optional<String> getDefaultNodeTag() {
+        final String value = properties.getProperty(PROPERTY_DEFAULT_NODE_TAG, "");
+        if (isBlank(value)) {
+            log.warn(format("Property: '%s' is set, but empty. Will be ignored", PROPERTY_DEFAULT_NODE_TAG));
+            return Optional.absent();
+        }
+
+        return Optional.of(value);
     }
 
     public <T> Set<T> setOf(T... ts) {
@@ -198,35 +224,34 @@ public class Mapper {
         return result;
     }
 
-    private boolean validState(final INodeEntry nodeEntry) {
+    protected final boolean isNodeInValidState(final INodeEntry nodeEntry) {
         if (null == nodeEntry) {
+            log.error("invalid node state, node is null");
             return false;
         }
 
         final String nodename = nodeEntry.getNodename();
+        if (isBlank(nodename)) {
+            log.warn("invalid node state, nodename is blank");
+            return false;
+        }
+
         final String hostname = nodeEntry.getHostname();
+        if (isBlank(hostname)) {
+            log.warn("invalid node state, hostname is blank");
+            return false;
+        }
+
         final String username = nodeEntry.getUsername();
-        final Set tags = nodeEntry.getTags();
-
-        return isNotBlank(nodename)
-                && isNotBlank(hostname)
-                && isNotBlank(username)
-                && !isEmpty(tags);
-    }
-
-    private boolean isEmpty(final Set<?> tags) {
-        if (null == tags) {
-            return true;
+        if (isBlank(username)) {
+            log.warn("ignoring parsed node, username is blank");
+            return false;
         }
 
-        if (tags.isEmpty()) {
-            return true;
-        }
-
-        for (final Object tag : tags) {
-            if (null != tag && isNotBlank(tag.toString())) {
-                return false;
-            }
+        final Set<?> tags = nodeEntry.getTags();
+        if (CollectionUtils.isEmpty(tags)) {
+            log.warn(format("ignoring parsed node, tags is empty. use plugin property %s to solve this", PROPERTY_DEFAULT_NODE_TAG));
+            return false;
         }
 
         return true;

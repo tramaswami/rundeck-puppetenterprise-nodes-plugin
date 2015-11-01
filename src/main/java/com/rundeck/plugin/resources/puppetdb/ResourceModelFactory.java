@@ -80,7 +80,7 @@ public class ResourceModelFactory implements ResourceModelSourceFactory, Describ
     @Override
     public ResourceModelSource createResourceModelSource(final Properties properties) throws ConfigurationException {
         final PuppetAPI puppetAPI = getPuppetAPI(properties);
-        final Mapper mapper = new Mapper();
+        final Mapper mapper = new Mapper(properties);
         final Map<String, Object> mapping = getMapping(properties);
 
         return new ResourceModelSource() {

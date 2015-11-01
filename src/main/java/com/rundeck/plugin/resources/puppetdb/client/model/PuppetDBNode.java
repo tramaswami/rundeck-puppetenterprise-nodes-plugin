@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public final class PuppetDBNode {
+public class PuppetDBNode {
 
     private final Node node;
     private final Map<String, Object> facts;

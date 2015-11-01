@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Scanner;
 
 import org.junit.Before;
@@ -34,7 +35,7 @@ public class UT_Mapper_nested_null {
 
     @Before
     public void before() {
-        this.mapper = new Mapper();
+        this.mapper = new Mapper(new Properties());
         this.gson = new Gson();
         this.testApi = testApi();
     }

@@ -7,7 +7,12 @@ import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.Scanner;
+
+import org.junit.Before;
+import org.junit.Test;
 
 import com.dtolabs.rundeck.core.common.INodeEntry;
 import com.google.common.base.Optional;
@@ -20,9 +25,6 @@ import com.rundeck.plugin.resources.puppetdb.client.model.Fact;
 import com.rundeck.plugin.resources.puppetdb.client.model.Node;
 import com.rundeck.plugin.resources.puppetdb.client.model.NodeClass;
 import com.rundeck.plugin.resources.puppetdb.client.model.PuppetDBNode;
-import java.util.Map.Entry;
-import org.junit.Before;
-import org.junit.Test;
 
 public class UT_Mapper_simple {
 
@@ -34,7 +36,7 @@ public class UT_Mapper_simple {
 
     @Before
     public void before() {
-        this.mapper = new Mapper();
+        this.mapper = new Mapper(new Properties());
         this.gson = new Gson();
         this.testApi = testApi();
     }
