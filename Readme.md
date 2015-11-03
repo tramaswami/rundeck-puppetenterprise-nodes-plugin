@@ -1,7 +1,7 @@
 Rundeck Puppet Enterprise Nodes Plugin
 ========================
 
-Version: 0.2.3
+Version: 0.2.5
 
 This is a Resource Model Source plugin for [RunDeck][] 1.5+ that provides
 Puppet Enterprise Nodes as nodes for the RunDeck server.
@@ -49,6 +49,7 @@ Here are the configuration properties:
  * <ssldir>/certs/<host>.pem
  * <ssldir>/ca/ca_crt.pem
 * `mappingFile`: Path to a java properties-formatted mapping definition file.
+* `nodeQuery: Puppet Query to filter nodes, if null then the plugin will return all, see more information on [Puppet API Query reference(https://docs.puppetlabs.com/puppetdb/latest/api/query/v4/nodes.html)
 
 Mapping Definition
 ----------

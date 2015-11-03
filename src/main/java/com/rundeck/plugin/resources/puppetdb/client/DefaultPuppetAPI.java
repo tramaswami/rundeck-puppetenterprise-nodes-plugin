@@ -14,6 +14,8 @@ import com.rundeck.plugin.resources.puppetdb.Constants;
 import com.rundeck.plugin.resources.puppetdb.client.model.Fact;
 import com.rundeck.plugin.resources.puppetdb.client.model.Node;
 import com.rundeck.plugin.resources.puppetdb.client.model.NodeClass;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -39,12 +41,23 @@ public class DefaultPuppetAPI extends PuppetAPI implements Constants {
     private final String puppetHost;
     private final String puppetPort;
     private final String puppetSslDir;
+    private String puppetNodeQuery;
 
     public DefaultPuppetAPI(Properties properties) {
         puppetSslDir = properties.getProperty(PROPERTY_PUPPETDB_SSL_DIR);
         puppetProtocol = puppetSslDir == null ? "http" : HTTPS;
         puppetHost = properties.getProperty(PROPERTY_PUPPETDB_HOST);
         puppetPort = properties.getProperty(PROPERTY_PUPPETDB_PORT);
+        try {
+            if (properties.getProperty(PROPERTY_NODE_QUERY) == null) {
+                puppetNodeQuery = null;
+            } else {
+                puppetNodeQuery = URLEncoder.encode(properties.getProperty(PROPERTY_NODE_QUERY), java.nio.charset.StandardCharsets.UTF_8.toString());
+            }
+        } catch (UnsupportedEncodingException ex) {
+            LOG.warn("", ex);
+            puppetNodeQuery = null;
+        }
     }
 
     public String getBaseUrl(final String path) {
@@ -56,7 +69,7 @@ public class DefaultPuppetAPI extends PuppetAPI implements Constants {
     @Override
     public List<Node> getNodes() {
         final CloseableHttpClient httpclient = puppetProtocol.equals(HTTPS) ? getHttpsClient() : new DefaultHttpClient();
-        final HttpGet httpGet = new HttpGet(getBaseUrl("pdb/query/v4/nodes"));
+        final HttpGet httpGet = new HttpGet(getBaseUrl("pdb/query/v4/nodes" + ((puppetNodeQuery != null && !puppetNodeQuery.trim().isEmpty()) ? ("?query=") + puppetNodeQuery : "")));
 
         try (final CloseableHttpResponse response = httpclient.execute(httpGet)) {
             final int statusCode = response.getStatusLine().getStatusCode();
@@ -151,4 +164,3 @@ public class DefaultPuppetAPI extends PuppetAPI implements Constants {
     }
 
 }
-
