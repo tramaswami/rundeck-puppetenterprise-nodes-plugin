@@ -26,19 +26,20 @@ package com.rundeck.plugin.resources.puppetdb;
 import static java.lang.String.format;
 import static java.util.Collections.emptyMap;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
+import com.codahale.metrics.ConsoleReporter;
+import com.codahale.metrics.MetricRegistry;
 import com.dtolabs.rundeck.core.common.Framework;
 import com.dtolabs.rundeck.core.common.INodeEntry;
 import com.dtolabs.rundeck.core.common.INodeSet;
@@ -52,7 +53,6 @@ import com.dtolabs.rundeck.core.resources.ResourceModelSource;
 import com.dtolabs.rundeck.core.resources.ResourceModelSourceException;
 import com.dtolabs.rundeck.core.resources.ResourceModelSourceFactory;
 import com.google.common.base.Function;
-import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
@@ -67,19 +67,34 @@ import org.apache.log4j.Logger;
 @Plugin(name = "puppet-enterprise", service = "ResourceModelSource")
 public class ResourceModelFactory implements ResourceModelSourceFactory, Describable, Constants {
 
+    private static MetricRegistry MAPPER = new MetricRegistry();
     private static Logger log = Logger.getLogger(ResourceModelFactory.class);
 
-    private Framework framework;
-    private Gson gson;
+    private final Framework framework;
+    private final Gson gson;
+    private final MetricRegistry metrics;
 
     public ResourceModelFactory(final Framework framework) {
         this.framework = framework;
         this.gson = new Gson();
+        this.metrics = MAPPER;
+    }
+
+    private void attachConsoleReporter(final MetricRegistry metrics, final Properties properties) {
+        if (properties.containsKey(PROPERTY_METRICS_INTERVAL)) {
+            final ConsoleReporter reporter = ConsoleReporter.forRegistry(metrics)
+                    .convertRatesTo(TimeUnit.SECONDS)
+                    .convertDurationsTo(TimeUnit.MILLISECONDS)
+                    .build();
+            reporter.start(Integer.parseInt(properties.getProperty(PROPERTY_METRICS_INTERVAL)), TimeUnit.MINUTES);
+        }
     }
 
     @Override
     public ResourceModelSource createResourceModelSource(final Properties properties) throws ConfigurationException {
-        final PuppetAPI puppetAPI = getPuppetAPI(properties);
+        attachConsoleReporter(metrics, properties);
+
+        final PuppetAPI puppetAPI = getPuppetAPI(properties, metrics);
         final Mapper mapper = new Mapper(properties);
         final Map<String, Object> mapping = getMapping(properties);
 
@@ -125,54 +140,17 @@ public class ResourceModelFactory implements ResourceModelSourceFactory, Describ
         return PLUGIN_DESCRIPTION;
     }
 
-    public PuppetAPI getPuppetAPI(final Properties properties) throws ConfigurationException {
-        final List<Property> missingProperties = getMissingProperties(properties);
+    public PuppetAPI getPuppetAPI(final Properties properties, final MetricRegistry metrics) throws ConfigurationException {
+        final List<Property> missingProperties = PropertyHandling.getMissingProperties(properties);
         if (isNotEmpty(missingProperties)) {
-            final String missingPropertiesNames = joinPropertyNames(missingProperties);
+            final String missingPropertiesNames = PropertyHandling.joinPropertyNames(missingProperties);
 
             final String template = "Can't start %s plugin, Missing properties: '%s'";
             final String message = format(template, PROVIDER_NAME, missingPropertiesNames);
             throw new ConfigurationException(message);
         }
 
-
-        return new DefaultPuppetAPI(properties);
-    }
-
-    private String joinPropertyNames(final List<Property> properties) {
-        final Function<Property, String> getName = new Function<Property, String>() {
-            @Override
-            public String apply(final Property input) {
-                return input.getName();
-            }
-        };
-
-        return FluentIterable.from(properties)
-                .transform(getName)
-                .join(Joiner.on(","));
-    }
-
-    private List<Property> getMissingProperties(final Properties properties) {
-        final List<Property> result = new ArrayList<>();
-
-
-        final Description description = getDescription();
-        for (final Property property : description.getProperties()) {
-            if (!property.isRequired()) {
-                continue;
-            }
-
-            final String key = property.getName();
-            final String value = properties.getProperty(key, "");
-
-            final boolean isMissing = isBlank(value);
-            if (isMissing) {
-                result.add(property);
-            }
-
-        }
-
-        return result;
+        return new DefaultPuppetAPI(properties, metrics);
     }
 
     public Map<String, Object> getMapping(final Properties properties) {

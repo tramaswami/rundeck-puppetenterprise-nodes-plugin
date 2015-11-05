@@ -7,15 +7,15 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 
+import com.codahale.metrics.MetricRegistry;
 import com.google.gson.Gson;
 import com.google.inject.Provider;
 import com.puppetlabs.puppetdb.javaclient.impl.PEM_SSLSocketFactoryProvider;
 import com.rundeck.plugin.resources.puppetdb.Constants;
+import com.rundeck.plugin.resources.puppetdb.PropertyHandling;
 import com.rundeck.plugin.resources.puppetdb.client.model.Fact;
 import com.rundeck.plugin.resources.puppetdb.client.model.Node;
 import com.rundeck.plugin.resources.puppetdb.client.model.NodeClass;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -41,23 +41,16 @@ public class DefaultPuppetAPI extends PuppetAPI implements Constants {
     private final String puppetHost;
     private final String puppetPort;
     private final String puppetSslDir;
-    private String puppetNodeQuery;
+    private final String puppetNodeQuery;
+    private final MetricRegistry metrics;
 
-    public DefaultPuppetAPI(Properties properties) {
-        puppetSslDir = properties.getProperty(PROPERTY_PUPPETDB_SSL_DIR);
-        puppetProtocol = puppetSslDir == null ? "http" : HTTPS;
-        puppetHost = properties.getProperty(PROPERTY_PUPPETDB_HOST);
-        puppetPort = properties.getProperty(PROPERTY_PUPPETDB_PORT);
-        try {
-            if (properties.getProperty(PROPERTY_NODE_QUERY) == null) {
-                puppetNodeQuery = null;
-            } else {
-                puppetNodeQuery = URLEncoder.encode(properties.getProperty(PROPERTY_NODE_QUERY), java.nio.charset.StandardCharsets.UTF_8.toString());
-            }
-        } catch (UnsupportedEncodingException ex) {
-            LOG.warn("", ex);
-            puppetNodeQuery = null;
-        }
+    public DefaultPuppetAPI(final Properties properties, final MetricRegistry metrics) {
+        this.puppetSslDir = properties.getProperty(PROPERTY_PUPPETDB_SSL_DIR);
+        this.puppetProtocol = puppetSslDir == null ? "http" : HTTPS;
+        this.puppetHost = properties.getProperty(PROPERTY_PUPPETDB_HOST);
+        this.puppetPort = properties.getProperty(PROPERTY_PUPPETDB_PORT);
+        this.puppetNodeQuery = PropertyHandling.readPuppetDbQuery(properties).orNull();
+        this.metrics = metrics;
     }
 
     public String getBaseUrl(final String path) {
@@ -76,6 +69,7 @@ public class DefaultPuppetAPI extends PuppetAPI implements Constants {
             final boolean ok = statusCode == HttpStatus.SC_OK;
 
             if (!ok) {
+                metrics.counter(MetricRegistry.name(DefaultPuppetAPI.class, "http.errors.count"));
                 LOG.warn(format("getNodes() ended with status code: %d msg: %s", statusCode, streamToString(response)));
                 return emptyList();
             }
@@ -84,8 +78,9 @@ public class DefaultPuppetAPI extends PuppetAPI implements Constants {
             final String responseBody = EntityUtils.toString(entity);
 
             return GSON.fromJson(responseBody, Node.LIST);
-        } catch (IOException e) {
-            LOG.warn("while getNodes()", e);
+        } catch (final IOException ex) {
+            metrics.counter(MetricRegistry.name(DefaultPuppetAPI.class, "http.errors.count"));
+            LOG.warn("exception while trying to fetch nodes from PuppetDB API, import will return 0 nodes ", ex);
         }
 
         return emptyList();
@@ -109,7 +104,7 @@ public class DefaultPuppetAPI extends PuppetAPI implements Constants {
             final boolean ok = statusCode == HttpStatus.SC_OK;
 
             if (!ok) {
-                String statusMsg = streamToString(response);
+                final String statusMsg = streamToString(response);
                 LOG.warn(format("getClasses(%s) ended with status code: %d msg: %s", node.getCertname(), statusCode, statusMsg));
                 return emptyList();
             }

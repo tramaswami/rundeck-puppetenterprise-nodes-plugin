@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import com.codahale.metrics.MetricRegistry;
 import com.dtolabs.rundeck.core.plugins.configuration.ConfigurationException;
 import org.junit.Test;
 
@@ -18,7 +19,7 @@ public class UTResourceModelFactory implements Constants {
 
         // web api
         final ResourceModelFactory resourceModelFactory = new ResourceModelFactory(null);
-        resourceModelFactory.getPuppetAPI(properties);
+        resourceModelFactory.getPuppetAPI(properties, new MetricRegistry());
     }
 
     @Test(expected = ConfigurationException.class)
@@ -27,7 +28,7 @@ public class UTResourceModelFactory implements Constants {
         properties.put(PROPERTY_PUPPETDB_HOST, "localhost");
 
         final ResourceModelFactory resourceModelFactory = new ResourceModelFactory(null);
-        resourceModelFactory.getPuppetAPI(properties);
+        resourceModelFactory.getPuppetAPI(properties, new MetricRegistry());
     }
 
     public void test2() throws IOException{
