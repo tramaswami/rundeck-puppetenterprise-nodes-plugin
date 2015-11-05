@@ -49,7 +49,7 @@ Here are the configuration properties:
  * <ssldir>/certs/<host>.pem
  * <ssldir>/ca/ca_crt.pem
 * `mappingFile`: Path to a java properties-formatted mapping definition file.
-* `nodeQuery: Puppet Query to filter nodes, if null then the plugin will return all, see more information on [Puppet API Query reference(https://docs.puppetlabs.com/puppetdb/latest/api/query/v4/nodes.html)
+* `nodeQuery`: Puppet Query to filter nodes, if null then the plugin will return all, see more information on [Puppet API Query reference(https://docs.puppetlabs.com/puppetdb/latest/api/query/v4/nodes.html)
 
 Mapping Definition
 ----------
