@@ -40,7 +40,7 @@ See: [Resource Model Source Configuration](http://rundeck.org/1.5/manual/plugins
 
 The provider name is: `puppet-enterprise`
 
-Here are the configuration properties:
+Here are the configuration properties for Simple Configuration:
 
 * `host`: Puppet Enterprise Master host
 * `port`: Puppet Enterprise Master port
@@ -50,6 +50,12 @@ Here are the configuration properties:
  * <ssldir>/ca/ca_crt.pem
 * `mappingFile`: Path to a java properties-formatted mapping definition file.
 * `nodeQuery`: Puppet Query to filter nodes, if null then the plugin will return all, see more information on [Puppet API Query reference(https://docs.puppetlabs.com/puppetdb/latest/api/query/v4/nodes.html)
+
+Configuration keys vary if you use them directly in the project file or in Rundeck using Edit Configuration File, for example node 1:
+
+resources.source.1.config.PROPERTY_PUPPETDB_HOST=host
+resources.source.1.config.PROPERTY_PUPPETDB_PORT=port
+
 
 Mapping Definition
 ----------
