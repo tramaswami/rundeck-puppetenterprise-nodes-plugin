@@ -64,8 +64,7 @@ public class DefaultPuppetAPI extends PuppetAPI implements Constants {
 
     @Override
     public List<Node> getNodes() {
-        String url = "pdb/query/v4/nodes" + getUserQuery();
-        final HttpGet httpGet = new HttpGet(getBaseUrl(url));
+        final HttpGet httpGet = mkGet("pdb/query/v4/nodes", getUserQuery());
         return makeRequest(httpGet, Node.listParser(GSON), Collections.<Node>emptyList(), "getNodes()");
     }
 
@@ -91,10 +90,7 @@ public class DefaultPuppetAPI extends PuppetAPI implements Constants {
     }
 
     public List<NodeFact> getFactForAllNodes(String fact) {
-        String path = "pdb/query/v4/facts/%s"+ getUserQuery();
-        String url = format(path, fact);
-        final HttpGet httpGet = new HttpGet(getBaseUrl(url));
-
+        final HttpGet httpGet = mkGet(format("pdb/query/v4/facts/%s", fact), getUserQuery());
         return makeRequest(httpGet, NodeFact.parser(GSON), Collections.<NodeFact>emptyList(), "getFactForAllNodes()");
     }
 
@@ -152,22 +148,26 @@ public class DefaultPuppetAPI extends PuppetAPI implements Constants {
 
     @Override
     public List<NodeClass> getClassesForNode(final Node node) {
-        final String url = format(getBaseUrl("pdb/query/v4/nodes/%s/resources/Class"), node.getCertname());
-        final HttpGet httpGet = new HttpGet(url);
+        final HttpGet httpGet = mkGet(format(getBaseUrl("pdb/query/v4/nodes/%s/resources/Class"), node.getCertname()));
         return makeRequest(httpGet, NodeClass.parser(GSON), Collections.<NodeClass>emptyList(), "getClassesForNode()");
     }
 
     public List<CertNodeClass> getClassesForAllNodes() {
-        String path = "pdb/query/v4/resources/Class" + getUserQuery();
-        final String url = getBaseUrl(path);
-        final HttpGet httpGet = new HttpGet(url);
+        final HttpGet httpGet = mkGet("pdb/query/v4/resources/Class", getUserQuery());
         return makeRequest(httpGet, CertNodeClass.listParser(GSON), Collections.<CertNodeClass>emptyList(), "getClassesForAllNodes()");
+    }
+
+    private HttpGet mkGet(final String path) {
+        return mkGet(path, null);
+    }
+    private HttpGet mkGet(final String path,String extra) {
+        return new HttpGet(getBaseUrl(path + (extra != null ? extra : "")));
     }
 
     @Override
     public List<Fact> getFactsForNode(final Node node) {
         final String url = format(getBaseUrl("pdb/query/v4/nodes/%s/facts"), node.getCertname());
-        final HttpGet httpGet = new HttpGet(url);
+        final HttpGet httpGet = mkGet(url);
         return makeRequest(httpGet, Fact.listParser(GSON), Collections.<Fact>emptyList(), "getFactsForNode()");
     }
 
