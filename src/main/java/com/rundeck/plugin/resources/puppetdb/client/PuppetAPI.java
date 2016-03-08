@@ -26,26 +26,29 @@ public abstract class PuppetAPI {
      * @param nodeClasses1
      * @return
      */
-    public PuppetDBNode getNodeWithFacts(final Node node, List<NodeFact> facts, final List<CertNodeClass> nodeClasses1) {
-        final List<NodeFact> newfacts = FluentIterable.from(facts).filter(
-                new Predicate<NodeFact>() {
-                    @Override
-                    public boolean apply(final NodeFact input) {
-                        return node.getCertname().equals(input.getCertname());
-                    }
-                }
-        ).toList();
-        final List<CertNodeClass> classes = FluentIterable.from(nodeClasses1).filter(
-                new Predicate<CertNodeClass>() {
-                    @Override
-                    public boolean apply(final CertNodeClass input) {
-                        return node.getCertname().equals(input.getCertname());
-                    }
-                }
-        ).toList();
+    public PuppetDBNode getNodeWithFacts(final Node node, final List<NodeFact> facts, final List<CertNodeClass> nodeClasses1) {
+        final List<NodeFact> newfacts = FluentIterable.from(facts).filter(certNameEqualsPredicate(node)).toList();
+        final List<CertNodeClass> classes = FluentIterable.from(nodeClasses1)
+                                                          .filter(certNameEqualsPredicate(node))
+                                                          .toList();
 
 
         return new PuppetDBNode(node, newfacts, classes);
+    }
+
+    private Predicate<Certname> certNameEqualsPredicate(final Certname node) {
+        return new Predicate<Certname>() {
+            @Override
+            public boolean apply(final Certname input) {
+                if (input == null ||
+                    input.getCertname() == null ||
+                    node == null ||
+                    node.getCertname() == null) {
+                    return false;
+                }
+                return node.getCertname().equals(input.getCertname());
+            }
+        };
     }
 
     public PuppetDBNode getNodeWithFacts(final Node node) {
