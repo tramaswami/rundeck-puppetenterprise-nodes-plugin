@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.google.gson.reflect.TypeToken;
 
-public class Node {
+public class Node implements Certname {
 
     public static final Type LIST = new TypeToken<List<Node>>() {}.getType();
 

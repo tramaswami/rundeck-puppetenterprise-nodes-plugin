@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by greg on 3/8/16.
  */
-public class CertNodeClass extends NodeClass {
+public class CertNodeClass extends NodeClass implements Certname{
     public static final Type LIST = new TypeToken<List<CertNodeClass>>() {}.getType();
     private String certname;
 

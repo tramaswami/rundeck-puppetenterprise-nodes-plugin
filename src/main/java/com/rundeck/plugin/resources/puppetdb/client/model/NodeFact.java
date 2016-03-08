@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by greg on 3/7/16.
  */
-public class NodeFact extends Fact {
+public class NodeFact extends Fact implements Certname {
     public static final Type LIST = new TypeToken<List<NodeFact>>() {
     }.getType();
 
