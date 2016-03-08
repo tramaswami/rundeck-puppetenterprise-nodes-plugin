@@ -202,9 +202,10 @@ public class Mapper implements Constants {
             final Object value = propertyUtilsBean.getProperty(puppetNode, propertyPath);
             return null == value ? "" : value.toString();
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | NestedNullException e) {
-            final String template = "can't parse propertyPath: '%s'";
-            final String message = format(template, propertyPath);
-            log.warn(message, e);
+            final String template = "can't parse propertyPath: '%s' for node '%s'";
+            final String message = format(template, propertyPath,puppetNode.getCertname());
+            log.warn(message);
+            log.debug(message, e);
         }
 
         return "";
