@@ -10,10 +10,9 @@ import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 import com.rundeck.plugin.resources.puppetdb.client.PuppetAPI;
-import com.rundeck.plugin.resources.puppetdb.client.model.Node;
-import com.rundeck.plugin.resources.puppetdb.client.model.NodeFact;
-import com.rundeck.plugin.resources.puppetdb.client.model.PuppetDBNode;
+import com.rundeck.plugin.resources.puppetdb.client.model.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -51,9 +50,13 @@ class PuppetDBResourceModelSource implements ResourceModelSource {
 
         List<NodeFact> factSet = puppetAPI.getFactSet(factNames);
 
+        final List<CertNodeClass> nodeClasses = includeClasses
+                                                ? puppetAPI.getClassesForAllNodes()
+                                                : Collections.<CertNodeClass>emptyList();
+
         // build nodes with facts and tags attached
         final List<PuppetDBNode> puppetNodes = FluentIterable.from(nodes)
-                                                             .transform(puppetAPI.queryNodeWithFacts(factSet))
+                                                             .transform(puppetAPI.queryNodeWithFacts(factSet,nodeClasses))
                                                              .toList();
 
         final List<INodeEntry> rundeckNodes = FluentIterable.from(puppetNodes)

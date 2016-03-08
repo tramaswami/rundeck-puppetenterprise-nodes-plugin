@@ -16,15 +16,17 @@ public abstract class PuppetAPI {
     public abstract List<Fact> getFactsForNode(final Node node);
 
     public abstract List<NodeClass> getClassesForNode(final Node node);
+    public abstract List<CertNodeClass> getClassesForAllNodes();
     public abstract List<NodeFact> getFactSet(Set<String> facts);
 
     /**
      * Create a puppet DB Node by filtering the facts
      * @param node
      * @param facts
+     * @param nodeClasses1
      * @return
      */
-    public PuppetDBNode getNodeWithFacts(final Node node, List<NodeFact> facts) {
+    public PuppetDBNode getNodeWithFacts(final Node node, List<NodeFact> facts, final List<CertNodeClass> nodeClasses1) {
         final List<NodeFact> newfacts = FluentIterable.from(facts).filter(
                 new Predicate<NodeFact>() {
                     @Override
@@ -33,12 +35,17 @@ public abstract class PuppetAPI {
                     }
                 }
         ).toList();
+        final List<CertNodeClass> classes = FluentIterable.from(nodeClasses1).filter(
+                new Predicate<CertNodeClass>() {
+                    @Override
+                    public boolean apply(final CertNodeClass input) {
+                        return node.getCertname().equals(input.getCertname());
+                    }
+                }
+        ).toList();
 
-        final List<NodeClass> nodeClasses = Collections.emptyList()
-                //getClassesForNode(node)
-                ;
 
-        return new PuppetDBNode(node, newfacts, nodeClasses);
+        return new PuppetDBNode(node, newfacts, classes);
     }
 
     public PuppetDBNode getNodeWithFacts(final Node node) {
@@ -47,11 +54,11 @@ public abstract class PuppetAPI {
         return new PuppetDBNode(node, facts, nodeClasses);
     }
 
-    public Function<Node, PuppetDBNode> queryNodeWithFacts(final List<NodeFact> facts) {
+    public Function<Node, PuppetDBNode> queryNodeWithFacts(final List<NodeFact> facts,final List<CertNodeClass> nodeClasses) {
         return new Function<Node, PuppetDBNode>() {
             @Override
             public PuppetDBNode apply(final Node node) {
-                return getNodeWithFacts(node, facts);
+                return getNodeWithFacts(node, facts, nodeClasses);
             }
         };
     }

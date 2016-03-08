@@ -13,7 +13,7 @@ public class PuppetDBNode {
 
     public PuppetDBNode(final Node node,
                         final List<? extends Fact> facts,
-                        final List<NodeClass> nodeClasses) {
+                        final List<? extends NodeClass> nodeClasses) {
         this.node = node;
 
         this.facts = new LinkedHashMap<>();

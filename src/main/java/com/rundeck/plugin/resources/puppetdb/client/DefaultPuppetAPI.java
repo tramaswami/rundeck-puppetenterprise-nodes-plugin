@@ -205,7 +205,7 @@ public class DefaultPuppetAPI extends PuppetAPI implements Constants {
         return emptyList();
     }
 
-    public List<CertNodeClass> getClassesForAllNodes(final Node node) {
+    public List<CertNodeClass> getClassesForAllNodes() {
         final CloseableHttpClient httpclient = puppetProtocol.equals(HTTPS)
                                                ? getHttpsClient()
                                                : new DefaultHttpClient();
@@ -213,7 +213,7 @@ public class DefaultPuppetAPI extends PuppetAPI implements Constants {
                       ((puppetNodeQuery != null && !puppetNodeQuery.trim().isEmpty())
                        ? ("?query=") + puppetNodeQuery
                        : "");
-        final String url = format(getBaseUrl(path), node.getCertname());
+        final String url = getBaseUrl(path);
         final HttpGet httpGet = new HttpGet(url);
         LOG.debug(format("GET %s", url));
         requestCounter();
@@ -224,8 +224,7 @@ public class DefaultPuppetAPI extends PuppetAPI implements Constants {
             if (!ok) {
                 final String statusMsg = streamToString(response);
                 LOG.warn(format(
-                        "getClasses(%s) ended with status code: %d msg: %s",
-                        node.getCertname(),
+                        "getClasses ended with status code: %d msg: %s",
                         statusCode,
                         statusMsg
                 ));

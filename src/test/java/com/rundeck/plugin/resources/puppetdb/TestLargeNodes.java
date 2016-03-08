@@ -106,6 +106,11 @@ public class TestLargeNodes {
             }
 
             @Override
+            public List<CertNodeClass> getClassesForAllNodes() {
+                return null;
+            }
+
+            @Override
             public List<Node> getNodes() {
 //                try {
 //                    System.out.println("getNodes...");

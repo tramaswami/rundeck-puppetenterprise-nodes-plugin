@@ -72,6 +72,11 @@ public class UT_Mapper_nested_null {
 
         return new PuppetAPI() {
             @Override
+            public List<CertNodeClass> getClassesForAllNodes() {
+                return null;
+            }
+
+            @Override
             public List<NodeFact> getFactSet(final Set<String> facts) {
                 return null;
             }

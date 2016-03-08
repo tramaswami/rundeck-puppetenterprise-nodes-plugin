@@ -60,6 +60,11 @@ public class TestDetermineFactNames {
     public PuppetAPI testApi() {
         return new PuppetAPI() {
             @Override
+            public List<CertNodeClass> getClassesForAllNodes() {
+                return null;
+            }
+
+            @Override
             public List<NodeFact> getFactSet(final Set<String> facts) {
                 return null;
             }
