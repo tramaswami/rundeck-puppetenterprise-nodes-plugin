@@ -49,6 +49,7 @@ class PuppetDBResourceModelSource implements ResourceModelSource {
         Set<String> factNames = mapper.determineFactNames(mapping);
 
         List<NodeFact> factSet = puppetAPI.getFactSet(factNames);
+//        System.err.println("facts: "+factSet);
 
         final List<CertNodeClass> nodeClasses = includeClasses
                                                 ? puppetAPI.getClassesForAllNodes()
