@@ -91,7 +91,7 @@ public class UT_Mapper_default_node_tag_property implements Constants {
         final PuppetDBNode puppetNode = newPuppetDBNodeMock();
 
         final Optional<INodeEntry> maybeNode = mapper.apply(puppetNode, mappings);
-        assertTrue("maybeNode should be empty", !maybeNode.isPresent());
+        assertTrue("maybeNode should not be empty", maybeNode.isPresent());
 
         // assertTrue("default tag should be empty", !defaultTag.isPresent());
     }

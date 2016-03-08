@@ -124,7 +124,6 @@ public class Mapper implements Constants {
     final Optional<String> getDefaultNodeTag() {
         final String value = properties.getProperty(PROPERTY_DEFAULT_NODE_TAG, "");
         if (isBlank(value)) {
-            log.warn(format("Property: '%s' is set, but empty. Will be ignored", PROPERTY_DEFAULT_NODE_TAG));
             return Optional.absent();
         }
 
@@ -249,12 +248,6 @@ public class Mapper implements Constants {
         final String username = nodeEntry.getUsername();
         if (isBlank(username)) {
             log.warn("ignoring parsed node, username is blank");
-            return false;
-        }
-
-        final Set<?> tags = nodeEntry.getTags();
-        if (CollectionUtils.isEmpty(tags)) {
-            log.warn(format("ignoring parsed node, tags is empty. use plugin property %s to solve this", PROPERTY_DEFAULT_NODE_TAG));
             return false;
         }
 
