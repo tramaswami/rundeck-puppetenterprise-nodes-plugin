@@ -33,4 +33,14 @@ public class NodeFact extends Fact implements Certname {
     public void setCertname(String certname) {
         this.certname = certname;
     }
+
+    @Override
+    public String toString() {
+        return "NodeFact{" +
+               "certname='" + certname + '\'' +
+               ", environment='" + getEnvironment() + '\'' +
+               ", name='" + getName() + '\'' +
+               ", value=" + getValue() +
+               '}';
+    }
 }

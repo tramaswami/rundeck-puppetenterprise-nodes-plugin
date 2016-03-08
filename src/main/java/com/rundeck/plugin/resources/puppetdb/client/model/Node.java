@@ -30,5 +30,11 @@ public class Node implements Certname {
         this.certname = certname;
     }
 
+    @Override
+    public String toString() {
+        return "com.rundeck.plugin.resources.puppetdb.client.model.Node{" +
+               "certname='" + certname + '\'' +
+               '}';
+    }
 }
 

@@ -47,4 +47,13 @@ public class Fact {
     public void setValue(final String value) {
         this.value = value;
     }
+
+    @Override
+    public String toString() {
+        return "Fact{" +
+               "environment='" + environment + '\'' +
+               ", name='" + name + '\'' +
+               ", value=" + value +
+               '}';
+    }
 }
