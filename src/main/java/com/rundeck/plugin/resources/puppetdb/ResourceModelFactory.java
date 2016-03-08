@@ -32,36 +32,23 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Scanner;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import com.codahale.metrics.ConsoleReporter;
 import com.codahale.metrics.MetricRegistry;
 import com.dtolabs.rundeck.core.common.Framework;
-import com.dtolabs.rundeck.core.common.INodeEntry;
-import com.dtolabs.rundeck.core.common.INodeSet;
-import com.dtolabs.rundeck.core.common.NodeSetImpl;
 import com.dtolabs.rundeck.core.plugins.Plugin;
 import com.dtolabs.rundeck.core.plugins.configuration.ConfigurationException;
 import com.dtolabs.rundeck.core.plugins.configuration.Describable;
 import com.dtolabs.rundeck.core.plugins.configuration.Description;
 import com.dtolabs.rundeck.core.plugins.configuration.Property;
 import com.dtolabs.rundeck.core.resources.ResourceModelSource;
-import com.dtolabs.rundeck.core.resources.ResourceModelSourceException;
 import com.dtolabs.rundeck.core.resources.ResourceModelSourceFactory;
-import com.google.common.base.Function;
-import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
-import com.google.common.collect.FluentIterable;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.rundeck.plugin.resources.puppetdb.client.DefaultPuppetAPI;
 import com.rundeck.plugin.resources.puppetdb.client.PuppetAPI;
-import com.rundeck.plugin.resources.puppetdb.client.model.Node;
-import com.rundeck.plugin.resources.puppetdb.client.model.PuppetDBNode;
 import org.apache.log4j.Logger;
 
 @Plugin(name = "puppet-enterprise", service = "ResourceModelSource")
@@ -98,42 +85,9 @@ public class ResourceModelFactory implements ResourceModelSourceFactory, Describ
         final Mapper mapper = new Mapper(properties);
         final Map<String, Object> mapping = getMapping(properties);
 
-        return new ResourceModelSource() {
-            @Override
-            public INodeSet getNodes() throws ResourceModelSourceException {
-                // get list of nodes without filtering
-                final List<Node> nodes = puppetAPI.getNodes();
-                if (null == nodes || nodes.isEmpty()) {
-                    return new NodeSetImpl();
-                }
-
-                // build nodes with facts and tags attached
-                final List<PuppetDBNode> puppetNodes = FluentIterable.from(nodes)
-                        .transform(puppetAPI.queryNode())
-                        .toList();
-
-                final List<INodeEntry> rundeckNodes = FluentIterable.from(puppetNodes)
-                        .transform(mapper.withFixedMapping(mapping))
-                        .filter(new Predicate<Optional<INodeEntry>>() {
-                            @Override
-                            public boolean apply(final Optional<INodeEntry> input) {
-                                return input.isPresent();
-                            }
-                        })
-                        .transform(new Function<Optional<INodeEntry>, INodeEntry>() {
-                            @Override
-                            public INodeEntry apply(final Optional<INodeEntry> input) {
-                                return input.get();
-                            }
-                        })
-                        .toList();
-
-                final NodeSetImpl nodeSet = new NodeSetImpl();
-                nodeSet.putNodes(rundeckNodes);
-                return nodeSet;
-            }
-        };
+        return new PuppetDBResourceModelSource(puppetAPI, mapper, mapping);
     }
+
 
     @Override
     public Description getDescription() {
