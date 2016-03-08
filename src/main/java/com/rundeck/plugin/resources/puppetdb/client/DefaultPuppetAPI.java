@@ -1,12 +1,10 @@
 package com.rundeck.plugin.resources.puppetdb.client;
 
 import static java.lang.String.format;
-import static java.util.Collections.emptyList;
 
 import java.io.IOException;
 import java.util.*;
 
-import com.codahale.metrics.Counter;
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;
@@ -21,6 +19,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
@@ -65,38 +64,9 @@ public class DefaultPuppetAPI extends PuppetAPI implements Constants {
 
     @Override
     public List<Node> getNodes() {
-        final CloseableHttpClient httpclient = puppetProtocol.equals(HTTPS)
-                                               ? getHttpsClient()
-                                               : new DefaultHttpClient();
-
-        String url = "pdb/query/v4/nodes" +
-                     ((puppetNodeQuery != null && !puppetNodeQuery.trim().isEmpty())
-                      ? ("?query=") + puppetNodeQuery
-                      : "");
+        String url = "pdb/query/v4/nodes" + getUserQuery();
         final HttpGet httpGet = new HttpGet(getBaseUrl(url));
-
-        LOG.debug(format("GET %s", url));
-        requestCounter();
-        try (final CloseableHttpResponse response = httpclient.execute(httpGet)) {
-            final int statusCode = response.getStatusLine().getStatusCode();
-            final boolean ok = statusCode == HttpStatus.SC_OK;
-
-            if (!ok) {
-                errorsCounter();
-                LOG.warn(format("getNodes() ended with status code: %d msg: %s", statusCode, streamToString(response)));
-                return emptyList();
-            }
-
-            final HttpEntity entity = response.getEntity();
-            final String responseBody = EntityUtils.toString(entity);
-
-            return GSON.fromJson(responseBody, Node.LIST);
-        } catch (final IOException ex) {
-            errorsCounter();
-            LOG.warn("exception while trying to fetch nodes from PuppetDB API, import will return 0 nodes ", ex);
-        }
-
-        return emptyList();
+        return makeRequest(httpGet, Node.listParser(GSON), Collections.<Node>emptyList(), "getNodes()");
     }
 
     Function<String, List<NodeFact>> singleFact() {
@@ -121,18 +91,29 @@ public class DefaultPuppetAPI extends PuppetAPI implements Constants {
     }
 
     public List<NodeFact> getFactForAllNodes(String fact) {
+        String path = "pdb/query/v4/facts/%s"+ getUserQuery();
+        String url = format(path, fact);
+        final HttpGet httpGet = new HttpGet(getBaseUrl(url));
+
+        return makeRequest(httpGet, NodeFact.parser(GSON), Collections.<NodeFact>emptyList(), "getFactForAllNodes()");
+    }
+
+    private String getUserQuery() {
+        return (puppetNodeQuery != null && !puppetNodeQuery.trim().isEmpty())
+         ? ("?query=") + puppetNodeQuery
+         : "";
+    }
+
+    public <T> T makeRequest(
+            final HttpUriRequest httpGet,
+            Function<String, T> parser,
+            T errResponse, final String name
+    ){
         final CloseableHttpClient httpclient = puppetProtocol.equals(HTTPS)
                                                ? getHttpsClient()
                                                : new DefaultHttpClient();
 
-        String path = "pdb/query/v4/facts/%s"+
-                      ((puppetNodeQuery != null && !puppetNodeQuery.trim().isEmpty())
-                       ? ("?query=") + puppetNodeQuery
-                       : "");
-        String url = format(path, fact);
-        final HttpGet httpGet = new HttpGet(getBaseUrl(url));
-
-        LOG.debug(format("GET %s", url));
+        LOG.debug(format("GET %s", httpGet.getURI()));
         requestCounter();
         try (final CloseableHttpResponse response = httpclient.execute(httpGet)) {
             final int statusCode = response.getStatusLine().getStatusCode();
@@ -140,20 +121,19 @@ public class DefaultPuppetAPI extends PuppetAPI implements Constants {
 
             if (!ok) {
                 errorsCounter();
-                LOG.warn(format("getNodes() ended with status code: %d msg: %s", statusCode, streamToString(response)));
-                return emptyList();
+                LOG.warn(format(name + " ended with status code: %d msg: %s", statusCode, streamToString(response)));
+                return errResponse;
             }
 
             final HttpEntity entity = response.getEntity();
             final String responseBody = EntityUtils.toString(entity);
 
-            return GSON.fromJson(responseBody, NodeFact.LIST);
+            return parser.apply(responseBody);
         } catch (final IOException ex) {
             errorsCounter();
-            LOG.warn("exception while trying to fetch nodes from PuppetDB API, import will return 0 nodes ", ex);
+            LOG.warn(name + " exception while trying to request PuppetDB API: "+ex.getMessage(), ex);
         }
-
-        return emptyList();
+        return errResponse;
     }
 
     private void errorsCounter() {
@@ -172,108 +152,23 @@ public class DefaultPuppetAPI extends PuppetAPI implements Constants {
 
     @Override
     public List<NodeClass> getClassesForNode(final Node node) {
-        final CloseableHttpClient httpclient = puppetProtocol.equals(HTTPS)
-                                               ? getHttpsClient()
-                                               : new DefaultHttpClient();
         final String url = format(getBaseUrl("pdb/query/v4/nodes/%s/resources/Class"), node.getCertname());
         final HttpGet httpGet = new HttpGet(url);
-        LOG.debug(format("GET %s", url));
-        requestCounter();
-        try (final CloseableHttpResponse response = httpclient.execute(httpGet)) {
-            final int statusCode = response.getStatusLine().getStatusCode();
-            final boolean ok = statusCode == HttpStatus.SC_OK;
-
-            if (!ok) {
-                final String statusMsg = streamToString(response);
-                LOG.warn(format(
-                        "getClasses(%s) ended with status code: %d msg: %s",
-                        node.getCertname(),
-                        statusCode,
-                        statusMsg
-                ));
-                return emptyList();
-            }
-
-            final HttpEntity entity = response.getEntity();
-            final String responseBody = EntityUtils.toString(entity);
-
-            return GSON.fromJson(responseBody, NodeClass.LIST);
-        } catch (IOException e) {
-            LOG.warn("while getClasses()", e);
-        }
-
-        return emptyList();
+        return makeRequest(httpGet, NodeClass.parser(GSON), Collections.<NodeClass>emptyList(), "getClassesForNode()");
     }
 
     public List<CertNodeClass> getClassesForAllNodes() {
-        final CloseableHttpClient httpclient = puppetProtocol.equals(HTTPS)
-                                               ? getHttpsClient()
-                                               : new DefaultHttpClient();
-        String path = "pdb/query/v4/resources/Class"+
-                      ((puppetNodeQuery != null && !puppetNodeQuery.trim().isEmpty())
-                       ? ("?query=") + puppetNodeQuery
-                       : "");
+        String path = "pdb/query/v4/resources/Class" + getUserQuery();
         final String url = getBaseUrl(path);
         final HttpGet httpGet = new HttpGet(url);
-        LOG.debug(format("GET %s", url));
-        requestCounter();
-        try (final CloseableHttpResponse response = httpclient.execute(httpGet)) {
-            final int statusCode = response.getStatusLine().getStatusCode();
-            final boolean ok = statusCode == HttpStatus.SC_OK;
-
-            if (!ok) {
-                final String statusMsg = streamToString(response);
-                LOG.warn(format(
-                        "getClasses ended with status code: %d msg: %s",
-                        statusCode,
-                        statusMsg
-                ));
-                return emptyList();
-            }
-
-            final HttpEntity entity = response.getEntity();
-            final String responseBody = EntityUtils.toString(entity);
-
-            return GSON.fromJson(responseBody, CertNodeClass.LIST);
-        } catch (IOException e) {
-            LOG.warn("while getClasses()", e);
-        }
-
-        return emptyList();
+        return makeRequest(httpGet, CertNodeClass.listParser(GSON), Collections.<CertNodeClass>emptyList(), "getClassesForAllNodes()");
     }
 
     @Override
     public List<Fact> getFactsForNode(final Node node) {
-        final CloseableHttpClient httpclient = puppetProtocol.equals(HTTPS)
-                                               ? getHttpsClient()
-                                               : new DefaultHttpClient();
         final String url = format(getBaseUrl("pdb/query/v4/nodes/%s/facts"), node.getCertname());
         final HttpGet httpGet = new HttpGet(url);
-        LOG.debug(format("GET %s", url));
-        requestCounter();
-        try (final CloseableHttpResponse response = httpclient.execute(httpGet)) {
-            final int statusCode = response.getStatusLine().getStatusCode();
-            final boolean ok = statusCode == HttpStatus.SC_OK;
-
-            if (!ok) {
-                LOG.warn(format(
-                        "getFacts(%s) ended with status code: %d msg: %s",
-                        node.getCertname(),
-                        statusCode,
-                        streamToString(response)
-                ));
-                return emptyList();
-            }
-
-            final HttpEntity entity = response.getEntity();
-            final String responseBody = EntityUtils.toString(entity);
-
-            return GSON.fromJson(responseBody, Fact.LIST);
-        } catch (IOException e) {
-            LOG.warn("while getFacts()", e);
-        }
-
-        return emptyList();
+        return makeRequest(httpGet, Fact.listParser(GSON), Collections.<Fact>emptyList(), "getFactsForNode()");
     }
 
     private CloseableHttpClient getHttpsClient() {

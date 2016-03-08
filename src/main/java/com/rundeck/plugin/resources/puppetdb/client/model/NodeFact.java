@@ -1,6 +1,8 @@
 package com.rundeck.plugin.resources.puppetdb.client.model;
 
+import com.google.common.base.Function;
 import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -11,6 +13,16 @@ import java.util.List;
 public class NodeFact extends Fact implements Certname {
     public static final Type LIST = new TypeToken<List<NodeFact>>() {
     }.getType();
+
+    public static Function<String, List<NodeFact>> parser(final Gson gson) {
+        return new Function<String, List<NodeFact>>() {
+            @Override
+            public List<NodeFact> apply(final String input) {
+                return gson.fromJson(input, NodeFact.LIST);
+            }
+
+        };
+    }
 
     private String certname;
 
