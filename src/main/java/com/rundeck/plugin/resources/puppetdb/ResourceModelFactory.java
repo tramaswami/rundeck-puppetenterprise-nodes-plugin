@@ -54,7 +54,7 @@ import org.apache.log4j.Logger;
 @Plugin(name = "puppet-enterprise", service = "ResourceModelSource")
 public class ResourceModelFactory implements ResourceModelSourceFactory, Describable, Constants {
 
-    private static MetricRegistry MAPPER = new MetricRegistry();
+    private static MetricRegistry METRICS = new MetricRegistry();
     private static Logger log = Logger.getLogger(ResourceModelFactory.class);
 
     private final Framework framework;
@@ -64,7 +64,7 @@ public class ResourceModelFactory implements ResourceModelSourceFactory, Describ
     public ResourceModelFactory(final Framework framework) {
         this.framework = framework;
         this.gson = new Gson();
-        this.metrics = MAPPER;
+        this.metrics = METRICS;
     }
 
     private void attachConsoleReporter(final MetricRegistry metrics, final Properties properties) {
