@@ -297,6 +297,11 @@ public class Mapper implements Constants {
             Map<String, Object> attrs = (Map<String, Object>) attributes;
             results.addAll(mappingFactNames(FluentIterable.from(attrs.values()).toList()));
         }
+        Object tags = mapping.get("tags");
+        if (tags != null && tags instanceof Map) {
+            Map<String, Object> attrs = (Map<String, Object>) attributes;
+            results.addAll(mappingFactNames(FluentIterable.from(attrs.values()).toList()));
+        }
 
         return results;
     }
