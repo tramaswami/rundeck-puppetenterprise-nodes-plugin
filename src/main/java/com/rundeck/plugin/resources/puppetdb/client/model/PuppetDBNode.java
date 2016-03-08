@@ -12,7 +12,7 @@ public class PuppetDBNode {
     private final List<String> classes;
 
     public PuppetDBNode(final Node node,
-                        final List<Fact> facts,
+                        final List<? extends Fact> facts,
                         final List<NodeClass> nodeClasses) {
         this.node = node;
 
