@@ -1,17 +1,5 @@
 package com.rundeck.plugin.resources.puppetdb;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.io.InputStream;
-import java.lang.reflect.Type;
-import java.util.*;
-import java.util.Map.Entry;
-
-import com.rundeck.plugin.resources.puppetdb.client.model.*;
-import org.junit.Before;
-import org.junit.Test;
-
 import com.dtolabs.rundeck.core.common.INodeEntry;
 import com.google.common.base.Optional;
 import com.google.common.collect.FluentIterable;
@@ -19,8 +7,21 @@ import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.rundeck.plugin.resources.puppetdb.client.PuppetAPI;
+import com.rundeck.plugin.resources.puppetdb.client.model.*;
+import org.junit.Before;
+import org.junit.Test;
 
-public class UT_Mapper_simple {
+import java.io.InputStream;
+import java.lang.reflect.Type;
+import java.util.*;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+/**
+ * Created by greg on 3/7/16.
+ */
+public class TestLargeNodes {
 
     Mapper mapper;
 
@@ -37,10 +38,10 @@ public class UT_Mapper_simple {
 
     @Test
     public void test_known_mapping() {
-        this.mapping = getMapping("simple/known_mapping.json"); 
+        this.mapping = getMapping("simple/known_mapping.json");
         final ImmutableList<PuppetDBNode> nodesWithFacts = FluentIterable.from(testApi.getNodes())
-                .transform(testApi.queryNode())
-                .toList();
+                                                                         .transform(testApi.queryNode())
+                                                                         .toList();
 
         final PuppetDBNode puppetDBNode = nodesWithFacts.get(0);
 
@@ -55,11 +56,12 @@ public class UT_Mapper_simple {
     @Test
     public void test_known_mapping_with_missing_property() {
         this.mapping = getMapping("simple/known_mapping_with_missing_property.json");
-
+        long now = System.currentTimeMillis();
         final ImmutableList<PuppetDBNode> nodesWithFacts = FluentIterable.from(testApi.getNodes())
-                .transform(testApi.queryNode())
-                .toList();
+                                                                         .transform(testApi.queryNode())
+                                                                         .toList();
 
+        System.out.println("dur " + (System.currentTimeMillis() - now));
         final PuppetDBNode puppetDBNode = nodesWithFacts.get(0);
 
         final Optional<INodeEntry> maybeNode = mapper.apply(puppetDBNode, mapping);
@@ -68,7 +70,7 @@ public class UT_Mapper_simple {
         assertTrue("maybeNode should be present", maybeNode.isPresent());
         assertEquals("nodeEntry.hostname should be 100.112.162.79", "100.112.162.79", nodeEntry.getHostname());
         assertEquals("nodeEntry.username should be username", "username", nodeEntry.getUsername());
-        for (Entry<String, String> e : nodeEntry.getAttributes().entrySet()) {
+        for (Map.Entry<String, String> e : nodeEntry.getAttributes().entrySet()) {
             assertTrue(e != null);
             assertTrue(e.getKey() != null);
             assertTrue(e.getValue() != null);
@@ -76,7 +78,7 @@ public class UT_Mapper_simple {
         for (Object o : nodeEntry.getTags()) {
             assertTrue(o != null);
         }
-        
+
         assertTrue(nodeEntry.getDescription() != null);
         //assertTrue(nodeEntry.getFrameworkProject() != null);
         assertTrue(nodeEntry.getNodename() != null);
@@ -105,11 +107,23 @@ public class UT_Mapper_simple {
 
             @Override
             public List<Node> getNodes() {
-                return gson.fromJson(readFile("simple/nodes.json"), Node.LIST);
+//                try {
+//                    System.out.println("getNodes...");
+//                    Thread.sleep(1000);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+                return gson.fromJson(readFile("large/nodes.json"), Node.LIST);
             }
 
             @Override
             public List<Fact> getFactsForNode(final Node node) {
+//                try {
+//                    System.out.println("getFactsForNode...");
+//                    Thread.sleep(1000);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
                 return gson.fromJson(readFile("simple/facts.json"), Fact.LIST);
             }
 
@@ -121,8 +135,10 @@ public class UT_Mapper_simple {
     }
 
     public String readFile(final String name) {
-        try (final InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(name);
-                final Scanner scanner = new Scanner(inputStream)) {
+        try (
+                final InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(name);
+                final Scanner scanner = new Scanner(inputStream)
+        ) {
             scanner.useDelimiter("\\Z");
             return scanner.next();
         } catch (Exception ex) {

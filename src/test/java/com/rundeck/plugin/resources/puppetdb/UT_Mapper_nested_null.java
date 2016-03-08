@@ -6,11 +6,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
 import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Scanner;
+import java.util.*;
 
+import com.rundeck.plugin.resources.puppetdb.client.model.*;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -20,10 +18,6 @@ import com.google.common.collect.FluentIterable;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.rundeck.plugin.resources.puppetdb.client.PuppetAPI;
-import com.rundeck.plugin.resources.puppetdb.client.model.Fact;
-import com.rundeck.plugin.resources.puppetdb.client.model.Node;
-import com.rundeck.plugin.resources.puppetdb.client.model.NodeClass;
-import com.rundeck.plugin.resources.puppetdb.client.model.PuppetDBNode;
 
 public class UT_Mapper_nested_null {
 
@@ -77,6 +71,11 @@ public class UT_Mapper_nested_null {
         final List<NodeClass> classes = gson.fromJson(readFile(prefix + "/classes.json"), NodeClass.LIST);
 
         return new PuppetAPI() {
+            @Override
+            public List<NodeFact> getFactSet(final Set<String> facts) {
+                return null;
+            }
+
             @Override
             public List<Node> getNodes() {
                 return nodes;
