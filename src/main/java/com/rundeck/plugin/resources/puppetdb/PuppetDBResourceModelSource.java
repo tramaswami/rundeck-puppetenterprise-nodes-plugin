@@ -59,26 +59,30 @@ class PuppetDBResourceModelSource implements ResourceModelSource {
                                                              .transform(puppetAPI.queryNodeWithFacts(factSet,nodeClasses))
                                                              .toList();
 
-        final List<INodeEntry> rundeckNodes = FluentIterable.from(puppetNodes)
-                                                            .transform(mapper.withFixedMapping(mapping))
-                                                            .filter(new Predicate<Optional<INodeEntry>>() {
-                                                                @Override
-                                                                public boolean apply(final Optional<INodeEntry> input) {
-                                                                    return input.isPresent();
-                                                                }
-                                                            })
-                                                            .transform(new Function<Optional<INodeEntry>, INodeEntry>() {
-
-                                                                @Override
-                                                                public INodeEntry apply(final Optional<INodeEntry>
-                                                                                                input) {
-                                                                    return input.get();
-                                                                }
-                                                            })
-                                                            .toList();
+        final List<INodeEntry> rundeckNodes = convertNodes(puppetNodes);
 
         final NodeSetImpl nodeSet = new NodeSetImpl();
         nodeSet.putNodes(rundeckNodes);
         return nodeSet;
+    }
+
+    private List<INodeEntry> convertNodes(final List<PuppetDBNode> puppetNodes) {
+        return FluentIterable.from(puppetNodes)
+                             .transform(mapper.withFixedMapping(mapping))
+                             .filter(new Predicate<Optional<INodeEntry>>() {
+                                                                    @Override
+                                                                    public boolean apply(final Optional<INodeEntry> input) {
+                                                                        return input.isPresent();
+                                                                    }
+                                                                })
+                             .transform(new Function<Optional<INodeEntry>, INodeEntry>() {
+
+                                                                    @Override
+                                                                    public INodeEntry apply(final Optional<INodeEntry>
+                                                                                                    input) {
+                                                                        return input.get();
+                                                                    }
+                                                                })
+                             .toList();
     }
 }

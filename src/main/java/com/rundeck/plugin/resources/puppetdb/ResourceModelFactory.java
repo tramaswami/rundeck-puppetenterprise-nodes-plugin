@@ -47,6 +47,7 @@ import com.dtolabs.rundeck.core.resources.ResourceModelSource;
 import com.dtolabs.rundeck.core.resources.ResourceModelSourceFactory;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.rundeck.plugin.resources.puppetdb.client.DefaultHTTP;
 import com.rundeck.plugin.resources.puppetdb.client.DefaultPuppetAPI;
 import com.rundeck.plugin.resources.puppetdb.client.PuppetAPI;
 import org.apache.log4j.Logger;
@@ -108,8 +109,15 @@ public class ResourceModelFactory implements ResourceModelSourceFactory, Describ
             final String message = format(template, PROVIDER_NAME, missingPropertiesNames);
             throw new ConfigurationException(message);
         }
+        DefaultHTTP defaultHTTP = createHTTP(properties, metrics);
+        return new DefaultPuppetAPI(defaultHTTP, PropertyHandling.readPuppetDbQuery(properties).orNull());
+    }
 
-        return new DefaultPuppetAPI(properties, metrics);
+    public static DefaultHTTP createHTTP(final Properties properties, final MetricRegistry metrics) {
+        String puppetSslDir = properties.getProperty(PROPERTY_PUPPETDB_SSL_DIR);
+        String puppetHost = properties.getProperty(PROPERTY_PUPPETDB_HOST);
+        String puppetPort = properties.getProperty(PROPERTY_PUPPETDB_PORT);
+        return new DefaultHTTP(puppetHost, puppetPort, puppetSslDir, metrics);
     }
 
     public Map<String, Object> getMapping(final Properties properties) {
