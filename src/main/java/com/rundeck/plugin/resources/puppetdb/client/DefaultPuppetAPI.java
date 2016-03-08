@@ -277,8 +277,16 @@ public class DefaultPuppetAPI extends PuppetAPI implements Constants {
         return emptyList();
     }
 
-    private DefaultHttpClient getHttpsClient() {
-        Provider<SSLSocketFactory> provider = new PEM_SSLSocketFactoryProvider(puppetHost, Integer.parseInt(puppetPort), puppetSslDir);
+    private CloseableHttpClient getHttpsClient() {
+        return origGetHttpsClient();
+    }
+
+    private CloseableHttpClient origGetHttpsClient() {
+        Provider<SSLSocketFactory> provider = new PEM_SSLSocketFactoryProvider(
+                puppetHost,
+                Integer.parseInt(puppetPort),
+                puppetSslDir
+        );
         SSLSocketFactory sf = provider.get();
 
         SchemeRegistry registry = new SchemeRegistry();
@@ -287,6 +295,18 @@ public class DefaultPuppetAPI extends PuppetAPI implements Constants {
         ClientConnectionManager ccm = new PoolingClientConnectionManager(registry);
 
         return new DefaultHttpClient(ccm);
+    }
+
+    private CloseableHttpClient getHttpsClient2() {
+        HttpClientBuilder builder = HttpClientBuilder.create()
+                                                     .setSSLSocketFactory(new PEM_SSLSocketFactoryProvider(
+                                                             puppetHost,
+                                                             Integer.parseInt(puppetPort),
+                                                             puppetSslDir
+                                                     ).get());
+        builder.setSchemePortResolver(new DefaultSchemePortResolver());
+        builder.setConnectionManager(new PoolingHttpClientConnectionManager());
+        return builder.build();
     }
 
 }
