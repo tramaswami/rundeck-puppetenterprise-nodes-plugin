@@ -8,6 +8,7 @@ build/
 ssl/
 /.nb-gradle/
 !/src/main/java/com/puppetlabs/puppetdb/javaclient/ssl/
+/out
 
 .classpath
 .project
