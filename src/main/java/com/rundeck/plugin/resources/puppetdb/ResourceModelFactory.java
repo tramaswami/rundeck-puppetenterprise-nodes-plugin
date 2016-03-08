@@ -85,7 +85,12 @@ public class ResourceModelFactory implements ResourceModelSourceFactory, Describ
         final Mapper mapper = new Mapper(properties);
         final Map<String, Object> mapping = getMapping(properties);
 
-        return new PuppetDBResourceModelSource(puppetAPI, mapper, mapping);
+        return new PuppetDBResourceModelSource(
+                puppetAPI,
+                mapper,
+                mapping,
+                "true".equals(properties.getProperty(PROPERTY_INCLUDE_CLASSES))
+        );
     }
 
 
