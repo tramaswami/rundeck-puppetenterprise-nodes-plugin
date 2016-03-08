@@ -23,36 +23,39 @@
  */
 package com.rundeck.plugin.resources.puppetdb;
 
-import static java.lang.String.format;
-import static java.util.Arrays.asList;
-
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-
-import org.apache.commons.beanutils.NestedNullException;
-import org.apache.commons.beanutils.PropertyUtilsBean;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
-
 import com.dtolabs.rundeck.core.common.INodeEntry;
 import com.dtolabs.rundeck.core.common.NodeEntryImpl;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.ImmutableList;
 import com.rundeck.plugin.resources.puppetdb.client.model.PuppetDBNode;
+import org.apache.commons.beanutils.NestedNullException;
+import org.apache.commons.beanutils.PropertyUtilsBean;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.log4j.Logger;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
+import java.util.regex.Pattern;
+
+import static java.lang.String.format;
+import static java.util.Arrays.asList;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  *
  */
 public class Mapper implements Constants {
 
+    public static final Predicate<Object> IS_MAP_PREDICATE = new Predicate<Object>() {
+        @Override
+        public boolean apply(final Object input) {
+            return input instanceof Map;
+        }
+    };
     private static Logger log = Logger.getLogger(ResourceModelFactory.class);
 
     private final Properties properties;
@@ -268,4 +271,109 @@ public class Mapper implements Constants {
         };
     }
 
+    public Set<String> determineFactNames(final Map<String, Object> mapping) {
+        Set<String> results = new HashSet<>();
+        ImmutableList<Object> nonAttributes = FluentIterable.from(mapping.entrySet())
+                                                                         .filter(new Predicate<Map.Entry<String,
+                                                                                 Object>>() {
+                                                                                     @Override
+                                                                                     public boolean apply(
+                                                                                             final Map.Entry<String,
+                                                                                                     Object> input
+                                                                                     )
+                                                                                     {
+                                                                                         return !input.getKey().equals(
+                                                                                                 "attributes") &&
+                                                                                                !input.getKey().equals
+                                                                                                        ("tags");
+                                                                                     }
+                                                                                 }
+                                                                         ).
+                        transform(
+                                new Function<Map.Entry<String,Object>, Object>() {
+                                    @Override
+                                    public Object apply(final Map.Entry<String, Object> input) {
+                                        return input.getValue();
+                                    }
+                                }
+                        ).toList();
+        results.addAll(mappingFactNames(nonAttributes));
+
+        Object attributes = mapping.get("attributes");
+        if (attributes != null && attributes instanceof Map) {
+            Map<String, Object> attrs = (Map<String, Object>) attributes;
+            results.addAll(mappingFactNames(FluentIterable.from(attrs.values()).toList()));
+        }
+
+        return results;
+    }
+    public Set<String> mappingFactNames(List<Object> input){
+        return FluentIterable.from(input)
+                      .filter(IS_MAP_PREDICATE)
+                             .transform(castToMap())
+                             .filter(containsKeyPredicate("path"))
+                             .transform(mapValue("path"))
+                             .filter(startsWithPredicate("facts."))
+                             .transform(substring("facts.".length()))
+                             .transform(firstPart("."))
+                             .toSet();
+    }
+
+    private Function<String, String> firstPart(final String separator) {
+        return new Function<String, String>() {
+            @Override
+            public String apply(final String input) {
+                if(input.contains(separator)){
+                    return input.substring(0,input.indexOf(separator));
+                }else{
+                    return input;
+                }
+            }
+        };
+    }
+
+    private Function<Object, Map<String, String>> castToMap() {
+        return new Function<Object, Map<String, String>>() {
+            @Override
+            public Map<String, String> apply(final Object input) {
+                return (Map<String, String>) input;
+            }
+        };
+    }
+
+    private Function<String, String> substring(final int length) {
+        return new Function<String, String>() {
+            @Override
+            public String apply(final String input) {
+                return input.substring(length);
+            }
+        };
+    }
+
+    private Predicate<String> startsWithPredicate(final String string) {
+        return new Predicate<String>() {
+            @Override
+            public boolean apply(final String input) {
+                return input.startsWith(string);
+            }
+        };
+    }
+
+    private Function<Map<String, String>, String> mapValue(final String key) {
+        return new Function<Map<String, String>, String>() {
+            @Override
+            public String apply(final Map<String, String> input) {
+                return input.get(key);
+            }
+        };
+    }
+
+    private Predicate<Map<String, String>> containsKeyPredicate(final String path) {
+        return new Predicate<Map<String, String>>() {
+            @Override
+            public boolean apply(final Map<String, String> input) {
+                return input.containsKey(path);
+            }
+        };
+    }
 }
