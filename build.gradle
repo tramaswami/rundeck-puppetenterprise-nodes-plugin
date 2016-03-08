@@ -6,6 +6,7 @@ targetCompatibility = 1.7
 
 defaultTasks 'clean', 'build'
 ext.rundeckPluginVersion = '1.1'
+apply plugin: 'groovy'
 
 configurations {
     //declare custom pluginLibs configuration to include only libs for this plugin
@@ -37,6 +38,8 @@ dependencies {
 
     testCompile group: 'junit', name:'junit', version: '4.12'
     testCompile group: 'org.mockito', name: 'mockito-core', version: '1.10.19'
+    testCompile "org.codehaus.groovy:groovy-all:2.3.7"
+    testCompile "org.spockframework:spock-core:0.7-groovy-2.0"
 }
 
 // task to copy plugin libs to output/lib dir
