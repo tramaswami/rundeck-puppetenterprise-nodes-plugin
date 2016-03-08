@@ -15,6 +15,7 @@ public interface Constants {
     String PROPERTY_DEFAULT_NODE_TAG = "PROPERTY_DEFAULT_NODE_TAG";
     String PROPERTY_NODE_QUERY = "PROPERTY_NODE_QUERY";
     String PROPERTY_METRICS_INTERVAL = "PROPERTY_METRICS_INTERVAL";
+    String PROPERTY_INCLUDE_CLASSES = "PROPERTY_INCLUDE_CLASSES";
 
     boolean PROPERTY_IS_REQUIRED = true;
     boolean PROPERTY_IS_OPTIONAL = false;
@@ -33,6 +34,10 @@ public interface Constants {
             .property(PropertyUtil.string(PROPERTY_MAPPING_FILE, "Mapping JSON", "JSON File describing mapping between PuppetDB Data and Rundeck Data", PROPERTY_IS_OPTIONAL, ""))
             .property(PropertyUtil.string(PROPERTY_DEFAULT_NODE_TAG, "Default tag for imported nodes", "By default, this plugin ignores imported nodes without tags. Tags are PuppetDB classes, to avoid this set a default tag", PROPERTY_IS_OPTIONAL, ""))
             .property(PropertyUtil.integer(PROPERTY_METRICS_INTERVAL, "Metrics logging interval", "Log the codahale metrics to the service.log file at the specified minute interval (no logging if unset).", false, "15"))
+            .property(PropertyUtil.bool(PROPERTY_INCLUDE_CLASSES, "Include Classes",
+                                        "If false, don't query for class names to be used as tags.",
+                                        false,
+                                        "false"))
             .build();
 
 }
