@@ -8,6 +8,7 @@ import java.lang.reflect.Type;
 import java.util.*;
 import java.util.Map.Entry;
 
+import com.rundeck.plugin.resources.puppetdb.client.PuppetDB;
 import com.rundeck.plugin.resources.puppetdb.client.model.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,16 +31,18 @@ public class UT_Mapper_simple {
 
     @Before
     public void before() {
-        this.mapper = new Mapper(new Properties());
+        this.mapper = new Mapper(Optional.<String>absent());
         this.gson = new Gson();
         this.testApi = testApi();
     }
 
     @Test
     public void test_known_mapping() {
-        this.mapping = getMapping("simple/known_mapping.json"); 
-        final ImmutableList<PuppetDBNode> nodesWithFacts = FluentIterable.from(testApi.getNodes())
-                .transform(testApi.queryNode())
+        this.mapping = getMapping("simple/known_mapping.json");
+        PuppetDB db = new PuppetDB(testApi);
+        final ImmutableList<PuppetDBNode> nodesWithFacts = FluentIterable
+                .from(testApi.getNodes(null))
+                .transform(db.queryNode())
                 .toList();
 
         final PuppetDBNode puppetDBNode = nodesWithFacts.get(0);
@@ -55,9 +58,9 @@ public class UT_Mapper_simple {
     @Test
     public void test_known_mapping_with_missing_property() {
         this.mapping = getMapping("simple/known_mapping_with_missing_property.json");
-
-        final ImmutableList<PuppetDBNode> nodesWithFacts = FluentIterable.from(testApi.getNodes())
-                .transform(testApi.queryNode())
+        PuppetDB db = new PuppetDB(testApi);
+        final ImmutableList<PuppetDBNode> nodesWithFacts = FluentIterable.from(testApi.getNodes(null))
+                .transform(db.queryNode())
                 .toList();
 
         final PuppetDBNode puppetDBNode = nodesWithFacts.get(0);
@@ -99,17 +102,17 @@ public class UT_Mapper_simple {
     public PuppetAPI testApi() {
         return new PuppetAPI() {
             @Override
-            public List<CertNodeClass> getClassesForAllNodes() {
+            public List<CertNodeClass> getClassesForAllNodes(final String userQuery) {
                 return null;
             }
 
             @Override
-            public List<NodeFact> getFactSet(final Set<String> facts) {
+            public List<NodeFact> getFactSet(final Set<String> facts, final String userQuery) {
                 return null;
             }
 
             @Override
-            public List<Node> getNodes() {
+            public List<Node> getNodes(final String userQuery) {
                 return gson.fromJson(readFile("simple/nodes.json"), Node.LIST);
             }
 

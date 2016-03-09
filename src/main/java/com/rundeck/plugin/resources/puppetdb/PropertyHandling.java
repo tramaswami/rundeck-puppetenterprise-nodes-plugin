@@ -28,19 +28,19 @@ public final class PropertyHandling implements Constants {
 
     private PropertyHandling() {}
 
-    public static Optional<String> readPuppetDbQuery(final Properties properties) {
-        try {
-            if (properties.getProperty(PROPERTY_NODE_QUERY) == null) {
-                return absent();
-            }
-
-            final String query = URLEncoder.encode(properties.getProperty(PROPERTY_NODE_QUERY), java.nio.charset.StandardCharsets.UTF_8.toString());
-            return Optional.of(query);
-        } catch (UnsupportedEncodingException ex) {
-            LOG.warn(format("Error while reading property: %s", getPropertyTitle(PROPERTY_NODE_QUERY, PROPERTY_NODE_QUERY)), ex);
+    public static Optional<String> optionalString(final Properties properties,String propertyName) {
+        final String value = properties.getProperty(propertyName, "");
+        if (isBlank(value)) {
+            return Optional.absent();
         }
 
-        return absent();
+        return Optional.of(value);
+    }
+    public static Optional<String> readDefaultNodeTag(final Properties properties) {
+        return optionalString(properties, PROPERTY_DEFAULT_NODE_TAG);
+    }
+    public static Optional<String> readPuppetDbQuery(final Properties properties) {
+        return optionalString(properties, PROPERTY_NODE_QUERY);
     }
 
     public static String getPropertyTitle(final String propertyName, final String defaultTitle) {
@@ -109,4 +109,11 @@ public final class PropertyHandling implements Constants {
     }
 
 
+    public static boolean readBoolean(final Properties properties, final String name, final boolean defval) {
+        String property = properties.getProperty(PROPERTY_INCLUDE_CLASSES);
+        if(null==property){
+            return defval;
+        }
+        return "true".equals(property);
+    }
 }

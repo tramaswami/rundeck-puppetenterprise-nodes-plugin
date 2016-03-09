@@ -46,7 +46,6 @@ public class DefaultHTTP implements HTTP {
     )
     {
         this.puppetProtocol = puppetSslDir == null ? HTTP : HTTPS;
-        ;
         this.puppetHost = puppetHost;
         this.puppetPort = puppetPort;
         this.puppetSslDir = puppetSslDir;
@@ -64,10 +63,7 @@ public class DefaultHTTP implements HTTP {
     }
 
     @Override
-    public <T> T makeRequest(
-            final String path, Function<String, T> parser,
-            T errResponse, final String name
-    )
+    public <T> T makeRequest(final String path, Function<String, T> parser, T errResult, final String name)
     {
         HttpGet get = mkGet(path);
         final CloseableHttpClient httpclient = getClient();
@@ -80,26 +76,20 @@ public class DefaultHTTP implements HTTP {
 
             if (!ok) {
                 errorsCounter();
-                LOG.warn(format(name + " ended with status code: %d msg: %s", statusCode, streamToString(response)));
-                return errResponse;
+                LOG.warn(format(name + " ended with status code: %d msg: %s", statusCode,
+                                EntityUtils.toString(response.getEntity())
+                ));
+                return errResult;
             }
 
-            final HttpEntity entity = response.getEntity();
-            final String responseBody = EntityUtils.toString(entity);
+            final String responseBody = EntityUtils.toString(response.getEntity());
 
             return parser.apply(responseBody);
         } catch (final IOException ex) {
             errorsCounter();
             LOG.warn(name + " exception while trying to request PuppetDB API: " + ex.getMessage(), ex);
         }
-        return errResponse;
-    }
-
-    private static String streamToString(final CloseableHttpResponse response) throws IOException {
-        final java.io.InputStream is = response.getEntity().getContent();
-        try (java.util.Scanner s = new java.util.Scanner(is)) {
-            return s.useDelimiter("\\A").hasNext() ? s.next() : "";
-        }
+        return errResult;
     }
 
     CloseableHttpClient getClient() {

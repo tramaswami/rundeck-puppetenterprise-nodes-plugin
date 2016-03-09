@@ -1,6 +1,8 @@
 package com.rundeck.plugin.resources.puppetdb
 
+import com.google.common.base.Optional
 import com.rundeck.plugin.resources.puppetdb.client.PuppetAPI
+import com.rundeck.plugin.resources.puppetdb.client.PuppetDB
 import spock.lang.Specification
 import com.rundeck.plugin.resources.puppetdb.client.model.*
 
@@ -12,14 +14,21 @@ class PuppetDBResourceModelSourceSpec extends Specification {
         given:
         def api = Mock(PuppetAPI)
         def mapping = [:]
-        def Mapper mapper = new Mapper([:] as Properties)
-        def source = new PuppetDBResourceModelSource(api, mapper, mapping, true)
+        def Mapper mapper = new Mapper(Optional.<String>absent())
+        def source = new PuppetDBResourceModelSource(
+                new PuppetDB(api)
+                ,
+                mapper,
+                mapping,
+                true,
+                null
+        )
 
         when:
         def result = source.getNodes()
 
         then:
-        1 * api.getNodes() >> []
+        1 * api.getNodes(_) >> []
         result != null
         result.getNodes().size() == 0
 
@@ -34,8 +43,15 @@ class PuppetDBResourceModelSourceSpec extends Specification {
                 hostname: ["default": "blah"],
                 username: ["default": "user1"]
         ]
-        def Mapper mapper = new Mapper([:] as Properties)
-        def source = new PuppetDBResourceModelSource(api, mapper, mapping, true)
+        def Mapper mapper = new Mapper(Optional.<String>absent())
+        def source = new PuppetDBResourceModelSource(
+                new PuppetDB(api)
+                ,
+                mapper,
+                mapping,
+                true,
+                null
+        )
 
         def node = new Node()
         node.certname = 'test1'
@@ -52,12 +68,9 @@ class PuppetDBResourceModelSourceSpec extends Specification {
         def result = source.getNodes()
 
         then:
-        1 * api.getNodes() >> [node]
-        1 * api.getFactSet(_) >> [nfact]
-        1 * api.getClassesForAllNodes() >> [nclass]
-        1 * api.queryNodeWithFacts(_,_)>> { args ->
-            return {Node n1->resnode}
-        }
+        1 * api.getNodes(_) >> [node]
+        1 * api.getFactSet(_, _) >> [nfact]
+        1 * api.getClassesForAllNodes(_) >> [nclass]
         result!=null
         result.nodeNames.contains("test1")
         result.getNode("test1") != null

@@ -24,10 +24,9 @@ public class UT_DefaultPuppetAPI_InvalidHost implements Constants {
         final MetricRegistry metrics = new MetricRegistry();
         DefaultHTTP http = ResourceModelFactory.createHTTP(properties, metrics);
         final DefaultPuppetAPI defaultPuppetAPI = new DefaultPuppetAPI(
-                http,
-                PropertyHandling.readPuppetDbQuery(properties).orNull()
+                http
         );
-        final List<Node> nodes = defaultPuppetAPI.getNodes();
+        final List<Node> nodes = defaultPuppetAPI.getNodes(null);
 
         assertNotNull("nodes should not be null", nodes);
         assertTrue("nodes should be empty", nodes.isEmpty());

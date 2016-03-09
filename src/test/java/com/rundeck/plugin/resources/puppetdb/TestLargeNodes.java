@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.rundeck.plugin.resources.puppetdb.client.PuppetAPI;
+import com.rundeck.plugin.resources.puppetdb.client.PuppetDB;
 import com.rundeck.plugin.resources.puppetdb.client.model.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,16 +32,17 @@ public class TestLargeNodes {
 
     @Before
     public void before() {
-        this.mapper = new Mapper(new Properties());
+        this.mapper = new Mapper(Optional.<String>absent());
         this.gson = new Gson();
         this.testApi = testApi();
     }
 
     @Test
     public void test_known_mapping() {
+        PuppetDB db = new PuppetDB(testApi);
         this.mapping = getMapping("simple/known_mapping.json");
-        final ImmutableList<PuppetDBNode> nodesWithFacts = FluentIterable.from(testApi.getNodes())
-                                                                         .transform(testApi.queryNode())
+        final ImmutableList<PuppetDBNode> nodesWithFacts = FluentIterable.from(testApi.getNodes(null))
+                                                                         .transform(db.queryNode())
                                                                          .toList();
 
         final PuppetDBNode puppetDBNode = nodesWithFacts.get(0);
@@ -55,10 +57,11 @@ public class TestLargeNodes {
 
     @Test
     public void test_known_mapping_with_missing_property() {
+        PuppetDB db = new PuppetDB(testApi);
         this.mapping = getMapping("simple/known_mapping_with_missing_property.json");
         long now = System.currentTimeMillis();
-        final ImmutableList<PuppetDBNode> nodesWithFacts = FluentIterable.from(testApi.getNodes())
-                                                                         .transform(testApi.queryNode())
+        final ImmutableList<PuppetDBNode> nodesWithFacts = FluentIterable.from(testApi.getNodes(null))
+                                                                         .transform(db.queryNode())
                                                                          .toList();
 
         System.out.println("dur " + (System.currentTimeMillis() - now));
@@ -101,17 +104,17 @@ public class TestLargeNodes {
     public PuppetAPI testApi() {
         return new PuppetAPI() {
             @Override
-            public List<NodeFact> getFactSet(final Set<String> facts) {
+            public List<NodeFact> getFactSet(final Set<String> facts, final String userQuery) {
                 return null;
             }
 
             @Override
-            public List<CertNodeClass> getClassesForAllNodes() {
+            public List<CertNodeClass> getClassesForAllNodes(final String userQuery) {
                 return null;
             }
 
             @Override
-            public List<Node> getNodes() {
+            public List<Node> getNodes(final String userQuery) {
 //                try {
 //                    System.out.println("getNodes...");
 //                    Thread.sleep(1000);

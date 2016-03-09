@@ -9,69 +9,43 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 import com.rundeck.plugin.resources.puppetdb.client.model.*;
 
-public abstract class PuppetAPI {
 
-    public abstract List<Node> getNodes();
-
-    public abstract List<Fact> getFactsForNode(final Node node);
-
-    public abstract List<NodeClass> getClassesForNode(final Node node);
-    public abstract List<CertNodeClass> getClassesForAllNodes();
-    public abstract List<NodeFact> getFactSet(Set<String> facts);
+public interface PuppetAPI {
 
     /**
-     * Create a puppet DB Node by filtering the facts
+     * List all queried nodes
+     * @return
+     * @param userQuery
+     */
+    public List<Node> getNodes(final String userQuery);
+
+    /**
+     * List all facts for node
      * @param node
-     * @param facts
-     * @param nodeClasses1
      * @return
      */
-    public PuppetDBNode getNodeWithFacts(final Node node, final List<NodeFact> facts, final List<CertNodeClass> nodeClasses1) {
-        final List<NodeFact> newfacts = FluentIterable.from(facts).filter(certNameEqualsPredicate(node)).toList();
-        final List<CertNodeClass> classes = FluentIterable.from(nodeClasses1)
-                                                          .filter(certNameEqualsPredicate(node))
-                                                          .toList();
+    public List<Fact> getFactsForNode(final Node node);
 
+    /**
+     * List all classes for node
+     * @param node
+     * @return
+     */
+    public List<NodeClass> getClassesForNode(final Node node);
 
-        return new PuppetDBNode(node, newfacts, classes);
-    }
+    /**
+     * Get classes for all queried nodes
+     * @return
+     * @param userQuery
+     */
+    public List<CertNodeClass> getClassesForAllNodes(final String userQuery);
 
-    private Predicate<Certname> certNameEqualsPredicate(final Certname node) {
-        return new Predicate<Certname>() {
-            @Override
-            public boolean apply(final Certname input) {
-                if (input == null ||
-                    input.getCertname() == null ||
-                    node == null ||
-                    node.getCertname() == null) {
-                    return false;
-                }
-                return node.getCertname().equals(input.getCertname());
-            }
-        };
-    }
-
-    public PuppetDBNode getNodeWithFacts(final Node node) {
-        final List<Fact> facts = getFactsForNode(node);
-        final List<NodeClass> nodeClasses = getClassesForNode(node);
-        return new PuppetDBNode(node, facts, nodeClasses);
-    }
-
-    public Function<Node, PuppetDBNode> queryNodeWithFacts(final List<NodeFact> facts,final List<CertNodeClass> nodeClasses) {
-        return new Function<Node, PuppetDBNode>() {
-            @Override
-            public PuppetDBNode apply(final Node node) {
-                return getNodeWithFacts(node, facts, nodeClasses);
-            }
-        };
-    }
-    public Function<Node, PuppetDBNode> queryNode() {
-        return new Function<Node, PuppetDBNode>() {
-            @Override
-            public PuppetDBNode apply(final Node node) {
-                return getNodeWithFacts(node);
-            }
-        };
-    }
+    /**
+     * Get all selected facts for the queried nodes
+     * @param facts
+     * @param userQuery
+     * @return
+     */
+    public List<NodeFact> getFactSet(Set<String> facts, final String userQuery);
 
 }

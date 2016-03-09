@@ -2,6 +2,8 @@ package com.rundeck.plugin.resources.puppetdb.client;
 
 import static java.lang.String.format;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.*;
 
 import com.google.common.base.Function;
@@ -12,39 +14,37 @@ import com.rundeck.plugin.resources.puppetdb.Constants;
 import com.rundeck.plugin.resources.puppetdb.client.model.*;
 import org.apache.log4j.Logger;
 
-public class DefaultPuppetAPI extends PuppetAPI implements Constants {
+public class DefaultPuppetAPI implements PuppetAPI, Constants {
 
 
     private static final Logger LOG = Logger.getLogger(DefaultPuppetAPI.class);
 
 
-    private final String puppetNodeQuery;
     private final HTTP http;
     private static final Gson GSON = new Gson();
 
-    public DefaultPuppetAPI(final HTTP http, final String puppetNodeQuery) {
-        this.puppetNodeQuery = puppetNodeQuery;
+    public DefaultPuppetAPI(final HTTP http) {
         this.http = http;
     }
 
 
     @Override
-    public List<Node> getNodes() {
-        final String path = mkQuery("pdb/query/v4/nodes", getUserQuery());
+    public List<Node> getNodes(final String userQuery) {
+        final String path = mkQuery("pdb/query/v4/nodes", userQuery);
         return http.makeRequest(path, Node.listParser(GSON), Collections.<Node>emptyList(), "getNodes()");
     }
 
-    Function<String, List<NodeFact>> singleFact() {
+    Function<String, List<NodeFact>> singleFact(final String userQuery) {
         return new Function<String, List<NodeFact>>() {
             @Override
             public List<NodeFact> apply(final String input) {
-                return getFactForAllNodes(input);
+                return getFactForAllNodes(input, userQuery);
             }
         };
     }
 
-    public List<NodeFact> getFactSet(Set<String> facts) {
-        ImmutableList<List<NodeFact>> lists = FluentIterable.from(facts).transform(singleFact()).toList();
+    public List<NodeFact> getFactSet(Set<String> facts, final String userQuery) {
+        ImmutableList<List<NodeFact>> lists = FluentIterable.from(facts).transform(singleFact(userQuery)).toList();
         List<NodeFact> nodeFacts = new ArrayList<>();
         for (List<NodeFact> list : lists) {
             nodeFacts.addAll(list);
@@ -52,12 +52,12 @@ public class DefaultPuppetAPI extends PuppetAPI implements Constants {
         return nodeFacts;
     }
 
-    public List<NodeFact> getFactForAllNodes(String fact) {
-        final String path = mkQuery(format("pdb/query/v4/facts/%s", fact), getUserQuery());
+    public List<NodeFact> getFactForAllNodes(String fact, final String userQuery) {
+        final String path = mkQuery(format("pdb/query/v4/facts/%s", fact), getUserQuery(userQuery));
         return http.makeRequest(path, NodeFact.parser(GSON), Collections.<NodeFact>emptyList(), "getFactForAllNodes()");
     }
 
-    private String getUserQuery() {
+    private String getUserQuery(String puppetNodeQuery) {
         return (puppetNodeQuery != null && !puppetNodeQuery.trim().isEmpty())
                ? ("?query=") + puppetNodeQuery
                : "";
@@ -76,8 +76,8 @@ public class DefaultPuppetAPI extends PuppetAPI implements Constants {
         );
     }
 
-    public List<CertNodeClass> getClassesForAllNodes() {
-        final String path = mkQuery("pdb/query/v4/resources/Class", getUserQuery());
+    public List<CertNodeClass> getClassesForAllNodes(final String userQuery) {
+        final String path = mkQuery("pdb/query/v4/resources/Class", getUserQuery(userQuery));
         return http.makeRequest(
                 path,
                 CertNodeClass.listParser(GSON), Collections.<CertNodeClass>emptyList(), "getClassesForAllNodes()"
@@ -85,7 +85,19 @@ public class DefaultPuppetAPI extends PuppetAPI implements Constants {
     }
 
     private String mkQuery(final String path, String query) {
-        return path + (query != null ? query : "");
+        return path + (query != null ? urlencode(query) : "");
+    }
+
+    private String urlencode(final String query) {
+        if (null == query) {
+            return null;
+        }
+        try {
+            return URLEncoder.encode(query, java.nio.charset.StandardCharsets.UTF_8.toString());
+        } catch (UnsupportedEncodingException e) {
+            LOG.error(e.getMessage(), e);
+        }
+        return null;
     }
 
     @Override

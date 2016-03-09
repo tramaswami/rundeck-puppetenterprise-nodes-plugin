@@ -10,6 +10,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 import com.rundeck.plugin.resources.puppetdb.client.PuppetAPI;
+import com.rundeck.plugin.resources.puppetdb.client.PuppetDB;
 import com.rundeck.plugin.resources.puppetdb.client.model.*;
 
 import java.util.Collections;
@@ -21,68 +22,51 @@ import java.util.Set;
  * Created by greg on 3/7/16.
  */
 class PuppetDBResourceModelSource implements ResourceModelSource {
-    private final PuppetAPI puppetAPI;
     private final Mapper mapper;
     private final Map<String, Object> mapping;
-    private boolean includeClasses;
+    private final boolean includeClasses;
+    private final String userQuery;
+    PuppetDB pdb;
 
     public PuppetDBResourceModelSource(
-            final PuppetAPI puppetAPI,
+            final PuppetDB pdb,
             final Mapper mapper,
             final Map<String, Object> mapping,
-            final boolean includeClasses
+            final boolean includeClasses,
+            final String userQuery
     )
     {
-        this.puppetAPI = puppetAPI;
+        this.pdb = pdb;
         this.mapper = mapper;
         this.mapping = mapping;
         this.includeClasses = includeClasses;
+        this.userQuery = userQuery;
     }
 
     @Override
     public INodeSet getNodes() throws ResourceModelSourceException {
         // get list of nodes without filtering
-        final List<Node> nodes = puppetAPI.getNodes();
+
+        final List<Node> nodes = pdb.getPuppetAPI().getNodes(userQuery);
         if (null == nodes || nodes.isEmpty()) {
             return new NodeSetImpl();
         }
         Set<String> factNames = mapper.determineFactNames(mapping);
 
-        List<NodeFact> factSet = puppetAPI.getFactSet(factNames);
+        List<NodeFact> factSet = pdb.getPuppetAPI().getFactSet(factNames, userQuery);
 
         final List<CertNodeClass> nodeClasses = includeClasses
-                                                ? puppetAPI.getClassesForAllNodes()
+                                                ? pdb.getPuppetAPI().getClassesForAllNodes(userQuery)
                                                 : Collections.<CertNodeClass>emptyList();
 
         // build nodes with facts and tags attached
-        final List<PuppetDBNode> puppetNodes = FluentIterable.from(nodes)
-                                                             .transform(puppetAPI.queryNodeWithFacts(factSet,nodeClasses))
-                                                             .toList();
-
-        final List<INodeEntry> rundeckNodes = convertNodes(puppetNodes);
+        final List<PuppetDBNode> puppetNodes = pdb.getPuppetDBNodes(nodes, factSet, nodeClasses);
+        final List<INodeEntry> rundeckNodes = mapper.convertNodes(puppetNodes, mapping);
 
         final NodeSetImpl nodeSet = new NodeSetImpl();
         nodeSet.putNodes(rundeckNodes);
         return nodeSet;
     }
 
-    private List<INodeEntry> convertNodes(final List<PuppetDBNode> puppetNodes) {
-        return FluentIterable.from(puppetNodes)
-                             .transform(mapper.withFixedMapping(mapping))
-                             .filter(new Predicate<Optional<INodeEntry>>() {
-                                                                    @Override
-                                                                    public boolean apply(final Optional<INodeEntry> input) {
-                                                                        return input.isPresent();
-                                                                    }
-                                                                })
-                             .transform(new Function<Optional<INodeEntry>, INodeEntry>() {
 
-                                                                    @Override
-                                                                    public INodeEntry apply(final Optional<INodeEntry>
-                                                                                                    input) {
-                                                                        return input.get();
-                                                                    }
-                                                                })
-                             .toList();
-    }
 }

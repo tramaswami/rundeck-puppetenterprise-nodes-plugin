@@ -1,9 +1,6 @@
 package com.rundeck.plugin.resources.puppetdb;
 
-import com.dtolabs.rundeck.core.common.INodeEntry;
 import com.google.common.base.Optional;
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.rundeck.plugin.resources.puppetdb.client.PuppetAPI;
@@ -33,7 +30,7 @@ public class TestDetermineFactNames {
 
     @Before
     public void before() {
-        this.mapper = new Mapper(new Properties());
+        this.mapper = new Mapper(Optional.<String>absent());
         this.gson = new Gson();
         this.testApi = testApi();
     }
@@ -60,17 +57,17 @@ public class TestDetermineFactNames {
     public PuppetAPI testApi() {
         return new PuppetAPI() {
             @Override
-            public List<CertNodeClass> getClassesForAllNodes() {
+            public List<CertNodeClass> getClassesForAllNodes(final String userQuery) {
                 return null;
             }
 
             @Override
-            public List<NodeFact> getFactSet(final Set<String> facts) {
+            public List<NodeFact> getFactSet(final Set<String> facts, final String userQuery) {
                 return null;
             }
 
             @Override
-            public List<Node> getNodes() {
+            public List<Node> getNodes(final String userQuery) {
                 return gson.fromJson(readFile("simple/nodes.json"), Node.LIST);
             }
 

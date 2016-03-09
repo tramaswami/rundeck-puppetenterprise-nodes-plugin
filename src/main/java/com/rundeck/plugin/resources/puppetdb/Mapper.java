@@ -58,11 +58,10 @@ public class Mapper implements Constants {
     };
     private static Logger log = Logger.getLogger(ResourceModelFactory.class);
 
-    private final Properties properties;
     private final PropertyUtilsBean propertyUtilsBean;
-
-    public Mapper(final Properties properties) {
-        this.properties = properties;
+    private final Optional<String> defaultNodeTag;
+    public Mapper(final Optional<String> defaultNodeTag) {
+        this.defaultNodeTag=defaultNodeTag;
         this.propertyUtilsBean = new PropertyUtilsBean();
     }
 
@@ -101,7 +100,6 @@ public class Mapper implements Constants {
             result.getTags().addAll(puppetNode.getClasses());
 
             // add default tag if any
-            final Optional<String> defaultNodeTag = getDefaultNodeTag();
             if (defaultNodeTag.isPresent()) {
                 result.getTags().add(defaultNodeTag.get());
             }
@@ -121,14 +119,6 @@ public class Mapper implements Constants {
         return isNodeInValidState(result) ? Optional.<INodeEntry> of(result) : Optional.<INodeEntry> absent();
     }
 
-    final Optional<String> getDefaultNodeTag() {
-        final String value = properties.getProperty(PROPERTY_DEFAULT_NODE_TAG, "");
-        if (isBlank(value)) {
-            return Optional.absent();
-        }
-
-        return Optional.of(value);
-    }
 
     public <T> Set<T> setOf(T... ts) {
         return new LinkedHashSet<>(asList(ts));
@@ -252,6 +242,31 @@ public class Mapper implements Constants {
         }
 
         return true;
+    }
+
+
+    List<INodeEntry> convertNodes(final List<PuppetDBNode> puppetNodes, final Map<String, Object> mapping) {
+
+        return FluentIterable.from(puppetNodes)
+                             .transform(withFixedMapping(mapping))
+                             .filter(new Predicate<Optional<INodeEntry>>() {
+                                 @Override
+                                 public boolean apply(final Optional<INodeEntry> input) {
+                                     return input.isPresent();
+                                 }
+                             })
+                             .transform(new Function<Optional<INodeEntry>, INodeEntry>() {
+
+                                 @Override
+                                 public INodeEntry apply(
+                                         final Optional<INodeEntry>
+                                                 input
+                                 )
+                                 {
+                                     return input.get();
+                                 }
+                             })
+                             .toList();
     }
 
     public Function<PuppetDBNode, Optional<INodeEntry>> withFixedMapping(final Map<String, Object> mapping) {

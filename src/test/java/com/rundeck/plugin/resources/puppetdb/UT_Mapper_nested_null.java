@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.util.*;
 
+import com.rundeck.plugin.resources.puppetdb.client.PuppetDB;
 import com.rundeck.plugin.resources.puppetdb.client.model.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,7 +30,7 @@ public class UT_Mapper_nested_null {
 
     @Before
     public void before() {
-        this.mapper = new Mapper(new Properties());
+        this.mapper = new Mapper(Optional.<String>absent());
         this.gson = new Gson();
         this.testApi = testApi();
     }
@@ -37,11 +38,12 @@ public class UT_Mapper_nested_null {
     @Test
     public void missing_nested_property_should_be_parsed_as_empty() {
         // this mapping has a invalid mapping for one of the attributes
+        PuppetDB db = new PuppetDB(testApi);
         this.mapping = getMapping("nested_null/nested_null_mapping.json"); 
-        final List<Node> nodes = testApi.getNodes();
+        final List<Node> nodes = testApi.getNodes(null);
 
         final List<PuppetDBNode> nodesWithFacts = FluentIterable.from(nodes)
-            .transform(testApi.queryNode())
+            .transform(db.queryNode())
             .toList();
 
         for (int i = 0; i < nodesWithFacts.size(); i++) {
@@ -72,17 +74,17 @@ public class UT_Mapper_nested_null {
 
         return new PuppetAPI() {
             @Override
-            public List<CertNodeClass> getClassesForAllNodes() {
+            public List<CertNodeClass> getClassesForAllNodes(final String userQuery) {
                 return null;
             }
 
             @Override
-            public List<NodeFact> getFactSet(final Set<String> facts) {
+            public List<NodeFact> getFactSet(final Set<String> facts, final String userQuery) {
                 return null;
             }
 
             @Override
-            public List<Node> getNodes() {
+            public List<Node> getNodes(final String userQuery) {
                 return nodes;
             }
 

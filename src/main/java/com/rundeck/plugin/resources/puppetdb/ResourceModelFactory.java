@@ -26,6 +26,7 @@ package com.rundeck.plugin.resources.puppetdb;
 import static java.lang.String.format;
 import static java.util.Collections.emptyMap;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.io.File;
@@ -45,11 +46,13 @@ import com.dtolabs.rundeck.core.plugins.configuration.Description;
 import com.dtolabs.rundeck.core.plugins.configuration.Property;
 import com.dtolabs.rundeck.core.resources.ResourceModelSource;
 import com.dtolabs.rundeck.core.resources.ResourceModelSourceFactory;
+import com.google.common.base.Optional;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.rundeck.plugin.resources.puppetdb.client.DefaultHTTP;
 import com.rundeck.plugin.resources.puppetdb.client.DefaultPuppetAPI;
 import com.rundeck.plugin.resources.puppetdb.client.PuppetAPI;
+import com.rundeck.plugin.resources.puppetdb.client.PuppetDB;
 import org.apache.log4j.Logger;
 
 @Plugin(name = "puppet-enterprise", service = "ResourceModelSource")
@@ -71,9 +74,9 @@ public class ResourceModelFactory implements ResourceModelSourceFactory, Describ
     private void attachConsoleReporter(final MetricRegistry metrics, final Properties properties) {
         if (properties.containsKey(PROPERTY_METRICS_INTERVAL)) {
             final ConsoleReporter reporter = ConsoleReporter.forRegistry(metrics)
-                    .convertRatesTo(TimeUnit.SECONDS)
-                    .convertDurationsTo(TimeUnit.MILLISECONDS)
-                    .build();
+                                                            .convertRatesTo(TimeUnit.SECONDS)
+                                                            .convertDurationsTo(TimeUnit.MILLISECONDS)
+                                                            .build();
             reporter.start(Integer.parseInt(properties.getProperty(PROPERTY_METRICS_INTERVAL)), TimeUnit.MINUTES);
         }
     }
@@ -81,16 +84,18 @@ public class ResourceModelFactory implements ResourceModelSourceFactory, Describ
     @Override
     public ResourceModelSource createResourceModelSource(final Properties properties) throws ConfigurationException {
         attachConsoleReporter(metrics, properties);
+        validate(properties);
 
-        final PuppetAPI puppetAPI = getPuppetAPI(properties, metrics);
-        final Mapper mapper = new Mapper(properties);
+        final Mapper mapper = new Mapper(PropertyHandling.readDefaultNodeTag(properties));
         final Map<String, Object> mapping = getMapping(properties);
-
+        DefaultHTTP defaultHTTP = createHTTP(properties, metrics);
+        PuppetDB pdb = PuppetDB.create(defaultHTTP);
         return new PuppetDBResourceModelSource(
-                puppetAPI,
+                pdb,
                 mapper,
                 mapping,
-                "true".equals(properties.getProperty(PROPERTY_INCLUDE_CLASSES))
+                PropertyHandling.readBoolean(properties, PROPERTY_INCLUDE_CLASSES, false),
+                PropertyHandling.readPuppetDbQuery(properties).orNull()
         );
     }
 
@@ -100,7 +105,7 @@ public class ResourceModelFactory implements ResourceModelSourceFactory, Describ
         return PLUGIN_DESCRIPTION;
     }
 
-    public PuppetAPI getPuppetAPI(final Properties properties, final MetricRegistry metrics) throws ConfigurationException {
+    public static void validate(final Properties properties) throws ConfigurationException {
         final List<Property> missingProperties = PropertyHandling.getMissingProperties(properties);
         if (isNotEmpty(missingProperties)) {
             final String missingPropertiesNames = PropertyHandling.joinPropertyNames(missingProperties);
@@ -109,8 +114,6 @@ public class ResourceModelFactory implements ResourceModelSourceFactory, Describ
             final String message = format(template, PROVIDER_NAME, missingPropertiesNames);
             throw new ConfigurationException(message);
         }
-        DefaultHTTP defaultHTTP = createHTTP(properties, metrics);
-        return new DefaultPuppetAPI(defaultHTTP, PropertyHandling.readPuppetDbQuery(properties).orNull());
     }
 
     public static DefaultHTTP createHTTP(final Properties properties, final MetricRegistry metrics) {
@@ -121,7 +124,8 @@ public class ResourceModelFactory implements ResourceModelSourceFactory, Describ
     }
 
     public Map<String, Object> getMapping(final Properties properties) {
-        final Type mappingType = new TypeToken<Map<String, Object>>() {}.getType();
+        final Type mappingType = new TypeToken<Map<String, Object>>() {
+        }.getType();
         final String mappingFilePath = properties.getProperty(PROPERTY_MAPPING_FILE);
 
         if (isNotBlank(mappingFilePath)) {
@@ -151,8 +155,10 @@ public class ResourceModelFactory implements ResourceModelSourceFactory, Describ
     }
 
     private String readFromFile(final File file) {
-        try (final InputStream inputStream = new FileInputStream(file);
-             final Scanner scanner = new Scanner(inputStream)) {
+        try (
+                final InputStream inputStream = new FileInputStream(file);
+                final Scanner scanner = new Scanner(inputStream)
+        ) {
             scanner.useDelimiter("\\Z");
             return scanner.next();
         } catch (Exception ex) {
@@ -163,8 +169,10 @@ public class ResourceModelFactory implements ResourceModelSourceFactory, Describ
     }
 
     private String readFromClasspath(final String name) {
-        try (final InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(name);
-             final Scanner scanner = new Scanner(inputStream)) {
+        try (
+                final InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(name);
+                final Scanner scanner = new Scanner(inputStream)
+        ) {
             scanner.useDelimiter("\\Z");
             return scanner.next();
         } catch (Exception ex) {
