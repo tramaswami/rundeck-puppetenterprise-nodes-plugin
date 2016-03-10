@@ -7,8 +7,11 @@ cache:
   - $HOME/.gradle/wrapper/
 deploy:
   provider: releases
+  api_key:
+    secure: 2grm4VnpW+Jhg4sJtOtNufiVTBPcJrWVwwv7zqhcYH69Kw6dJl4wIBxBfNqFMatNHW1q5flyQBmmslSadRorNJR1M+VGUY5KP5nnr38FxUBjmJPd2VtPSUBMM9BgBoY+QHHRbhAuZ9lNHnNIBcmhuccYcQzCi2OQyIymsRpz9zvuFFeKP2k09sOuRx1JJ9P49X18oT2SNUOBWj4S9Ucb7tfKEIFViVFG5z64sh26eBAZW0LpWfBDx8baaR2M50AbGeCVZoaaLWmcyHND9fs6XXDsYlYOwfnjBbQQmXty1XsadWKoPNU3sTkRtPU9zT0gDMrejsrcKc0oytEIzRp2WZrSSAIuxFfllh0dX3hhOJmQuPoVHAeQ0hV364VubJdlYzs+3VTl4TWLaeeY48uDf7QOexKooMCZPDSNUltJ2MVcucgjvtjDhlZ7evMbjavr6MnMl1hQM2smkUDMbnHvT1+8KhTzum9zIPW+KmSPHlkkhHdTPozC204j9mNMGI+oqealHHj74Hbk8DOMgyyN9bBYMl/4FxFKJ/rjU+1Yj4kSmiyZcjKYf9wopGXWIKMJbnG1xSlOcqU/amS4y3/gutl5ihDdLJpUpJnYJWXfnULOnknGI50bN1GCqeG3c2r1uMB6ywFTHuBRXc9R0h6Cd5TkAJ3pNS3rxoc2rU1hjlA=
   file: build/libs/rundeck-puppetenterprise-nodes-plugin-*.jar
   file_glob: true
   skip_cleanup: true
   on:
     tags: true
+    repo: rundeck-plugins/rundeck-puppetenterprise-nodes-plugin
