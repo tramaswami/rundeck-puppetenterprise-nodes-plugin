@@ -3,6 +3,8 @@ Rundeck Puppet Enterprise Nodes Plugin
 
 Version: 0.9.x
 
+[![Build Status](https://travis-ci.org/rundeck-plugins/rundeck-puppetenterprise-nodes-plugin.svg?branch=master)](https://travis-ci.org/rundeck-plugins/rundeck-puppetenterprise-nodes-plugin)
+
 This is a Resource Model Source plugin for [Rundeck][] 1.5+ that provides
 Puppet Enterprise Nodes as nodes for the RunDeck server.
 
