@@ -1,12 +1,16 @@
 Rundeck Puppet Enterprise Nodes Plugin
 ========================
 
-Version: 0.2.5
+Version: 0.9.x
 
-This is a Resource Model Source plugin for [RunDeck][] 1.5+ that provides
+This is a Resource Model Source plugin for [Rundeck][] 1.5+ that provides
 Puppet Enterprise Nodes as nodes for the RunDeck server.
 
-[RunDeck]: http://rundeck.org
+[Rundeck]: http://rundeck.org
+
+This is based on the original <https://github.com/latamdevs/rundeck-puppetenterprise-nodes-plugin>.
+
+See [Release Notes](https://github.com/rundeck-plugins/rundeck-puppetenterprise-nodes-plugin/blob/master/Release-Notes.md) for version changes.
 
 Previous Check
 ------------
@@ -21,11 +25,21 @@ curl 'https://HOST:PORT/pdb/query/v4/nodes' \
   --cert /etc/puppet/ssl/certs/<HOST>.pem \
   --key /etc/puppet/ssl/private_keys/<HOST>.pem \
 
+Mock API
+------------
+
+Run a mock api server at <http://localhost:5050>:
+
+  ./gradlew -p mock-puppetdb-api-server
+
+This uses [ratpack](http://ratpack.io) to respond to the `/nodes`, `/resources/Class` and `/facts/*` queries
+with mocked json data.
+
 
 Installation
 ------------
 
-Download from the [releases page](https://github.com/latamdevs/rundeck-puppetenterprise-nodes-plugin/releases).
+Download from the [releases page](https://github.com/rundeck-plugins/rundeck-puppetenterprise-nodes-plugin/releases).
 
 Put the `rundeck-puppetenterprise-nodes-plugin-x.y.jar` into your `$RDECK_BASE/libext` dir.
 
@@ -36,7 +50,7 @@ You can configure the Resource Model Sources for a project either via the
 RunDeck GUI, under the "Admin" page, or you can modify the `project.properties`
 file to configure the sources.
 
-See: [Resource Model Source Configuration](http://rundeck.org/1.5/manual/plugins.html#resource-model-source-configuration)
+See: [Resource Model Source Configuration](http://rundeck.org/docs/manual/plugins.html#resource-model-source-configuration)
 
 The provider name is: `puppet-enterprise`
 
@@ -50,6 +64,8 @@ Here are the configuration properties for Simple Configuration:
  * <ssldir>/ca/ca_crt.pem
 * `mappingFile`: Path to a java properties-formatted mapping definition file.
 * `nodeQuery`: Puppet Query to filter nodes, if null then the plugin will return all, see more information on [Puppet API Query reference(https://docs.puppetlabs.com/puppetdb/latest/api/query/v4/nodes.html)
+* `default tag`: default tag to add to nodes
+* `include classes`: if selected, queries the classes to add them as tags, otherwise does not do it
 
 Configuration keys vary if you use them directly in the project file or in Rundeck using Edit Configuration File, for example node 1:
 
@@ -68,21 +84,6 @@ will be set to using a "selector" on properties of the Puppet Enterprise Node ob
 
 the default mapping file is src/main/resources/defaultMapping.json
 
-Configuring the Mapping
------------------------
-
-You can configure your source to start with the above default mapping with the 
-`useDefaultMapping` property.
-
-You can then selectively change it either by setting the `mappingParams` or 
-pointing to a new properties file with `mappingFile`.
-
-For example, you can put this in the `mappingParams` field in the GUI to change 
-the default tags for your nodes, remove the "stopping" tag selector, and add a
-new "ami_id" selector:
-
-    tags.default=mytag, mytag2;tag.stopping.selector=;ami_id.selector=imageId
-
 Mapping format
 ---------------
 
@@ -93,36 +94,9 @@ automatically be set to the instance ID if no other value is defined.
 For purposes of the mapping definition, a `field selector` is either:
 
 * An Puppet Enterprise fieldname, or dot-separated field names
-* "tags/" followed by a Tag name, e.g. "tags/My Tag"
-* "tags/*" for use by the `attributes.selector` mapping
 
-Selectors use the Apache [BeanUtils](http://commons.apache.org/beanutils/) to extract a property value from the AWS API
-[Instance class](http://docs.amazonwebservices.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/Puppet Enterprise/model/Instance.html).
-This means you can use dot-separated fieldnames to traverse the object graph.
-E.g. "state.name" to specify the "name" field of the State property of the Instance.
-
-format:
-
-    # define a selector for "property":
-    <attribute>.selector=<field selector>
-    # define a default value for "property":
-    <attribute>.default=<default value>
-    # Special attributes selector to map all Tags to attributes
-    attributes.selector=tags/*
-    # The value for the tags selector will be treated as a comma-separated list of strings
-    tags.selector=<field selector>
-    # the default tags list
-    tags.default=a,b,c
-    # Define a single tag <name> which will be set if and only if the selector result is not empty
-    tag.<name>.selector=<field selector>
-    # Define a single tag <name> which will be set if the selector result equals the <value>
-    tag.<name>.selector=<field selector>=<value>
-
-Note, a ".selector" value can have multiple selectors defined, separated by commas,
-and they will be evaluated in order with the first value available being used.  E.g. "nodename.selector=tags/Name,instanceId", which will look for a tag named "Name", otherwise use the instanceId.
-
-You can also use the `<field selector>=<value>` feature to set a tag only if the field selector has a certain value.
-
+Selectors use the Apache [BeanUtils](http://commons.apache.org/beanutils/) to extract a property value from the 
+Puppet json resources.
 
 Mapping Puppet Enterprise Nodes to Rundeck Nodes
 =================
