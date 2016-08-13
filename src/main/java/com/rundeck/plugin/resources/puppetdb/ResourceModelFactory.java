@@ -26,15 +26,19 @@ package com.rundeck.plugin.resources.puppetdb;
 import static java.lang.String.format;
 import static java.util.Collections.emptyMap;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
+
+import org.apache.log4j.Logger;
 
 import com.codahale.metrics.ConsoleReporter;
 import com.codahale.metrics.MetricRegistry;
@@ -46,14 +50,10 @@ import com.dtolabs.rundeck.core.plugins.configuration.Description;
 import com.dtolabs.rundeck.core.plugins.configuration.Property;
 import com.dtolabs.rundeck.core.resources.ResourceModelSource;
 import com.dtolabs.rundeck.core.resources.ResourceModelSourceFactory;
-import com.google.common.base.Optional;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.rundeck.plugin.resources.puppetdb.client.DefaultHTTP;
-import com.rundeck.plugin.resources.puppetdb.client.DefaultPuppetAPI;
-import com.rundeck.plugin.resources.puppetdb.client.PuppetAPI;
 import com.rundeck.plugin.resources.puppetdb.client.PuppetDB;
-import org.apache.log4j.Logger;
 
 @Plugin(name = "puppet-enterprise", service = "ResourceModelSource")
 public class ResourceModelFactory implements ResourceModelSourceFactory, Describable, Constants {
@@ -61,12 +61,10 @@ public class ResourceModelFactory implements ResourceModelSourceFactory, Describ
     private static MetricRegistry METRICS = new MetricRegistry();
     private static Logger log = Logger.getLogger(ResourceModelFactory.class);
 
-    private final Framework framework;
     private final Gson gson;
     private final MetricRegistry metrics;
 
     public ResourceModelFactory(final Framework framework) {
-        this.framework = framework;
         this.gson = new Gson();
         this.metrics = METRICS;
     }

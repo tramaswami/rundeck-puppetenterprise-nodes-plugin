@@ -1,22 +1,20 @@
 package com.rundeck.plugin.resources.puppetdb;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import com.dtolabs.rundeck.core.common.INodeEntry;
 import com.dtolabs.rundeck.core.common.INodeSet;
 import com.dtolabs.rundeck.core.common.NodeSetImpl;
 import com.dtolabs.rundeck.core.resources.ResourceModelSource;
 import com.dtolabs.rundeck.core.resources.ResourceModelSourceException;
-import com.google.common.base.Function;
-import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
-import com.google.common.collect.FluentIterable;
-import com.rundeck.plugin.resources.puppetdb.client.PuppetAPI;
 import com.rundeck.plugin.resources.puppetdb.client.PuppetDB;
-import com.rundeck.plugin.resources.puppetdb.client.model.*;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import com.rundeck.plugin.resources.puppetdb.client.model.CertNodeClass;
+import com.rundeck.plugin.resources.puppetdb.client.model.Node;
+import com.rundeck.plugin.resources.puppetdb.client.model.NodeFact;
+import com.rundeck.plugin.resources.puppetdb.client.model.PuppetDBNode;
 
 /**
  * Created by greg on 3/7/16.

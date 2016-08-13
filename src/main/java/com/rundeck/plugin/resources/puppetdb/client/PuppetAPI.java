@@ -1,13 +1,13 @@
 package com.rundeck.plugin.resources.puppetdb.client;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.collect.FluentIterable;
-import com.rundeck.plugin.resources.puppetdb.client.model.*;
+import com.rundeck.plugin.resources.puppetdb.client.model.CertNodeClass;
+import com.rundeck.plugin.resources.puppetdb.client.model.Fact;
+import com.rundeck.plugin.resources.puppetdb.client.model.Node;
+import com.rundeck.plugin.resources.puppetdb.client.model.NodeClass;
+import com.rundeck.plugin.resources.puppetdb.client.model.NodeFact;
 
 
 public interface PuppetAPI {

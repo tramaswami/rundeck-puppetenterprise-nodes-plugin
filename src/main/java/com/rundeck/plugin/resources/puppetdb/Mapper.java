@@ -23,6 +23,23 @@
  */
 package com.rundeck.plugin.resources.puppetdb;
 
+import static java.lang.String.format;
+import static java.util.Arrays.asList;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.commons.beanutils.NestedNullException;
+import org.apache.commons.beanutils.PropertyUtilsBean;
+import org.apache.log4j.Logger;
+
 import com.dtolabs.rundeck.core.common.INodeEntry;
 import com.dtolabs.rundeck.core.common.NodeEntryImpl;
 import com.google.common.base.Function;
@@ -31,19 +48,6 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import com.rundeck.plugin.resources.puppetdb.client.model.PuppetDBNode;
-import org.apache.commons.beanutils.NestedNullException;
-import org.apache.commons.beanutils.PropertyUtilsBean;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
-import java.util.regex.Pattern;
-
-import static java.lang.String.format;
-import static java.util.Arrays.asList;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  *

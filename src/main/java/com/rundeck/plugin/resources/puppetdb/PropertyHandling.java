@@ -1,12 +1,8 @@
 package com.rundeck.plugin.resources.puppetdb;
 
 
-import static com.google.common.base.Optional.absent;
-import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -17,14 +13,11 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
-import org.apache.log4j.Logger;
 
 /**
  * kind of DSL for resolving properties
  */
 public final class PropertyHandling implements Constants {
-
-    private static Logger LOG = Logger.getLogger(PropertyHandling.class);
 
     private PropertyHandling() {}
 
