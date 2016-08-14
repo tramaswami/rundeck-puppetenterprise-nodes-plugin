@@ -4,6 +4,7 @@ import static java.lang.String.format;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import com.google.common.base.Function;
@@ -16,7 +17,8 @@ import org.apache.log4j.Logger;
 
 public class DefaultPuppetAPI implements PuppetAPI, Constants {
 
-
+    private static final String UTF8 = StandardCharsets.UTF_8.toString();
+    
     private static final Logger LOG = Logger.getLogger(DefaultPuppetAPI.class);
 
 
@@ -93,7 +95,7 @@ public class DefaultPuppetAPI implements PuppetAPI, Constants {
             return null;
         }
         try {
-            return URLEncoder.encode(query, java.nio.charset.StandardCharsets.UTF_8.toString());
+            return URLEncoder.encode(query, UTF8);
         } catch (UnsupportedEncodingException e) {
             LOG.error(e.getMessage(), e);
         }
