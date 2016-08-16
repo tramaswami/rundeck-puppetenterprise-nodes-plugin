@@ -116,9 +116,10 @@ public class ResourceModelFactory implements ResourceModelSourceFactory, Describ
 
     public static DefaultHTTP createHTTP(final Properties properties, final MetricRegistry metrics) {
         String puppetSslDir = properties.getProperty(PROPERTY_PUPPETDB_SSL_DIR);
+        String certificatName = properties.getProperty(PROPERTY_PUPPETDB_CERTIFICATE_NAME);
         String puppetHost = properties.getProperty(PROPERTY_PUPPETDB_HOST);
         String puppetPort = properties.getProperty(PROPERTY_PUPPETDB_PORT);
-        return new DefaultHTTP(puppetHost, puppetPort, puppetSslDir, metrics);
+        return new DefaultHTTP(puppetHost, puppetPort, certificatName, puppetSslDir, metrics);
     }
 
     public Map<String, Object> getMapping(final Properties properties) {
