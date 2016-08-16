@@ -32,7 +32,7 @@ public class DefaultPuppetAPI implements PuppetAPI, Constants {
 
     @Override
     public List<Node> getNodes(final String userQuery) {
-        final String path = mkQuery("pdb/query/v4/nodes", userQuery);
+        final String path = "pdb/query/v4/nodes" + getUserQuery(userQuery);
         return http.makeRequest(path, Node.listParser(GSON), Collections.<Node>emptyList(), "getNodes()");
     }
 
@@ -55,16 +55,15 @@ public class DefaultPuppetAPI implements PuppetAPI, Constants {
     }
 
     public List<NodeFact> getFactForAllNodes(String fact, final String userQuery) {
-        final String path = mkQuery(format("pdb/query/v4/facts/%s", fact), getUserQuery(userQuery));
+        final String path = format("pdb/query/v4/facts/%s", fact) + getUserQuery(userQuery);
         return http.makeRequest(path, NodeFact.parser(GSON), Collections.<NodeFact>emptyList(), "getFactForAllNodes()");
     }
 
     private String getUserQuery(String puppetNodeQuery) {
         return (puppetNodeQuery != null && !puppetNodeQuery.trim().isEmpty())
-               ? ("?query=") + puppetNodeQuery
+               ? ("?query=") + urlencode(puppetNodeQuery)
                : "";
     }
-
 
     @Override
     public List<NodeClass> getClassesForNode(final Node node) {
@@ -79,15 +78,11 @@ public class DefaultPuppetAPI implements PuppetAPI, Constants {
     }
 
     public List<CertNodeClass> getClassesForAllNodes(final String userQuery) {
-        final String path = mkQuery("pdb/query/v4/resources/Class", getUserQuery(userQuery));
+        final String path = "pdb/query/v4/resources/Class" + getUserQuery(userQuery);
         return http.makeRequest(
                 path,
                 CertNodeClass.listParser(GSON), Collections.<CertNodeClass>emptyList(), "getClassesForAllNodes()"
         );
-    }
-
-    private String mkQuery(final String path, String query) {
-        return path + (query != null ? urlencode(query) : "");
     }
 
     private String urlencode(final String query) {
@@ -107,6 +102,5 @@ public class DefaultPuppetAPI implements PuppetAPI, Constants {
         final String url = format("pdb/query/v4/nodes/%s/facts", node.getCertname());
         return http.makeRequest(url, Fact.listParser(GSON), Collections.<Fact>emptyList(), "getFactsForNode()");
     }
-
 
 }
