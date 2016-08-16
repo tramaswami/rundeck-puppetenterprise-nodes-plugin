@@ -1,29 +1,28 @@
 package com.rundeck.plugin.resources.puppetdb.client;
 
-import com.codahale.metrics.MetricRegistry;
-import com.google.common.base.Function;
-import com.google.inject.Provider;
-import com.puppetlabs.puppetdb.javaclient.impl.PEM_SSLSocketFactoryProvider;
-import org.apache.http.HttpEntity;
+import static java.lang.String.format;
+
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+
+import javax.net.ssl.SSLContext;
+
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.scheme.SchemeRegistry;
-import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
+import org.apache.http.conn.HttpClientConnectionManager;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.conn.DefaultSchemePortResolver;
-import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 
-import java.io.IOException;
-
-import static java.lang.String.format;
+import com.codahale.metrics.MetricRegistry;
+import com.google.common.base.Function;
 
 /**
  * Use apache http client
@@ -32,6 +31,8 @@ public class DefaultHTTP implements HTTP {
     private static final Logger LOG = Logger.getLogger(DefaultHTTP.class);
     private static final String HTTPS = "https";
     public static final String HTTP = "http";
+    private static final String USERAGENT = "Rundeck Node Plugin";
+    
     private final String puppetProtocol;
     private final String puppetHost;
     private final String puppetPort;
@@ -43,8 +44,7 @@ public class DefaultHTTP implements HTTP {
             final String puppetPort,
             final String puppetSslDir,
             final MetricRegistry metrics
-    )
-    {
+            ) {
         this.puppetProtocol = puppetSslDir == null ? HTTP : HTTPS;
         this.puppetHost = puppetHost;
         this.puppetPort = puppetPort;
@@ -77,8 +77,8 @@ public class DefaultHTTP implements HTTP {
             if (!ok) {
                 errorsCounter();
                 LOG.warn(format(name + " ended with status code: %d msg: %s", statusCode,
-                                EntityUtils.toString(response.getEntity())
-                ));
+                        EntityUtils.toString(response.getEntity())
+                        ));
                 return errResult;
             }
 
@@ -94,40 +94,29 @@ public class DefaultHTTP implements HTTP {
 
     CloseableHttpClient getClient() {
         return puppetProtocol.equalsIgnoreCase(HTTPS)
-               ? getHttpsClient()
-               : new DefaultHttpClient();
+                ? getHttpsClient()
+                        : HttpClients.custom().setUserAgent(USERAGENT).build();
     }
 
     private CloseableHttpClient getHttpsClient() {
-        return origGetHttpsClient();
-    }
+        try {
+            SSLContext sslContext = PemSslContext.getContext(puppetHost, puppetSslDir);
 
-    private CloseableHttpClient origGetHttpsClient() {
-        Provider<SSLSocketFactory> provider = new PEM_SSLSocketFactoryProvider(
-                puppetHost,
-                Integer.parseInt(puppetPort),
-                puppetSslDir
-        );
-        SSLSocketFactory sf = provider.get();
+            SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslContext);
+            Registry<ConnectionSocketFactory> r = RegistryBuilder.<ConnectionSocketFactory>create()
+                    .register(HTTPS, sslsf)
+                    .build();
 
-        SchemeRegistry registry = new SchemeRegistry();
-        registry.register(new Scheme(HTTPS, 443, sf));
+            HttpClientConnectionManager cm = new PoolingHttpClientConnectionManager(r);
 
-        ClientConnectionManager ccm = new PoolingClientConnectionManager(registry);
-
-        return new DefaultHttpClient(ccm);
-    }
-
-    private CloseableHttpClient getHttpsClient2() {
-        HttpClientBuilder builder = HttpClientBuilder.create()
-                                                     .setSSLSocketFactory(new PEM_SSLSocketFactoryProvider(
-                                                             puppetHost,
-                                                             Integer.parseInt(puppetPort),
-                                                             puppetSslDir
-                                                     ).get());
-        builder.setSchemePortResolver(new DefaultSchemePortResolver());
-        builder.setConnectionManager(new PoolingHttpClientConnectionManager());
-        return builder.build();
+            return HttpClients.custom()
+                    .setConnectionManager(cm)
+                    .setUserAgent(USERAGENT)
+                    .build();
+        } catch (IOException | GeneralSecurityException ex) {
+            LOG.error("Can't configure https with puppetdb: " + ex.getMessage(), ex);
+            return null;
+        }
     }
 
     private void errorsCounter() {
