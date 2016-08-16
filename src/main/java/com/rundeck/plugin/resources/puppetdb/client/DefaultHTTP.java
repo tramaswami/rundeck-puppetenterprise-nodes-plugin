@@ -36,18 +36,21 @@ public class DefaultHTTP implements HTTP {
     private final String puppetProtocol;
     private final String puppetHost;
     private final String puppetPort;
+    private final String puppetCertificatName;
     private final String puppetSslDir;
     private final MetricRegistry metrics;
 
     public DefaultHTTP(
             final String puppetHost,
             final String puppetPort,
+            final String puppetCertificatName,
             final String puppetSslDir,
             final MetricRegistry metrics
             ) {
         this.puppetProtocol = puppetSslDir == null ? HTTP : HTTPS;
         this.puppetHost = puppetHost;
         this.puppetPort = puppetPort;
+        this.puppetCertificatName = puppetCertificatName;
         this.puppetSslDir = puppetSslDir;
         this.metrics = metrics;
     }
@@ -100,7 +103,7 @@ public class DefaultHTTP implements HTTP {
 
     private CloseableHttpClient getHttpsClient() {
         try {
-            SSLContext sslContext = PemSslContext.getContext(puppetHost, puppetSslDir);
+            SSLContext sslContext = PemSslContext.getContext(puppetCertificatName, puppetSslDir);
 
             SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslContext);
             Registry<ConnectionSocketFactory> r = RegistryBuilder.<ConnectionSocketFactory>create()
