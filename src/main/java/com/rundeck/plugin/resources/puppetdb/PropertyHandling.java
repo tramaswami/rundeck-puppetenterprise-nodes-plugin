@@ -103,10 +103,10 @@ public final class PropertyHandling implements Constants {
 
 
     public static boolean readBoolean(final Properties properties, final String name, final boolean defval) {
-        String property = properties.getProperty(PROPERTY_INCLUDE_CLASSES);
-        if(null==property){
+        String property = properties.getProperty(name);
+        if (null == property) {
             return defval;
         }
-        return "true".equals(property);
+        return "true".equals(property.toLowerCase());
     }
 }
