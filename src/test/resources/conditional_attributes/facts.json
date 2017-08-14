@@ -1,0 +1,2050 @@
+[
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "kernel",
+    "value": "Linux"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "network6_lo",
+    "value": "::1"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "lsbdistdescription",
+    "value": "Ubuntu 14.04.3 LTS"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "kernelrelease",
+    "value": "3.19.0-28-generic"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "lsbdistrelease",
+    "value": "14.04"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "pe_server_version",
+    "value": "2015.2.1"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "is_pe",
+    "value": false
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "memorysize_mb",
+    "value": 6968.578125
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "sshfp_dsa",
+    "value": "SSHFP 2 1 4663da00630eaeebe2151fe9b1c4fca559e39506\nSSHFP 2 2 eaae7a05b87bc53793fafdfa32a7cba8d81e97fd766627670776396f8dafb74a"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "architecture",
+    "value": "amd64"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "platform_tag",
+    "value": "ubuntu-14.04-amd64"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "rubysitedir",
+    "value": "/opt/puppetlabs/puppet/lib/ruby/site_ruby/2.1.0"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "memorysize",
+    "value": "6.81 GiB"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "hostname",
+    "value": "hatest1"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "productname",
+    "value": "Virtual Machine"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "blockdevice_sr0_vendor",
+    "value": "Msft"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "facterversion",
+    "value": "3.1.0"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "virtual",
+    "value": "hyperv"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "physicalprocessorcount",
+    "value": 1
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "netmask6",
+    "value": "ffff:ffff:ffff:ffff::"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "pe_concat_basedir",
+    "value": "/opt/puppetlabs/puppet/cache/pe_concat"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "interfaces",
+    "value": "eth0,lo"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "lsbdistcodename",
+    "value": "trusty"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "network6_eth0",
+    "value": "fe80::"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "chassisassettag",
+    "value": "7783-7084-3265-9085-8269-3286-77"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "rubyversion",
+    "value": "2.1.6"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "boardmanufacturer",
+    "value": "Microsoft Corporation"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "blockdevice_sdb_vendor",
+    "value": "Msft"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "blockdevice_sr0_model",
+    "value": "Virtual CD/ROM"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "processor2",
+    "value": "Intel(R) Xeon(R) CPU E5-2673 v3 @ 2.40GHz"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "timezone",
+    "value": "UTC"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "netmask6_eth0",
+    "value": "ffff:ffff:ffff:ffff::"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "sshfp_rsa",
+    "value": "SSHFP 1 1 e26e745e4a353d631d11001143ddb9c4b7a7674d\nSSHFP 1 2 7c378c25cefd8a1eea9d501e1113853cefd7288c16d0b409a02268d976d3ba24"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "bios_vendor",
+    "value": "American Megatrends Inc."
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "clientnoop",
+    "value": false
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "os",
+    "value": {
+      "architecture": "amd64",
+      "distro": {
+        "codename": "trusty",
+        "description": "Ubuntu 14.04.3 LTS",
+        "id": "Ubuntu",
+        "release": {
+          "full": "14.04",
+          "major": "14.04"
+        }
+      },
+      "family": "Debian",
+      "hardware": "x86_64",
+      "name": "Ubuntu",
+      "release": {
+        "full": "14.04",
+        "major": "14.04"
+      },
+      "selinux": {
+        "enabled": false
+      }
+    }
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "osfamily",
+    "value": "Debian"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "augeasversion",
+    "value": "1.4.0"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "ipaddress_lo",
+    "value": "127.0.0.1"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "netmask_eth0",
+    "value": "255.255.254.0"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "operatingsystem",
+    "value": "Ubuntu"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "ipaddress6_eth0",
+    "value": "fe80::20d:3aff:fe91:16e6"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "manufacturer",
+    "value": "Microsoft Corporation"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "mtu_eth0",
+    "value": 1500
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "trusted",
+    "value": {
+      "authenticated": "remote",
+      "certname": "localhost-linux",
+      "extensions": {}
+    }
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "bios_version",
+    "value": "090006"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "network_lo",
+    "value": "127.0.0.0"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "ipaddress6",
+    "value": "fe80::20d:3aff:fe91:16e6"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "fqdn",
+    "value": "hatest1.hatest1.g3.internal.cloudapp.net"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "id",
+    "value": "root"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "hardwaremodel",
+    "value": "x86_64"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "aio_agent_build",
+    "value": "1.2.5"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "blockdevice_sr0_size",
+    "value": 4521984
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "netmask_lo",
+    "value": "255.0.0.0"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "netmask",
+    "value": "255.255.254.0"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "sshfp_ecdsa",
+    "value": "SSHFP 3 1 ddb8a4b3a4b9f91aad0e852a70252de810d54a58\nSSHFP 3 2 989e48d1638c42d44ddfb8644a03b165949074a63f74893505f929dbe2cb8068"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "processor0",
+    "value": "Intel(R) Xeon(R) CPU E5-2673 v3 @ 2.40GHz"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "staging_http_get",
+    "value": "curl"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "kernelversion",
+    "value": "3.19.0"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "is_virtual",
+    "value": true
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "blockdevice_sdb_model",
+    "value": "Virtual Disk"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "uuid",
+    "value": "56BFEA28-3FAC-1E43-8B7C-F43233FF64C8"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "sshrsakey",
+    "value": "AAAAB3NzaC1yc2EAAAADAQABAAABAQDVeA88Ge5tGFBAVFbVBqqkV7VinSLYd00+ssViXreKNiCeyOEjzcG254UYc59Z5t5okkhwuaN7u4VglVSIsEh4CZAFSVpFPr1xjbXleDv3bMJE8EXNyiT78l3Jlp+tuDm3PE0fBe9CZ+zzPtYkg8z7G4KXoUdtZNjjTXXUMQBWU+LmDnaCIy9yGenTsvOoWedd83e0XxY9AxIKFc8RlFsqIUxVVC6Mv/lvhvO0GPrZas+ZcGEtnhEWwVXgKi2nd8PJDC5ID1z/EbqDD0qaZgufNwfwAlgfc91SRKVPlEKj1M2S1av2SQ3gaKCrkKOLXV/dfH+v0EewNvkwaoIuDdob"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "network",
+    "value": "100.112.162.0"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "ipaddress_eth0",
+    "value": "100.112.162.79"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "blockdevice_sda_size",
+    "value": 31457280000
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "sshdsakey",
+    "value": "AAAAB3NzaC1kc3MAAACBANIRk3fjo9ZjICYxtpaW/BnxNZyPL6RJaqxzfq8NFdoAiKszsc5n3hO9gv8PUUYc/Nbsa228w1Nw/CGxq0JrZO9clNMXqaOkt0kTZz/gy/Jf431YnC5n+euqxP+mmdCQxo0LMkue5UNHVgvM93N1L52v0AnUcyS0vPPcHAKxiTa1AAAAFQCo+OZhTnUx579cexksq+ou3Mxi4wAAAIEAoksZzXHcOSO0Q1B+e3s3pEH7C5+OrVHNhOwdxt/C6MNJAxyu21BTwYMRYbOi4Rhs0Giz7IC0wMmaciL1ZljJslZBBYrg8jDxAEP6CR+b8OPGDmNYktFDcI3t/sLg5Mo0FQU22xhsHkSk6Y4NjGXPGRgBPEFzmFLjFqWZLH6LfTkAAACAFvbRC3lWTIhlydQiGu2csqltV6gCqhs2adE9wrLvQxZCkeE4WIhwZi+T2YIq3uTJrafZdMfyWqKioa66aNkiAZsob570BeSyVFeuPdu8g9QeDcAW1ynjhpoZZhkyfyakXBTCXEq8Cobi3H558nOv+oUIYudEps1V62xi+1NmiLo="
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "operatingsystemrelease",
+    "value": "14.04"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "identity",
+    "value": {
+      "gid": 0,
+      "group": "root",
+      "uid": 0,
+      "user": "root"
+    }
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "clientversion",
+    "value": "4.2.2"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "dhcp_servers",
+    "value": {
+      "eth0": "100.112.136.202",
+      "system": "100.112.136.202"
+    }
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "kernelmajversion",
+    "value": "3.19"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "macaddress",
+    "value": "00:0d:3a:91:16:e6"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "filesystems",
+    "value": "ext2,ext3,ext4,udf,vfat"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "rubyplatform",
+    "value": "x86_64-linux"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "chassistype",
+    "value": "Desktop"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "domain",
+    "value": "hatest1.g3.internal.cloudapp.net"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "mtu_lo",
+    "value": 65536
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "aio_agent_version",
+    "value": "1.2.5"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "hardwareisa",
+    "value": "x86_64"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "ipaddress",
+    "value": "100.112.162.79"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "augeas",
+    "value": {
+      "version": "1.4.0"
+    }
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "networking",
+    "value": {
+      "mac": "00:0d:3a:91:16:e6",
+      "ip6": "fe80::20d:3aff:fe91:16e6",
+      "hostname": "hatest1",
+      "dhcp": "100.112.136.202",
+      "netmask6": "ffff:ffff:ffff:ffff::",
+      "interfaces": {
+        "eth0": {
+          "mac": "00:0d:3a:91:16:e6",
+          "ip6": "fe80::20d:3aff:fe91:16e6",
+          "bindings": [
+            {
+              "address": "100.112.162.79",
+              "netmask": "255.255.254.0",
+              "network": "100.112.162.0"
+            }
+          ],
+          "dhcp": "100.112.136.202",
+          "netmask6": "ffff:ffff:ffff:ffff::",
+          "netmask": "255.255.254.0",
+          "network": "100.112.162.0",
+          "mtu": 1500,
+          "ip": "100.112.162.79",
+          "bindings6": [
+            {
+              "address": "fe80::20d:3aff:fe91:16e6",
+              "netmask": "ffff:ffff:ffff:ffff::",
+              "network": "fe80::"
+            }
+          ],
+          "network6": "fe80::"
+        },
+        "lo": {
+          "ip6": "::1",
+          "bindings": [
+            {
+              "address": "127.0.0.1",
+              "netmask": "255.0.0.0",
+              "network": "127.0.0.0"
+            }
+          ],
+          "netmask6": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff",
+          "netmask": "255.0.0.0",
+          "network": "127.0.0.0",
+          "mtu": 65536,
+          "ip": "127.0.0.1",
+          "bindings6": [
+            {
+              "address": "::1",
+              "netmask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff",
+              "network": "::1"
+            }
+          ],
+          "network6": "::1"
+        }
+      },
+      "fqdn": "hatest1.hatest1.g3.internal.cloudapp.net",
+      "netmask": "255.255.254.0",
+      "network": "100.112.162.0",
+      "mtu": 1500,
+      "primary": "eth0",
+      "ip": "100.112.162.79",
+      "domain": "hatest1.g3.internal.cloudapp.net",
+      "network6": "fe80::"
+    }
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "network6",
+    "value": "fe80::"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "processor3",
+    "value": "Intel(R) Xeon(R) CPU E5-2673 v3 @ 2.40GHz"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "netmask6_lo",
+    "value": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "ruby",
+    "value": {
+      "platform": "x86_64-linux",
+      "sitedir": "/opt/puppetlabs/puppet/lib/ruby/site_ruby/2.1.0",
+      "version": "2.1.6"
+    }
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "blockdevice_sda_model",
+    "value": "Virtual Disk"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "hardwareisa",
+    "value": null
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "blockdevice_sdb_size",
+    "value": 306016419840
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "blockdevice_sda_vendor",
+    "value": "Msft"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "puppetversion",
+    "value": "4.2.2"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "platform_symlink_writable",
+    "value": true
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "processors",
+    "value": {
+      "count": 4,
+      "isa": "x86_64",
+      "models": [
+        "Intel(R) Xeon(R) CPU E5-2673 v3 @ 2.40GHz",
+        "Intel(R) Xeon(R) CPU E5-2673 v3 @ 2.40GHz",
+        "Intel(R) Xeon(R) CPU E5-2673 v3 @ 2.40GHz",
+        "Intel(R) Xeon(R) CPU E5-2673 v3 @ 2.40GHz"
+      ],
+      "physicalcount": 1
+    }
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "processor1",
+    "value": "Intel(R) Xeon(R) CPU E5-2673 v3 @ 2.40GHz"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "sshecdsakey",
+    "value": "AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBN1Xc0MUIB+PWFthwK1yAq4FrvOUZGv/9iwBq9rGoNmPQjVYwvK0H1pB75pRM+DFaRFziEvODQw8RogHJKXBzps="
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "selinux",
+    "value": false
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "ipaddress6_lo",
+    "value": "::1"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "clientcert",
+    "value": "localhost-linux"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "lsbmajdistrelease",
+    "value": "14.04"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "boardserialnumber",
+    "value": "0000-0010-1200-0111-4846-7850-93"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "puppet_files_dir_present",
+    "value": false
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "operatingsystemmajrelease",
+    "value": "14.04"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "bios_release_date",
+    "value": "05/23/2012"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "network_eth0",
+    "value": "100.112.162.0"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "lsbdistid",
+    "value": "Ubuntu"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "blockdevice_fd0_size",
+    "value": 0
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "ssh",
+    "value": {
+      "dsa": {
+        "fingerprints": {
+          "sha1": "SSHFP 2 1 4663da00630eaeebe2151fe9b1c4fca559e39506",
+          "sha256": "SSHFP 2 2 eaae7a05b87bc53793fafdfa32a7cba8d81e97fd766627670776396f8dafb74a"
+        },
+        "key": "AAAAB3NzaC1kc3MAAACBANIRk3fjo9ZjICYxtpaW/BnxNZyPL6RJaqxzfq8NFdoAiKszsc5n3hO9gv8PUUYc/Nbsa228w1Nw/CGxq0JrZO9clNMXqaOkt0kTZz/gy/Jf431YnC5n+euqxP+mmdCQxo0LMkue5UNHVgvM93N1L52v0AnUcyS0vPPcHAKxiTa1AAAAFQCo+OZhTnUx579cexksq+ou3Mxi4wAAAIEAoksZzXHcOSO0Q1B+e3s3pEH7C5+OrVHNhOwdxt/C6MNJAxyu21BTwYMRYbOi4Rhs0Giz7IC0wMmaciL1ZljJslZBBYrg8jDxAEP6CR+b8OPGDmNYktFDcI3t/sLg5Mo0FQU22xhsHkSk6Y4NjGXPGRgBPEFzmFLjFqWZLH6LfTkAAACAFvbRC3lWTIhlydQiGu2csqltV6gCqhs2adE9wrLvQxZCkeE4WIhwZi+T2YIq3uTJrafZdMfyWqKioa66aNkiAZsob570BeSyVFeuPdu8g9QeDcAW1ynjhpoZZhkyfyakXBTCXEq8Cobi3H558nOv+oUIYudEps1V62xi+1NmiLo="
+      },
+      "ecdsa": {
+        "fingerprints": {
+          "sha1": "SSHFP 3 1 ddb8a4b3a4b9f91aad0e852a70252de810d54a58",
+          "sha256": "SSHFP 3 2 989e48d1638c42d44ddfb8644a03b165949074a63f74893505f929dbe2cb8068"
+        },
+        "key": "AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBN1Xc0MUIB+PWFthwK1yAq4FrvOUZGv/9iwBq9rGoNmPQjVYwvK0H1pB75pRM+DFaRFziEvODQw8RogHJKXBzps="
+      },
+      "rsa": {
+        "fingerprints": {
+          "sha1": "SSHFP 1 1 e26e745e4a353d631d11001143ddb9c4b7a7674d",
+          "sha256": "SSHFP 1 2 7c378c25cefd8a1eea9d501e1113853cefd7288c16d0b409a02268d976d3ba24"
+        },
+        "key": "AAAAB3NzaC1yc2EAAAADAQABAAABAQDVeA88Ge5tGFBAVFbVBqqkV7VinSLYd00+ssViXreKNiCeyOEjzcG254UYc59Z5t5okkhwuaN7u4VglVSIsEh4CZAFSVpFPr1xjbXleDv3bMJE8EXNyiT78l3Jlp+tuDm3PE0fBe9CZ+zzPtYkg8z7G4KXoUdtZNjjTXXUMQBWU+LmDnaCIy9yGenTsvOoWedd83e0XxY9AxIKFc8RlFsqIUxVVC6Mv/lvhvO0GPrZas+ZcGEtnhEWwVXgKi2nd8PJDC5ID1z/EbqDD0qaZgufNwfwAlgfc91SRKVPlEKj1M2S1av2SQ3gaKCrkKOLXV/dfH+v0EewNvkwaoIuDdob"
+      }
+    }
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "blockdevices",
+    "value": "fd0,sda,sdb,sr0"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "partitions",
+    "value": {
+      "/dev/sda1": {
+        "filesystem": "ext4",
+        "label": "cloudimg-rootfs",
+        "mount": "/",
+        "size": "29.30 GiB",
+        "size_bytes": 31456231424,
+        "uuid": "6e603566-8ebc-4ba1-8cfe-6fbd5f8ca174"
+      },
+      "/dev/sdb1": {
+        "filesystem": "ext4",
+        "mount": "/mnt",
+        "size": "285.00 GiB",
+        "size_bytes": 306014322688,
+        "uuid": "64ec7ecf-000b-46d8-802b-e3ab0154ef79"
+      }
+    }
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "boardproductname",
+    "value": "Virtual Machine"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "gid",
+    "value": "root"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "processorcount",
+    "value": 4
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "uptime_days",
+    "value": 12
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "disks",
+    "value": {
+      "fd0": {
+        "size": "0 bytes",
+        "size_bytes": 0
+      },
+      "sda": {
+        "model": "Virtual Disk",
+        "size": "29.30 GiB",
+        "size_bytes": 31457280000,
+        "vendor": "Msft"
+      },
+      "sdb": {
+        "model": "Virtual Disk",
+        "size": "285.00 GiB",
+        "size_bytes": 306016419840,
+        "vendor": "Msft"
+      },
+      "sr0": {
+        "model": "Virtual CD/ROM",
+        "size": "4.31 MiB",
+        "size_bytes": 4521984,
+        "vendor": "Msft"
+      }
+    }
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "custom_auth_conf",
+    "value": "false"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "dmi",
+    "value": {
+      "bios": {
+        "release_date": "05/23/2012",
+        "vendor": "American Megatrends Inc.",
+        "version": "090006"
+      },
+      "board": {
+        "manufacturer": "Microsoft Corporation",
+        "product": "Virtual Machine",
+        "serial_number": "0000-0010-1200-0111-4846-7850-93"
+      },
+      "chassis": {
+        "asset_tag": "7783-7084-3265-9085-8269-3286-77",
+        "type": "Desktop"
+      },
+      "manufacturer": "Microsoft Corporation",
+      "product": {
+        "name": "Virtual Machine",
+        "serial_number": "0000-0006-9134-8227-1551-6058-75",
+        "uuid": "56BFEA28-3FAC-1E43-8B7C-F43233FF64C8"
+      }
+    }
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "macaddress_eth0",
+    "value": "00:0d:3a:91:16:e6"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "pe_build",
+    "value": "2015.2.1"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "serialnumber",
+    "value": "0000-0006-9134-8227-1551-6058-75"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "uptime",
+    "value": "12 days"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "mountpoints",
+    "value": {
+      "/": {
+        "filesystem": "ext4",
+        "device": "/dev/sda1",
+        "used_bytes": 3816001536,
+        "available_bytes": 27111784448,
+        "used": "3.55 GiB",
+        "size": "28.80 GiB",
+        "options": [
+          "rw",
+          "discard"
+        ],
+        "size_bytes": 30927785984,
+        "available": "25.25 GiB",
+        "capacity": "12.34%"
+      },
+      "/mnt": {
+        "filesystem": "ext4",
+        "device": "/dev/sdb1",
+        "used_bytes": 65966080,
+        "available_bytes": 301012709376,
+        "used": "62.91 MiB",
+        "size": "280.40 GiB",
+        "options": [
+          "rw"
+        ],
+        "size_bytes": 301078675456,
+        "available": "280.34 GiB",
+        "capacity": "0.02%"
+      }
+    }
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "uptime_hours",
+    "value": 289
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "system_uptime",
+    "value": {
+      "days": 12,
+      "hours": 289,
+      "seconds": 1041376,
+      "uptime": "12 days"
+    }
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "memoryfree",
+    "value": "3.61 GiB"
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "load_averages",
+    "value": {
+      "15m": 0.52,
+      "1m": 0.17,
+      "5m": 0.44
+    }
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "memory",
+    "value": {
+      "system": {
+        "available": "3.61 GiB",
+        "available_bytes": 3878711296,
+        "capacity": "46.92%",
+        "total": "6.81 GiB",
+        "total_bytes": 7307083776,
+        "used": "3.19 GiB",
+        "used_bytes": 3428372480
+      }
+    }
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "memoryfree_mb",
+    "value": 3699.02734375
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "uptime_seconds",
+    "value": 1041376
+  },
+  {
+    "certname": "localhost-linux",
+    "environment": "production",
+    "name": "path",
+    "value": "/opt/puppetlabs/puppet/bin:/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "kernel",
+    "value": "Linux"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "network6_lo",
+    "value": "::1"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "lsbdistdescription",
+    "value": "Ubuntu 14.04.3 LTS"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "kernelrelease",
+    "value": "3.19.0-28-generic"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "lsbdistrelease",
+    "value": "14.04"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "pe_server_version",
+    "value": "2015.2.1"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "is_pe",
+    "value": false
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "memorysize_mb",
+    "value": 6968.578125
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "sshfp_dsa",
+    "value": "SSHFP 2 1 4663da00630eaeebe2151fe9b1c4fca559e39506\nSSHFP 2 2 eaae7a05b87bc53793fafdfa32a7cba8d81e97fd766627670776396f8dafb74a"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "architecture",
+    "value": "amd64"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "platform_tag",
+    "value": "ubuntu-14.04-amd64"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "rubysitedir",
+    "value": "/opt/puppetlabs/puppet/lib/ruby/site_ruby/2.1.0"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "memorysize",
+    "value": "6.81 GiB"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "hostname",
+    "value": "hatest1"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "productname",
+    "value": "Virtual Machine"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "blockdevice_sr0_vendor",
+    "value": "Msft"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "facterversion",
+    "value": "3.1.0"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "virtual",
+    "value": "hyperv"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "physicalprocessorcount",
+    "value": 1
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "netmask6",
+    "value": "ffff:ffff:ffff:ffff::"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "pe_concat_basedir",
+    "value": "/opt/puppetlabs/puppet/cache/pe_concat"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "interfaces",
+    "value": "eth0,lo"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "lsbdistcodename",
+    "value": "trusty"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "network6_eth0",
+    "value": "fe80::"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "chassisassettag",
+    "value": "7783-7084-3265-9085-8269-3286-77"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "rubyversion",
+    "value": "2.1.6"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "boardmanufacturer",
+    "value": "Microsoft Corporation"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "blockdevice_sdb_vendor",
+    "value": "Msft"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "blockdevice_sr0_model",
+    "value": "Virtual CD/ROM"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "processor2",
+    "value": "Intel(R) Xeon(R) CPU E5-2673 v3 @ 2.40GHz"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "timezone",
+    "value": "UTC"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "netmask6_eth0",
+    "value": "ffff:ffff:ffff:ffff::"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "sshfp_rsa",
+    "value": "SSHFP 1 1 e26e745e4a353d631d11001143ddb9c4b7a7674d\nSSHFP 1 2 7c378c25cefd8a1eea9d501e1113853cefd7288c16d0b409a02268d976d3ba24"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "bios_vendor",
+    "value": "American Megatrends Inc."
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "clientnoop",
+    "value": false
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "os",
+    "value": {
+      "architecture": "amd64",
+      "distro": {
+        "codename": "trusty",
+        "description": "Ubuntu 14.04.3 LTS",
+        "id": "Ubuntu",
+        "release": {
+          "full": "14.04",
+          "major": "14.04"
+        }
+      },
+      "family": "Debian",
+      "hardware": "x86_64",
+      "name": "Ubuntu",
+      "release": {
+        "full": "14.04",
+        "major": "14.04"
+      },
+      "selinux": {
+        "enabled": false
+      }
+    }
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "osfamily",
+    "value": "Debian"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "augeasversion",
+    "value": "1.4.0"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "ipaddress_lo",
+    "value": "127.0.0.1"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "netmask_eth0",
+    "value": "255.255.254.0"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "operatingsystem",
+    "value": "Ubuntu"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "ipaddress6_eth0",
+    "value": "fe80::20d:3aff:fe91:16e6"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "manufacturer",
+    "value": "Microsoft Corporation"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "mtu_eth0",
+    "value": 1500
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "trusted",
+    "value": {
+      "authenticated": "remote",
+      "certname": "localhost-windows",
+      "extensions": {}
+    }
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "bios_version",
+    "value": "090006"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "network_lo",
+    "value": "127.0.0.0"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "ipaddress6",
+    "value": "fe80::20d:3aff:fe91:16e6"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "fqdn",
+    "value": "hatest1.hatest1.g3.internal.cloudapp.net"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "id",
+    "value": "root"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "hardwaremodel",
+    "value": "x86_64"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "aio_agent_build",
+    "value": "1.2.5"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "blockdevice_sr0_size",
+    "value": 4521984
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "netmask_lo",
+    "value": "255.0.0.0"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "netmask",
+    "value": "255.255.254.0"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "sshfp_ecdsa",
+    "value": "SSHFP 3 1 ddb8a4b3a4b9f91aad0e852a70252de810d54a58\nSSHFP 3 2 989e48d1638c42d44ddfb8644a03b165949074a63f74893505f929dbe2cb8068"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "processor0",
+    "value": "Intel(R) Xeon(R) CPU E5-2673 v3 @ 2.40GHz"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "staging_http_get",
+    "value": "curl"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "kernelversion",
+    "value": "3.19.0"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "is_virtual",
+    "value": true
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "blockdevice_sdb_model",
+    "value": "Virtual Disk"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "uuid",
+    "value": "56BFEA28-3FAC-1E43-8B7C-F43233FF64C8"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "sshrsakey",
+    "value": "AAAAB3NzaC1yc2EAAAADAQABAAABAQDVeA88Ge5tGFBAVFbVBqqkV7VinSLYd00+ssViXreKNiCeyOEjzcG254UYc59Z5t5okkhwuaN7u4VglVSIsEh4CZAFSVpFPr1xjbXleDv3bMJE8EXNyiT78l3Jlp+tuDm3PE0fBe9CZ+zzPtYkg8z7G4KXoUdtZNjjTXXUMQBWU+LmDnaCIy9yGenTsvOoWedd83e0XxY9AxIKFc8RlFsqIUxVVC6Mv/lvhvO0GPrZas+ZcGEtnhEWwVXgKi2nd8PJDC5ID1z/EbqDD0qaZgufNwfwAlgfc91SRKVPlEKj1M2S1av2SQ3gaKCrkKOLXV/dfH+v0EewNvkwaoIuDdob"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "network",
+    "value": "100.112.162.0"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "ipaddress_eth0",
+    "value": "100.112.162.79"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "blockdevice_sda_size",
+    "value": 31457280000
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "sshdsakey",
+    "value": "AAAAB3NzaC1kc3MAAACBANIRk3fjo9ZjICYxtpaW/BnxNZyPL6RJaqxzfq8NFdoAiKszsc5n3hO9gv8PUUYc/Nbsa228w1Nw/CGxq0JrZO9clNMXqaOkt0kTZz/gy/Jf431YnC5n+euqxP+mmdCQxo0LMkue5UNHVgvM93N1L52v0AnUcyS0vPPcHAKxiTa1AAAAFQCo+OZhTnUx579cexksq+ou3Mxi4wAAAIEAoksZzXHcOSO0Q1B+e3s3pEH7C5+OrVHNhOwdxt/C6MNJAxyu21BTwYMRYbOi4Rhs0Giz7IC0wMmaciL1ZljJslZBBYrg8jDxAEP6CR+b8OPGDmNYktFDcI3t/sLg5Mo0FQU22xhsHkSk6Y4NjGXPGRgBPEFzmFLjFqWZLH6LfTkAAACAFvbRC3lWTIhlydQiGu2csqltV6gCqhs2adE9wrLvQxZCkeE4WIhwZi+T2YIq3uTJrafZdMfyWqKioa66aNkiAZsob570BeSyVFeuPdu8g9QeDcAW1ynjhpoZZhkyfyakXBTCXEq8Cobi3H558nOv+oUIYudEps1V62xi+1NmiLo="
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "operatingsystemrelease",
+    "value": "14.04"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "identity",
+    "value": {
+      "gid": 0,
+      "group": "root",
+      "uid": 0,
+      "user": "root"
+    }
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "clientversion",
+    "value": "4.2.2"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "dhcp_servers",
+    "value": {
+      "eth0": "100.112.136.202",
+      "system": "100.112.136.202"
+    }
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "kernelmajversion",
+    "value": "3.19"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "macaddress",
+    "value": "00:0d:3a:91:16:e6"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "filesystems",
+    "value": "ext2,ext3,ext4,udf,vfat"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "rubyplatform",
+    "value": "x86_64-linux"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "chassistype",
+    "value": "Desktop"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "domain",
+    "value": "hatest1.g3.internal.cloudapp.net"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "mtu_lo",
+    "value": 65536
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "aio_agent_version",
+    "value": "1.2.5"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "hardwareisa",
+    "value": "x86_64"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "ipaddress",
+    "value": "100.112.162.79"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "augeas",
+    "value": {
+      "version": "1.4.0"
+    }
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "networking",
+    "value": {
+      "mac": "00:0d:3a:91:16:e6",
+      "ip6": "fe80::20d:3aff:fe91:16e6",
+      "hostname": "hatest1",
+      "dhcp": "100.112.136.202",
+      "netmask6": "ffff:ffff:ffff:ffff::",
+      "interfaces": {
+        "eth0": {
+          "mac": "00:0d:3a:91:16:e6",
+          "ip6": "fe80::20d:3aff:fe91:16e6",
+          "bindings": [
+            {
+              "address": "100.112.162.79",
+              "netmask": "255.255.254.0",
+              "network": "100.112.162.0"
+            }
+          ],
+          "dhcp": "100.112.136.202",
+          "netmask6": "ffff:ffff:ffff:ffff::",
+          "netmask": "255.255.254.0",
+          "network": "100.112.162.0",
+          "mtu": 1500,
+          "ip": "100.112.162.79",
+          "bindings6": [
+            {
+              "address": "fe80::20d:3aff:fe91:16e6",
+              "netmask": "ffff:ffff:ffff:ffff::",
+              "network": "fe80::"
+            }
+          ],
+          "network6": "fe80::"
+        },
+        "lo": {
+          "ip6": "::1",
+          "bindings": [
+            {
+              "address": "127.0.0.1",
+              "netmask": "255.0.0.0",
+              "network": "127.0.0.0"
+            }
+          ],
+          "netmask6": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff",
+          "netmask": "255.0.0.0",
+          "network": "127.0.0.0",
+          "mtu": 65536,
+          "ip": "127.0.0.1",
+          "bindings6": [
+            {
+              "address": "::1",
+              "netmask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff",
+              "network": "::1"
+            }
+          ],
+          "network6": "::1"
+        }
+      },
+      "fqdn": "hatest1.hatest1.g3.internal.cloudapp.net",
+      "netmask": "255.255.254.0",
+      "network": "100.112.162.0",
+      "mtu": 1500,
+      "primary": "eth0",
+      "ip": "100.112.162.79",
+      "domain": "hatest1.g3.internal.cloudapp.net",
+      "network6": "fe80::"
+    }
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "network6",
+    "value": "fe80::"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "processor3",
+    "value": "Intel(R) Xeon(R) CPU E5-2673 v3 @ 2.40GHz"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "netmask6_lo",
+    "value": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "ruby",
+    "value": {
+      "platform": "x86_64-linux",
+      "sitedir": "/opt/puppetlabs/puppet/lib/ruby/site_ruby/2.1.0",
+      "version": "2.1.6"
+    }
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "blockdevice_sda_model",
+    "value": "Virtual Disk"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "hardwareisa",
+    "value": null
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "blockdevice_sdb_size",
+    "value": 306016419840
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "blockdevice_sda_vendor",
+    "value": "Msft"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "puppetversion",
+    "value": "4.2.2"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "platform_symlink_writable",
+    "value": true
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "processors",
+    "value": {
+      "count": 4,
+      "isa": "x86_64",
+      "models": [
+        "Intel(R) Xeon(R) CPU E5-2673 v3 @ 2.40GHz",
+        "Intel(R) Xeon(R) CPU E5-2673 v3 @ 2.40GHz",
+        "Intel(R) Xeon(R) CPU E5-2673 v3 @ 2.40GHz",
+        "Intel(R) Xeon(R) CPU E5-2673 v3 @ 2.40GHz"
+      ],
+      "physicalcount": 1
+    }
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "processor1",
+    "value": "Intel(R) Xeon(R) CPU E5-2673 v3 @ 2.40GHz"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "sshecdsakey",
+    "value": "AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBN1Xc0MUIB+PWFthwK1yAq4FrvOUZGv/9iwBq9rGoNmPQjVYwvK0H1pB75pRM+DFaRFziEvODQw8RogHJKXBzps="
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "selinux",
+    "value": false
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "ipaddress6_lo",
+    "value": "::1"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "clientcert",
+    "value": "localhost-windows"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "lsbmajdistrelease",
+    "value": "14.04"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "boardserialnumber",
+    "value": "0000-0010-1200-0111-4846-7850-93"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "puppet_files_dir_present",
+    "value": false
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "operatingsystemmajrelease",
+    "value": "14.04"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "bios_release_date",
+    "value": "05/23/2012"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "network_eth0",
+    "value": "100.112.162.0"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "lsbdistid",
+    "value": "Ubuntu"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "blockdevice_fd0_size",
+    "value": 0
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "ssh",
+    "value": {
+      "dsa": {
+        "fingerprints": {
+          "sha1": "SSHFP 2 1 4663da00630eaeebe2151fe9b1c4fca559e39506",
+          "sha256": "SSHFP 2 2 eaae7a05b87bc53793fafdfa32a7cba8d81e97fd766627670776396f8dafb74a"
+        },
+        "key": "AAAAB3NzaC1kc3MAAACBANIRk3fjo9ZjICYxtpaW/BnxNZyPL6RJaqxzfq8NFdoAiKszsc5n3hO9gv8PUUYc/Nbsa228w1Nw/CGxq0JrZO9clNMXqaOkt0kTZz/gy/Jf431YnC5n+euqxP+mmdCQxo0LMkue5UNHVgvM93N1L52v0AnUcyS0vPPcHAKxiTa1AAAAFQCo+OZhTnUx579cexksq+ou3Mxi4wAAAIEAoksZzXHcOSO0Q1B+e3s3pEH7C5+OrVHNhOwdxt/C6MNJAxyu21BTwYMRYbOi4Rhs0Giz7IC0wMmaciL1ZljJslZBBYrg8jDxAEP6CR+b8OPGDmNYktFDcI3t/sLg5Mo0FQU22xhsHkSk6Y4NjGXPGRgBPEFzmFLjFqWZLH6LfTkAAACAFvbRC3lWTIhlydQiGu2csqltV6gCqhs2adE9wrLvQxZCkeE4WIhwZi+T2YIq3uTJrafZdMfyWqKioa66aNkiAZsob570BeSyVFeuPdu8g9QeDcAW1ynjhpoZZhkyfyakXBTCXEq8Cobi3H558nOv+oUIYudEps1V62xi+1NmiLo="
+      },
+      "ecdsa": {
+        "fingerprints": {
+          "sha1": "SSHFP 3 1 ddb8a4b3a4b9f91aad0e852a70252de810d54a58",
+          "sha256": "SSHFP 3 2 989e48d1638c42d44ddfb8644a03b165949074a63f74893505f929dbe2cb8068"
+        },
+        "key": "AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBN1Xc0MUIB+PWFthwK1yAq4FrvOUZGv/9iwBq9rGoNmPQjVYwvK0H1pB75pRM+DFaRFziEvODQw8RogHJKXBzps="
+      },
+      "rsa": {
+        "fingerprints": {
+          "sha1": "SSHFP 1 1 e26e745e4a353d631d11001143ddb9c4b7a7674d",
+          "sha256": "SSHFP 1 2 7c378c25cefd8a1eea9d501e1113853cefd7288c16d0b409a02268d976d3ba24"
+        },
+        "key": "AAAAB3NzaC1yc2EAAAADAQABAAABAQDVeA88Ge5tGFBAVFbVBqqkV7VinSLYd00+ssViXreKNiCeyOEjzcG254UYc59Z5t5okkhwuaN7u4VglVSIsEh4CZAFSVpFPr1xjbXleDv3bMJE8EXNyiT78l3Jlp+tuDm3PE0fBe9CZ+zzPtYkg8z7G4KXoUdtZNjjTXXUMQBWU+LmDnaCIy9yGenTsvOoWedd83e0XxY9AxIKFc8RlFsqIUxVVC6Mv/lvhvO0GPrZas+ZcGEtnhEWwVXgKi2nd8PJDC5ID1z/EbqDD0qaZgufNwfwAlgfc91SRKVPlEKj1M2S1av2SQ3gaKCrkKOLXV/dfH+v0EewNvkwaoIuDdob"
+      }
+    }
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "blockdevices",
+    "value": "fd0,sda,sdb,sr0"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "partitions",
+    "value": {
+      "/dev/sda1": {
+        "filesystem": "ext4",
+        "label": "cloudimg-rootfs",
+        "mount": "/",
+        "size": "29.30 GiB",
+        "size_bytes": 31456231424,
+        "uuid": "6e603566-8ebc-4ba1-8cfe-6fbd5f8ca174"
+      },
+      "/dev/sdb1": {
+        "filesystem": "ext4",
+        "mount": "/mnt",
+        "size": "285.00 GiB",
+        "size_bytes": 306014322688,
+        "uuid": "64ec7ecf-000b-46d8-802b-e3ab0154ef79"
+      }
+    }
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "boardproductname",
+    "value": "Virtual Machine"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "gid",
+    "value": "root"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "processorcount",
+    "value": 4
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "uptime_days",
+    "value": 12
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "disks",
+    "value": {
+      "fd0": {
+        "size": "0 bytes",
+        "size_bytes": 0
+      },
+      "sda": {
+        "model": "Virtual Disk",
+        "size": "29.30 GiB",
+        "size_bytes": 31457280000,
+        "vendor": "Msft"
+      },
+      "sdb": {
+        "model": "Virtual Disk",
+        "size": "285.00 GiB",
+        "size_bytes": 306016419840,
+        "vendor": "Msft"
+      },
+      "sr0": {
+        "model": "Virtual CD/ROM",
+        "size": "4.31 MiB",
+        "size_bytes": 4521984,
+        "vendor": "Msft"
+      }
+    }
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "custom_auth_conf",
+    "value": "false"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "dmi",
+    "value": {
+      "bios": {
+        "release_date": "05/23/2012",
+        "vendor": "American Megatrends Inc.",
+        "version": "090006"
+      },
+      "board": {
+        "manufacturer": "Microsoft Corporation",
+        "product": "Virtual Machine",
+        "serial_number": "0000-0010-1200-0111-4846-7850-93"
+      },
+      "chassis": {
+        "asset_tag": "7783-7084-3265-9085-8269-3286-77",
+        "type": "Desktop"
+      },
+      "manufacturer": "Microsoft Corporation",
+      "product": {
+        "name": "Virtual Machine",
+        "serial_number": "0000-0006-9134-8227-1551-6058-75",
+        "uuid": "56BFEA28-3FAC-1E43-8B7C-F43233FF64C8"
+      }
+    }
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "macaddress_eth0",
+    "value": "00:0d:3a:91:16:e6"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "pe_build",
+    "value": "2015.2.1"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "serialnumber",
+    "value": "0000-0006-9134-8227-1551-6058-75"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "uptime",
+    "value": "12 days"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "mountpoints",
+    "value": {
+      "/": {
+        "filesystem": "ext4",
+        "device": "/dev/sda1",
+        "used_bytes": 3816001536,
+        "available_bytes": 27111784448,
+        "used": "3.55 GiB",
+        "size": "28.80 GiB",
+        "options": [
+          "rw",
+          "discard"
+        ],
+        "size_bytes": 30927785984,
+        "available": "25.25 GiB",
+        "capacity": "12.34%"
+      },
+      "/mnt": {
+        "filesystem": "ext4",
+        "device": "/dev/sdb1",
+        "used_bytes": 65966080,
+        "available_bytes": 301012709376,
+        "used": "62.91 MiB",
+        "size": "280.40 GiB",
+        "options": [
+          "rw"
+        ],
+        "size_bytes": 301078675456,
+        "available": "280.34 GiB",
+        "capacity": "0.02%"
+      }
+    }
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "uptime_hours",
+    "value": 289
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "system_uptime",
+    "value": {
+      "days": 12,
+      "hours": 289,
+      "seconds": 1041376,
+      "uptime": "12 days"
+    }
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "memoryfree",
+    "value": "3.61 GiB"
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "load_averages",
+    "value": {
+      "15m": 0.52,
+      "1m": 0.17,
+      "5m": 0.44
+    }
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "memory",
+    "value": {
+      "system": {
+        "available": "3.61 GiB",
+        "available_bytes": 3878711296,
+        "capacity": "46.92%",
+        "total": "6.81 GiB",
+        "total_bytes": 7307083776,
+        "used": "3.19 GiB",
+        "used_bytes": 3428372480
+      }
+    }
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "memoryfree_mb",
+    "value": 3699.02734375
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "uptime_seconds",
+    "value": 1041376
+  },
+  {
+    "certname": "localhost-windows",
+    "environment": "production",
+    "name": "path",
+    "value": "/opt/puppetlabs/puppet/bin:/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin"
+  }
+]
