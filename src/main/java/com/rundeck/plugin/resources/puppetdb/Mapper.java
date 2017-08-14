@@ -35,6 +35,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import org.apache.commons.beanutils.NestedNullException;
 import org.apache.commons.beanutils.PropertyUtilsBean;
@@ -96,6 +98,18 @@ public class Mapper implements Constants {
             }
         }
 
+        // parse conditional attributes
+        final boolean hasConditionalAttributes = mappings.containsKey("conditionalAttributes");
+        if (hasConditionalAttributes) {
+            final Object conditionalAttributesMapping = mappings.get("conditionalAttributes");
+
+            final boolean isValidMapping = null != conditionalAttributesMapping && conditionalAttributesMapping instanceof Map;
+            if (isValidMapping) {
+                final Map<String, String> newAttributes = assembleMapWithConditions(puppetNode, (Map<String, Object>) conditionalAttributesMapping);
+                result.getAttributes().putAll(newAttributes);
+            }
+        }
+
 
         // parse tags
         final boolean hasTags = mappings.containsKey("tags");
@@ -149,6 +163,56 @@ public class Mapper implements Constants {
         }
 
         return result;
+    }
+
+    private Map<String, String> assembleMapWithConditions(final PuppetDBNode puppetNode,
+                                                          final Map<String, Object> mappings) {
+        final Map<String, String> result = new LinkedHashMap<>();
+
+        for (Map.Entry<String, Object> entry : mappings.entrySet()) {
+            final String key = entry.getKey();
+
+            final boolean isValidMapping = entry.getValue() instanceof Map;
+            if (!isValidMapping) {
+                log.warn("wrong mapping for property: 'key', please specify a json object with properties 'path' and/or 'default'");
+                continue;
+            }
+
+
+            final Map<String, String> mapping = (Map<String, String>) entry.getValue();
+            if (!mapping.containsKey("conditionPath") || !mapping.containsKey("conditionRegex")) {
+                log.warn("wrong mapping for property: 'conditionalAttributes', please specify a json object with properties 'conditionPath' and 'conditionRegex'");
+                continue;
+            }
+
+            final String conditionPath = mapping.get("conditionPath");
+            final String conditionRegex = mapping.get("conditionRegex");
+            final String conditionValue = getPuppetNodeProperty(puppetNode, conditionPath);
+
+            if (!regExValid(conditionRegex)) {
+                log.warn("invalid regex on conditional attribute: " + conditionRegex);
+                continue;
+            }
+
+            if (conditionValue.matches(conditionRegex)) {
+                final String value = getPuppetNodeProperty(puppetNode, mapping);
+                if (null != value) {
+                    result.put(key, value);
+                }
+            }
+        }
+
+        return result;
+    }
+
+    private boolean regExValid(String regEx) {
+        try {
+            Pattern.compile(regEx);
+            return true;
+        } catch (PatternSyntaxException exception) {
+            return false;
+        }
+
     }
 
     private Map<String, String> assembleMapOmitingKeys(final PuppetDBNode puppetNode,
