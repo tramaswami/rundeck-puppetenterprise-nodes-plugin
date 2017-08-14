@@ -86,6 +86,16 @@ will be set to using a "selector" on properties of the Puppet Enterprise Node ob
 
 the default mapping file is src/main/resources/defaultMapping.json
 
+Conditional Mapping
+-----------
+Conditional mapping allows for node attributes to be set when the value of a property in the Puppet Enterprise Node object matches a specified regular expression.
+
+This is useful for specifying a different executor than the default one for specific nodes (i.e. if Rundeck is connecting to both Windows and Linux nodes in the same project).
+
+An example can be found in the file:
+
+`src/test/resources/conditional_mapping/one_matching_mapping.json`
+
 Mapping format
 ---------------
 
