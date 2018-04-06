@@ -122,14 +122,14 @@ public class Mapper implements Constants {
                 result.getTags().add(defaultNodeTag.get());
             }
 
-            /*
+            
              final Object tagsMapping = mappings.getOrDefault("tags", emptyMap());
              final boolean isValidMapping = tagsMapping instanceof List;
              if (isValidMapping) {
              final Set<String> newTags = assembleSet(puppetNode, (List<Map<String, String>>) tagsMapping);
              result.getTags().addAll(newTags);
              }
-             */
+             
         }
 
 
