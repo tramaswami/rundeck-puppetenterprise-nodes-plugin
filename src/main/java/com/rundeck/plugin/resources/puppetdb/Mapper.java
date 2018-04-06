@@ -23,6 +23,7 @@
  */
 package com.rundeck.plugin.resources.puppetdb;
 
+import static java.util.Collections.emptyMap;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.isBlank;
