@@ -117,6 +117,11 @@ public class Mapper implements Constants {
         if (hasTags) {
             // TODO: for now, tags is every tag we found.
             result.getTags().addAll(puppetNode.getClasses());
+            String value = getPuppetNodeProperty(puppetNode, mapping);
+            if (null != value) {
+            result.put(key, value);
+            }
+
 
             // add default tag if any
             if (defaultNodeTag.isPresent()) {
