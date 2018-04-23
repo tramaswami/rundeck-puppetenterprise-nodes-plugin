@@ -112,20 +112,21 @@ public class Mapper implements Constants {
         }
 
 
-        // parse tags
+// parse tags
         final boolean hasTags = mappings.containsKey("tags");
-        log.debug("hastags="+hasTags);
+        log.debug("PDB hasTags="+hasTags);
         if (hasTags) {
             // TODO: for now, tags is every tag we found.
-            log.debug("puppetNode.getClasses()="+puppetNode.getClasses().size());
-            log.debug("puppetNode.getClasses()="+puppetNode.getClasses());
-            log.debug("before=result.getTags()="+result.getTags());
+                log.debug("PDB puppetNode.getClasses="+puppetNode.getClasses());
             result.getTags().addAll(puppetNode.getClasses());
-            log.debug("after=result.getTags()="+result.getTags());
-           /* String value = getPuppetNodeProperty(puppetNode, mapping);
-            if (null != value) {
-                result.put(key, value);
-            }*/
+
+            // add default tag if any
+            log.debug("PDB defaultNodeTag.isPresent()="+defaultNodeTag.isPresent());
+            if (defaultNodeTag.isPresent()) {
+              log.debug("PDB result before="+result.getTags());
+                result.getTags().add(defaultNodeTag.get());
+                log.debug("PDB result after="+result.getTags());
+            }
 
 
             // add default tag if any
